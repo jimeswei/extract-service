@@ -1,3 +1,10 @@
+ssh -T git@github.com
+git add .
+git commit -m "readme.md"
+git remote set-url origin  git@github.com:jimeswei/extract-service.git
+git push origin main
+
+
 # 智能文本提取服务 - 系统架构设计文档实现
 
 [![架构完整度](https://img.shields.io/badge/架构完整度-100%25-brightgreen)](./architecture-test.sh)
