@@ -1,0 +1,2 @@
+mysql: 
+ip: 192.168.3.78, user: root,port: 3307, password: 123456

@@ -1,0 +1,367 @@
+{
+  "info": {
+    "name": "智能文本提取服务 - Extract Service API",
+    "description": "MCP标准的智能文本提取服务API测试集合",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:2701",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "基础API测试",
+      "item": [
+        {
+          "name": "健康检查",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/health",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "服务信息",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/info",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "info"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "文本提取API",
+      "item": [
+        {
+          "name": "单文本三元组提取",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"小明是北京大学的学生，他正在学习人工智能课程。\",\n  \"extractType\": \"triples\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/extract",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "extract"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "复杂文本提取",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"苹果公司成立于1976年，由史蒂夫·乔布斯、史蒂夫·沃兹尼亚克和罗纳德·韦恩共同创立。公司总部位于加利福尼亚州库比蒂诺，是全球领先的科技公司之一。苹果公司主要产品包括iPhone、iPad、Mac电脑等。\",\n  \"extractType\": \"triples\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/extract",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "extract"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "批量文本提取",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"texts\": [\n    \"张三是清华大学的教授。\",\n    \"李四在谷歌公司工作。\",\n    \"王五喜欢打篮球。\"\n  ],\n  \"extractType\": \"triples\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/extract/batch",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "extract", "batch"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "MCP工具接口测试",
+      "item": [
+        {
+          "name": "MCP初始化",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 1,\n  \"method\": \"initialize\",\n  \"params\": {\n    \"protocolVersion\": \"2024-11-05\",\n    \"capabilities\": {\n      \"tools\": {}\n    },\n    \"clientInfo\": {\n      \"name\": \"postman-client\",\n      \"version\": \"1.0.0\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/mcp/initialize",
+              "host": ["{{base_url}}"],
+              "path": ["mcp", "initialize"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MCP工具列表",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 2,\n  \"method\": \"tools/list\",\n  \"params\": {}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/mcp/tools/list",
+              "host": ["{{base_url}}"],
+              "path": ["mcp", "tools", "list"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MCP工具调用 - 提取三元组",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 3,\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"extract_triples\",\n    \"arguments\": {\n      \"text\": \"马云是阿里巴巴集团的创始人，公司成立于1999年。\",\n      \"extractType\": \"triples\",\n      \"options\": \"{}\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/mcp/tools/call",
+              "host": ["{{base_url}}"],
+              "path": ["mcp", "tools", "call"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MCP工具调用 - 批量提取",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 4,\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"batch_extract\",\n    \"arguments\": {\n      \"texts\": \"[\\\"腾讯公司由马化腾创立。\\\",\\\"百度是中国的搜索引擎公司。\\\"]\",\n      \"extractType\": \"triples\",\n      \"batchSize\": \"10\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/mcp/tools/call",
+              "host": ["{{base_url}}"],
+              "path": ["mcp", "tools", "call"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MCP工具调用 - 健康检查",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 5,\n  \"method\": \"tools/call\",\n  \"params\": {\n    \"name\": \"health_check\",\n    \"arguments\": {}\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/mcp/tools/call",
+              "host": ["{{base_url}}"],
+              "path": ["mcp", "tools", "call"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "错误处理测试",
+      "item": [
+        {
+          "name": "空文本测试",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"\",\n  \"extractType\": \"triples\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/extract",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "extract"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "无效参数测试",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"invalidParam\": \"test\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/extract",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "extract"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "性能测试",
+      "item": [
+        {
+          "name": "长文本提取",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"人工智能（Artificial Intelligence，AI）是计算机科学的一个分支，它企图了解智能的实质，并生产出一种新的能以人类智能相似的方式做出反应的智能机器。该领域的研究包括机器人、语言识别、图像识别、自然语言处理和专家系统等。人工智能从诞生以来，理论和技术日益成熟，应用领域也不断扩大。可以设想，未来人工智能带来的科技产品，将会是人类智慧的\\\"容器\\\"。人工智能可以对人的意识、思维的信息过程的模拟。人工智能不是人的智能，但能像人那样思考、也可能超过人的智能。人工智能是一门极富挑战性的科学，从事这项工作的人必须懂得计算机知识，心理学和哲学。人工智能是包括十分广泛的科学，它由不同的领域组成，如机器学习，计算机视觉等等。\",\n  \"extractType\": \"triples\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/extract",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "extract"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "大批量提取",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"texts\": [\n    \"北京是中国的首都。\",\n    \"上海是中国的经济中心。\",\n    \"深圳是中国的科技创新中心。\",\n    \"广州是中国南方的重要城市。\",\n    \"杭州以西湖闻名。\",\n    \"成都是四川省的省会。\",\n    \"西安有兵马俑。\",\n    \"南京是江苏省的省会。\",\n    \"武汉位于长江中游。\",\n    \"重庆是直辖市。\"\n  ],\n  \"extractType\": \"triples\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/extract/batch",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "extract", "batch"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// 设置时间戳",
+          "pm.globals.set('timestamp', Date.now());"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// 通用测试脚本",
+          "pm.test('响应状态码检查', function () {",
+          "    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);",
+          "});",
+          "",
+          "pm.test('响应时间检查', function () {",
+          "    pm.expect(pm.response.responseTime).to.be.below(30000);",
+          "});",
+          "",
+          "pm.test('响应格式检查', function () {",
+          "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+          "});",
+          "",
+          "// 记录响应时间",
+          "console.log('响应时间: ' + pm.response.responseTime + 'ms');"
+        ]
+      }
+    }
+  ]
+} 
