@@ -13,13 +13,14 @@ spring:
 ai:
   mcp:
     server:
-      name: intelligent-extraction-service
+      name: intelligent-extraction-service-prod
       type: ASYNC
       version: 1.0.0
       enabled: true
       sse-endpoint: /sse
       sse-message-endpoint: /mcp/message
-      request-timeout: 30000
+      request-timeout: 60000
+      max-connections: 100
       capabilities:
         tool: true
         resource: true
