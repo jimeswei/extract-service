@@ -1,5 +1,6 @@
 package com.datacenter.extract.service;
 
+import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.ArrayList;
-import org.springframework.ai.tool.annotation.Tool;
 
 /**
  * 文本提取服务 - 按照系统架构设计文档第3.2章实现
@@ -33,8 +33,8 @@ public class TextExtractionService {
     }
 
     /**
-     * @Tool注解标记的核心工具方法
-     *                  按照架构文档设计：从文本中提取知识三元组，自动识别实体和关系
+     * 
+     * 按照架构文档设计：从文本中提取知识三元组，自动识别实体和关系，并保存到数据库
      */
     @Tool(name = "extract_triples", description = "从文本中提取知识三元组，自动识别实体和关系")
     public String extractTriples(
@@ -42,12 +42,15 @@ public class TextExtractionService {
             @ToolParam(description = "提取类型(默认triples)") String extractType,
             @ToolParam(description = "额外选项(可选)") String options) {
 
-        // 巧妙设计：智能缓存键生成，考虑所有影响因子
-        String cacheKey = CacheKeyGenerator.generate(text, extractType, options);
-
         try {
-            // 直接使用SmartAIProvider处理，它内部已包含缓存逻辑
-            return smartAIProvider.process(text, extractType != null ? extractType : "triples");
+            // 1. 使用AI进行提取
+            String aiResult = smartAIProvider.process(text, extractType != null ? extractType : "triples");
+
+            // 2. 保存提取结果到数据库
+            databaseService.saveSocialData(aiResult);
+
+            // 3. 返回提取结果
+            return aiResult;
         } catch (Exception e) {
             log.error("提取失败: {}", e.getMessage());
             return createErrorResponse(e);
@@ -69,7 +72,19 @@ public class TextExtractionService {
             List<String> textList = parseTextArray(texts);
 
             List<String> results = textList.parallelStream()
-                    .map(text -> smartAIProvider.process(text, extractType != null ? extractType : "triples"))
+                    .map(text -> {
+                        try {
+                            // 1. AI提取
+                            String aiResult = smartAIProvider.process(text,
+                                    extractType != null ? extractType : "triples");
+                            // 2. 保存到数据库
+                            databaseService.saveSocialData(aiResult);
+                            return aiResult;
+                        } catch (Exception e) {
+                            log.error("批量提取单项失败: {}", e.getMessage());
+                            return createErrorResponse(e);
+                        }
+                    })
                     .collect(Collectors.toList());
 
             return formatBatchResults(results);
@@ -156,26 +171,42 @@ public class TextExtractionService {
     }
 
     private HealthStatus checkSystemHealth() {
-        double memoryUsage = MemoryUtils.getUsagePercentage();
-        Map<String, Object> cacheStats = smartAIProvider.getCacheStats();
+        try {
+            double memoryUsage = MemoryUtils.getUsagePercentage();
+            Map<String, Object> cacheStats = smartAIProvider.getCacheStats();
 
-        if (memoryUsage > 90) {
+            if (memoryUsage > 90) {
+                return HealthStatus.UNHEALTHY;
+            } else if (memoryUsage > 75) {
+                return HealthStatus.DEGRADED;
+            } else {
+                return HealthStatus.HEALTHY;
+            }
+        } catch (Exception e) {
+            log.error("检查系统健康状态失败: {}", e.getMessage());
             return HealthStatus.UNHEALTHY;
-        } else if (memoryUsage > 75) {
-            return HealthStatus.DEGRADED;
-        } else {
-            return HealthStatus.HEALTHY;
         }
     }
 
     private String createHealthResponse(HealthStatus status) {
-        return String.format("""
-                {"status":"%s","memory_usage":"%.2f%%","cache_stats":%s,"success":true,"timestamp":%d}
-                """,
-                status.name().toLowerCase(),
-                MemoryUtils.getUsagePercentage(),
-                smartAIProvider.getCacheStats().toString(),
-                System.currentTimeMillis());
+        try {
+            double memoryUsage = MemoryUtils.getUsagePercentage();
+            Map<String, Object> cacheStats = smartAIProvider.getCacheStats();
+
+            return String.format(
+                    """
+                            {"status":"%s","memory_usage":"%.2f%%","database_enabled":true,"redis_connected":false,"cache_size":%d,"success":true,"timestamp":%d}
+                            """,
+                    status.name().toLowerCase(),
+                    memoryUsage,
+                    ((Number) cacheStats.get("cache_size")).longValue(),
+                    System.currentTimeMillis());
+        } catch (Exception e) {
+            log.error("创建健康检查响应失败: {}", e.getMessage());
+            return String.format("""
+                    {"status":"unhealthy","error":"%s","success":false,"timestamp":%d}
+                    """, e.getMessage(), System.currentTimeMillis());
+        }
     }
 
     private String createErrorResponse(Exception e) {

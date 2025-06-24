@@ -56,7 +56,7 @@ extraction:
   ai:
     providers:
       deepseek:
-        api-key: sk-3b61aec308d543be81a499e1c82cf2d4
+        api-key: sk-cea6dbdbba694338b5f4abe9dfb0975b
         url: https://api.deepseek.com/v1/chat/completions
         timeout: 30s
         retry-count: 3

@@ -1,12 +1,11 @@
 package com.datacenter.extract.controller;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.datacenter.extract.service.SmartAIProvider;
+import com.datacenter.extract.service.TextExtractionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
@@ -14,19 +13,21 @@ import java.util.concurrent.CompletableFuture;
 @CrossOrigin(origins = "*")
 public class ExtractController {
 
-    private final SmartAIProvider smartAIProvider;
+    private final TextExtractionService textExtractionService;
 
     @Autowired
-    public ExtractController(SmartAIProvider smartAIProvider) {
-        this.smartAIProvider = smartAIProvider;
+    public ExtractController(TextExtractionService textExtractionService) {
+        this.textExtractionService = textExtractionService;
     }
 
     @PostMapping("/extract")
     public CompletableFuture<JSONObject> extract(@RequestBody JSONObject request) {
         return CompletableFuture.supplyAsync(() -> {
             String text = request.getString("text");
-            String extractTypeTemp = request.getString("extractType");
-            final String extractType = (extractTypeTemp == null || extractTypeTemp.isEmpty()) ? "triples" : extractTypeTemp;
+            String extractType = request.getString("extractType");
+            if (extractType == null || extractType.isEmpty()) {
+                extractType = "triples";
+            }
 
             if (text == null || text.trim().isEmpty()) {
                 JSONObject error = new JSONObject();
@@ -36,7 +37,8 @@ public class ExtractController {
                 return error;
             }
 
-            String result = smartAIProvider.process(text, extractType);
+            // 正确的调用关系：Controller → TextExtractionService
+            String result = textExtractionService.extractTriples(text, extractType, null);
             return JSONObject.parseObject(result);
         });
     }
@@ -45,8 +47,10 @@ public class ExtractController {
     public CompletableFuture<JSONObject> batchExtract(@RequestBody JSONObject request) {
         return CompletableFuture.supplyAsync(() -> {
             List<String> texts = request.getList("texts", String.class);
-            String extractTypeTemp = request.getString("extractType");
-            final String extractType = (extractTypeTemp == null || extractTypeTemp.isEmpty()) ? "triples" : extractTypeTemp;
+            String extractType = request.getString("extractType");
+            if (extractType == null || extractType.isEmpty()) {
+                extractType = "triples";
+            }
 
             if (texts == null || texts.isEmpty()) {
                 JSONObject error = new JSONObject();
@@ -56,37 +60,47 @@ public class ExtractController {
                 return error;
             }
 
-            List<String> results = texts.parallelStream()
-                    .map(text -> smartAIProvider.process(text, extractType))
-                    .toList();
+            String textsJson = "[" + texts.stream()
+                    .map(t -> "\"" + t.replace("\"", "\\\"") + "\"")
+                    .reduce((a, b) -> a + "," + b)
+                    .orElse("") + "]";
 
-            JSONObject response = new JSONObject();
-            response.put("results", results);
-            response.put("total", texts.size());
-            response.put("extractType", extractType);
-            response.put("success", true);
-            response.put("timestamp", System.currentTimeMillis());
-            return response;
+            // 正确的调用关系：Controller → TextExtractionService
+            String result = textExtractionService.batchExtract(textsJson, extractType, null);
+            return JSONObject.parseObject(result);
+        });
+    }
+
+    @PostMapping("/extract/social")
+    public CompletableFuture<JSONObject> extractSocial(@RequestBody JSONObject request) {
+        return CompletableFuture.supplyAsync(() -> {
+            String text = request.getString("text");
+            String extractTypes = request.getString("extractTypes");
+            Boolean maskSensitive = request.getBoolean("maskSensitive");
+
+            if (text == null || text.trim().isEmpty()) {
+                JSONObject error = new JSONObject();
+                error.put("error", "文本内容不能为空");
+                error.put("success", false);
+                error.put("timestamp", System.currentTimeMillis());
+                return error;
+            }
+
+            // 正确的调用关系：Controller → TextExtractionService
+            String result = textExtractionService.extractSocialInfo(
+                text,
+                extractTypes != null ? extractTypes : "entities,relations",
+                maskSensitive != null ? maskSensitive : false
+            );
+            return JSONObject.parseObject(result);
         });
     }
 
     @GetMapping("/health")
     public JSONObject health() {
-        Runtime runtime = Runtime.getRuntime();
-        long totalMemory = runtime.totalMemory();
-        long freeMemory = runtime.freeMemory();
-        double memoryUsage = (double) (totalMemory - freeMemory) / totalMemory * 100;
-
-        JSONObject health = new JSONObject();
-        health.put("service", "extract-service");
-        health.put("status", memoryUsage < 90 ? "healthy" : "degraded");
-        health.put("memory_usage", String.format("%.2f%%", memoryUsage));
-        health.put("timestamp", System.currentTimeMillis());
-
-        Map<String, Object> cacheStats = smartAIProvider.getCacheStats();
-        health.putAll(cacheStats);
-
-        return health;
+        // 正确的调用关系：Controller → TextExtractionService
+        String healthResult = textExtractionService.healthCheck();
+        return JSONObject.parseObject(healthResult);
     }
 
     @GetMapping("/info")
@@ -94,17 +108,11 @@ public class ExtractController {
         JSONObject info = new JSONObject();
         info.put("service", "intelligent-extraction-service");
         info.put("version", "1.0.0");
-        info.put("description", "按照系统架构设计文档实现的智能文本提取服务");
-        info.put("features", new String[] {
-                "知识三元组提取",
-                "智能缓存",
-                "容错降级",
-                "批量处理"
-        });
-        info.put("architecture", "MCP工具接口层 → 业务编排层 → 核心处理层 → 基础设施层");
-        info.put("ai_provider", "Deepseek API");
-        info.put("cache_provider", "Caffeine");
-        info.put("json_provider", "FastJSON2");
+        info.put("description", "按照正确分层架构设计的智能文本提取服务");
+        info.put("architecture", "ExtractController → TextExtractionService → SmartAIProvider → AIModelCaller");
+        info.put("principle", "Controller不直接调用大模型，严格遵循分层架构");
+        info.put("call_relationship", "✅ 正确：Controller只调用TextExtractionService");
+        info.put("data_flow", "文本输入 → AI提取 → 数据库保存 → 结果返回");
         info.put("timestamp", System.currentTimeMillis());
         return info;
     }

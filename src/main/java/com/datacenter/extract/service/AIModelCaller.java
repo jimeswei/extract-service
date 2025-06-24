@@ -30,10 +30,11 @@ public class AIModelCaller {
     private final String apiKey;
 
     public AIModelCaller(WebClient.Builder builder,
-            @Value("${extraction.ai.providers.deepseek.api-key}") String apiKey) {
+            @Value("${extraction.ai.providers.deepseek.api-key}") String apiKey,
+            @Value("${extraction.ai.providers.deepseek.url}") String apiUrl) {
         this.apiKey = apiKey;
         this.deepseekClient = builder
-                .baseUrl("https://api.deepseek.com")
+                .baseUrl(apiUrl)
                 .defaultHeader("Authorization", "Bearer " + apiKey)
                 .build();
     }
@@ -47,7 +48,6 @@ public class AIModelCaller {
     public String callAI(String text, String extractType) {
         try {
             return deepseekClient.post()
-                    .uri("/v1/chat/completions")
                     .bodyValue(buildRequest(text, extractType))
                     .retrieve()
                     .bodyToMono(String.class)

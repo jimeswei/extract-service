@@ -41,11 +41,24 @@ public class DatabaseService {
      */
     public void saveSocialData(String extractionResult) {
         try {
+            log.info("开始保存提取数据到数据库，数据长度: {}", extractionResult != null ? extractionResult.length() : 0);
+
             // 解析AI提取结果
             Map<String, Object> data = parseExtractionResult(extractionResult);
 
-            // 保存人员信息
-            if (data.containsKey("entities")) {
+            if (data.isEmpty()) {
+                log.warn("解析结果为空，跳过数据库保存");
+                return;
+            }
+
+            // 优先处理triples格式（AI实际返回格式）
+            if (data.containsKey("triples")) {
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> triples = (List<Map<String, Object>>) data.get("triples");
+                processTriplesData(triples);
+            }
+            // 兼容entities格式
+            else if (data.containsKey("entities")) {
                 @SuppressWarnings("unchecked")
                 Map<String, Object> entities = (Map<String, Object>) data.get("entities");
                 savePersons(entities);
@@ -63,7 +76,132 @@ public class DatabaseService {
             log.info("🎉 成功保存提取数据到MySQL数据库 (localhost:3306/extract-graph)");
 
         } catch (Exception e) {
-            log.error("保存数据失败: {}", e.getMessage());
+            log.error("保存数据失败: {}", e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 处理triples格式数据 - 这是AI实际返回的格式
+     */
+    private void processTriplesData(List<Map<String, Object>> triples) {
+        if (triples == null || triples.isEmpty()) {
+            log.info("triples为空，跳过处理");
+            return;
+        }
+
+        log.info("处理 {} 个三元组", triples.size());
+
+        // 从triples中提取实体
+        for (Map<String, Object> triple : triples) {
+            String subject = (String) triple.get("subject");
+            String predicate = (String) triple.get("predicate");
+            String object = (String) triple.get("object");
+
+            if (subject != null && !subject.trim().isEmpty()) {
+                // 根据谓词判断主语是人名还是作品名
+                if (isPerson(subject, predicate)) {
+                    saveSinglePerson(subject, predicate, object);
+                } else if (isWork(subject, predicate)) {
+                    saveSingleWork(subject, predicate, object);
+                }
+            }
+
+            // 处理宾语也可能是实体的情况
+            if (object != null && !object.trim().isEmpty()) {
+                if (isPerson(object, predicate)) {
+                    saveSinglePerson(object, predicate, subject);
+                }
+            }
+
+            // 记录关系
+            log.info("🔗 关系记录: {} --[{}]--> {}", subject, predicate, object);
+        }
+    }
+
+    /**
+     * 判断是否为人员实体
+     */
+    private boolean isPerson(String entity, String predicate) {
+        // 常见的人员相关谓词
+        return predicate.contains("出生") || predicate.contains("结婚") || predicate.contains("职业") ||
+                predicate.contains("导演") || predicate.contains("主演") || predicate.contains("歌手") ||
+                predicate.contains("演员") || predicate.contains("制片") || predicate.contains("编剧") ||
+                entity.matches(".*[杰明华伦龙云飞雪莉].*"); // 简单的人名模式匹配
+    }
+
+    /**
+     * 判断是否为作品实体
+     */
+    private boolean isWork(String entity, String predicate) {
+        // 作品通常用书名号包围，或包含特定词汇
+        return entity.startsWith("《") && entity.endsWith("》") ||
+                predicate.contains("作品") || predicate.contains("电影") || predicate.contains("歌曲") ||
+                predicate.contains("专辑") || predicate.contains("小说");
+    }
+
+    /**
+     * 保存单个人员信息
+     */
+    private void saveSinglePerson(String name, String predicate, String value) {
+        try {
+            // 检查是否已存在
+            if (celebrityRepository.existsByName(name)) {
+                log.info("人员 {} 已存在，跳过插入", name);
+                return;
+            }
+
+            // 创建Celebrity实体
+            Celebrity celebrity = new Celebrity();
+            celebrity.setCelebrityId(generateId());
+            celebrity.setName(name);
+
+            // 根据谓词设置相应字段
+            if (predicate.contains("职业") || predicate.contains("歌手") || predicate.contains("演员")) {
+                celebrity.setProfession(value);
+            } else if (predicate.contains("出生")) {
+                celebrity.setBirthdate(value);
+            } else if (predicate.contains("结婚") || predicate.contains("配偶")) {
+                celebrity.setSpouse(value);
+            }
+
+            // 保存到数据库
+            celebrityRepository.save(celebrity);
+            log.info("✅ 成功保存人员: {} (通过三元组提取)", name);
+
+        } catch (Exception e) {
+            log.error("保存人员 {} 失败: {}", name, e.getMessage());
+        }
+    }
+
+    /**
+     * 保存单个作品信息
+     */
+    private void saveSingleWork(String title, String predicate, String value) {
+        try {
+            // 检查是否已存在
+            if (workRepository.existsByTitle(title)) {
+                log.info("作品 {} 已存在，跳过插入", title);
+                return;
+            }
+
+            // 创建Work实体
+            Work work = new Work();
+            work.setWorkId(generateId());
+            work.setTitle(title);
+
+            // 根据谓词设置相应字段
+            if (predicate.contains("类型")) {
+                work.setWorkType(value);
+            } else if (predicate.contains("发布") || predicate.contains("上映")) {
+                work.setReleaseDate(value);
+            }
+
+            // 保存到数据库
+            workRepository.save(work);
+            log.info("✅ 成功保存作品: {} (通过三元组提取)", title);
+
+        } catch (Exception e) {
+            log.error("保存作品 {} 失败: {}", title, e.getMessage());
         }
     }
 
@@ -204,37 +342,35 @@ public class DatabaseService {
      */
     private Map<String, Object> parseExtractionResult(String result) {
         try {
+            log.info("原始AI返回数据: {}", result);
+
             // 简单的JSON解析实现
             if (result == null || result.trim().isEmpty()) {
+                log.warn("AI返回数据为空");
                 return Map.of();
             }
 
             // 提取JSON部分
             String jsonPart = extractJsonFromResult(result);
             if (jsonPart.isEmpty()) {
+                log.warn("无法从AI返回数据中提取JSON部分");
                 return Map.of();
             }
+
+            log.info("提取的JSON部分: {}", jsonPart);
 
             // 使用Jackson ObjectMapper解析
             com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
             @SuppressWarnings("unchecked")
             Map<String, Object> data = mapper.readValue(jsonPart, Map.class);
 
-            log.info("成功解析提取结果，包含 {} 个主要字段", data.size());
+            log.info("成功解析提取结果，包含 {} 个主要字段: {}", data.size(), data.keySet());
             return data;
 
         } catch (Exception e) {
-            log.warn("解析提取结果失败: {}, 使用模拟数据", e.getMessage());
-
-            // 返回模拟数据用于测试
-            return Map.of(
-                    "entities", Map.of(
-                            "persons", List.of(
-                                    Map.of("name", "测试人员", "nationality", "中国", "gender", "男", "profession", "测试职业")),
-                            "works", List.of(
-                                    Map.of("title", "测试作品", "work_type", "电影", "release_date", "2024"))),
-                    "relations", List.of(
-                            Map.of("source", "测试人员", "target", "测试作品", "type", "导演")));
+            log.error("解析提取结果失败: {}, 原始数据: {}", e.getMessage(), result);
+            // 不再使用模拟数据，返回空Map让调用方知道解析失败
+            return Map.of();
         }
     }
 
