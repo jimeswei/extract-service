@@ -60,7 +60,7 @@ public class DatabaseService {
                 saveRelations(relations);
             }
 
-            log.info("🎉 成功保存提取数据到MySQL数据库 (192.168.3.78:3307/extract-graph)");
+            log.info("🎉 成功保存提取数据到MySQL数据库 (localhost:3306/extract-graph)");
 
         } catch (Exception e) {
             log.error("保存数据失败: {}", e.getMessage());
