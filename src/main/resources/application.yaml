@@ -51,15 +51,25 @@ ai:
         prompt: true
         completion: true
       
-# 智能配置：自适应参数 - 第4章处理引擎配置
+# 智能配置：自适应参数 - 第4章处理引擎配置 (优化版)
 extraction:
   ai:
     providers:
       deepseek:
         api-key: sk-cea6dbdbba694338b5f4abe9dfb0975b
         url: https://api.deepseek.com/v1/chat/completions
-        timeout: 30s
-        retry-count: 3
+        # 🚀 优化超时配置：基础超时 + 动态调整
+        base-timeout: 30s
+        max-timeout: 180s
+        timeout-per-1000-chars: 10s
+        # 🔄 优化重试配置
+        retry-count: 4
+        retry-base-delay: 2s
+        retry-max-delay: 30s
+        # 🛡️ 并发控制
+        max-concurrent-calls: 5
+        # 📊 监控配置
+        enable-metrics: true
         fallback-enabled: true
       local:
         enabled: true
@@ -78,7 +88,23 @@ extraction:
   processing:
     batch-size: 10
     parallel-threads: 4
-    timeout: 60s
+    timeout: 120s
+    
+  # 🌐 网络配置优化
+  webclient:
+    # 连接池配置
+    connection-pool:
+      max-connections: 50
+      max-idle-time: 30s
+      max-life-time: 60s
+      pending-acquire-timeout: 60s
+    # 超时配置
+    connect-timeout: 10s
+    read-timeout: 180s
+    write-timeout: 60s
+    # SSL配置
+    ssl:
+      handshake-timeout: 10s
     
 # 智能监控配置 - 第9章监控架构
 management:

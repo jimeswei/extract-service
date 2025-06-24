@@ -128,3 +128,82 @@ ERROR in ch.qos.logback.core.pattern.parser.Compiler@62452cc9 - [wEx] is not a v
 	at org.springframework.boot.context.logging.LoggingApplicationListener.initializeSystem(LoggingApplicationListener.java:332)
 	... 24 common frames omitted
 2025-06-24 15:29:53.347 [main] ERROR i.n.resolver.dns.DnsServerAddressStreamProviders - Unable to load io.netty.resolver.dns.macos.MacOSDnsServerAddressStreamProvider, fallback to system defaults. This may result in incorrect DNS resolutions on MacOS. Check whether you have a dependency on 'io.netty:netty-resolver-dns-native-macos'. Use DEBUG level to see the full stack: java.lang.UnsatisfiedLinkError: failed to load the required native library
+2025-06-24 15:49:22.363 [ForkJoinPool.commonPool-worker-1] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 408
+2025-06-24 15:49:22.363 [ForkJoinPool.commonPool-worker-1] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 15:50:24.364 [ForkJoinPool.commonPool-worker-3] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 402
+2025-06-24 15:50:24.372 [ForkJoinPool.commonPool-worker-3] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 15:51:26.385 [ForkJoinPool.commonPool-worker-1] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 331
+2025-06-24 15:51:26.392 [ForkJoinPool.commonPool-worker-1] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 15:52:28.395 [ForkJoinPool.commonPool-worker-3] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 442
+2025-06-24 15:52:28.402 [ForkJoinPool.commonPool-worker-3] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 15:53:30.398 [ForkJoinPool.commonPool-worker-1] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 461
+2025-06-24 15:53:30.399 [ForkJoinPool.commonPool-worker-1] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 15:55:34.401 [ForkJoinPool.commonPool-worker-3] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 465
+2025-06-24 15:55:34.401 [ForkJoinPool.commonPool-worker-3] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 15:56:36.410 [ForkJoinPool.commonPool-worker-1] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 489
+2025-06-24 15:56:36.411 [ForkJoinPool.commonPool-worker-1] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 15:57:38.414 [ForkJoinPool.commonPool-worker-3] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 404
+2025-06-24 15:57:38.415 [ForkJoinPool.commonPool-worker-3] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 15:58:40.428 [ForkJoinPool.commonPool-worker-1] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 346
+2025-06-24 15:58:40.428 [ForkJoinPool.commonPool-worker-1] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 16:05:35.380 [ForkJoinPool.commonPool-worker-6] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 408
+2025-06-24 16:05:35.381 [ForkJoinPool.commonPool-worker-6] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 16:09:52.078 [main] ERROR i.n.resolver.dns.DnsServerAddressStreamProviders - Unable to load io.netty.resolver.dns.macos.MacOSDnsServerAddressStreamProvider, fallback to system defaults. This may result in incorrect DNS resolutions on MacOS. Check whether you have a dependency on 'io.netty:netty-resolver-dns-native-macos'. Use DEBUG level to see the full stack: java.lang.UnsatisfiedLinkError: failed to load the required native library
+2025-06-24 16:10:58.486 [main] ERROR o.s.b.diagnostics.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 2701 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 2701 or configure this application to listen on another port.
+
+2025-06-24 16:11:39.821 [main] ERROR o.s.b.diagnostics.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 2701 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 2701 or configure this application to listen on another port.
+
+2025-06-24 16:15:14.939 [parallel-7] ERROR com.datacenter.extract.service.AIModelCaller - ❌ AI调用失败，耗时: 30016ms，错误: Did not observe any item or terminal signal within 30000ms in 'flatMap' (and no fallback has been configured)
+2025-06-24 16:15:14.940 [ForkJoinPool.commonPool-worker-1] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 408
+2025-06-24 16:15:14.940 [ForkJoinPool.commonPool-worker-1] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 16:15:46.969 [parallel-11] ERROR com.datacenter.extract.service.AIModelCaller - ❌ AI调用失败，耗时: 30006ms，错误: Did not observe any item or terminal signal within 30000ms in 'flatMap' (and no fallback has been configured)
+2025-06-24 16:15:46.970 [ForkJoinPool.commonPool-worker-1] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 402
+2025-06-24 16:15:46.970 [ForkJoinPool.commonPool-worker-1] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 16:16:18.994 [parallel-3] ERROR com.datacenter.extract.service.AIModelCaller - ❌ AI调用失败，耗时: 30003ms，错误: Did not observe any item or terminal signal within 30000ms in 'flatMap' (and no fallback has been configured)
+2025-06-24 16:16:18.995 [ForkJoinPool.commonPool-worker-1] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 331
+2025-06-24 16:16:18.995 [ForkJoinPool.commonPool-worker-1] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 16:16:51.024 [parallel-7] ERROR com.datacenter.extract.service.AIModelCaller - ❌ AI调用失败，耗时: 30008ms，错误: Did not observe any item or terminal signal within 30000ms in 'flatMap' (and no fallback has been configured)
+2025-06-24 16:16:51.024 [ForkJoinPool.commonPool-worker-1] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 442
+2025-06-24 16:16:51.025 [ForkJoinPool.commonPool-worker-1] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 16:17:23.046 [parallel-11] ERROR com.datacenter.extract.service.AIModelCaller - ❌ AI调用失败，耗时: 30002ms，错误: Did not observe any item or terminal signal within 30000ms in 'flatMap' (and no fallback has been configured)
+2025-06-24 16:17:23.047 [ForkJoinPool.commonPool-worker-1] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 461
+2025-06-24 16:17:23.047 [ForkJoinPool.commonPool-worker-1] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 16:17:55.073 [parallel-5] ERROR com.datacenter.extract.service.AIModelCaller - ❌ AI调用失败，耗时: 30007ms，错误: Did not observe any item or terminal signal within 30000ms in 'flatMap' (and no fallback has been configured)
+2025-06-24 16:17:55.080 [ForkJoinPool.commonPool-worker-1] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 400
+2025-06-24 16:17:55.080 [ForkJoinPool.commonPool-worker-1] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 16:18:27.121 [parallel-8] ERROR com.datacenter.extract.service.AIModelCaller - ❌ AI调用失败，耗时: 30008ms，错误: Did not observe any item or terminal signal within 30000ms in 'flatMap' (and no fallback has been configured)
+2025-06-24 16:18:27.122 [ForkJoinPool.commonPool-worker-1] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 465
+2025-06-24 16:18:27.122 [ForkJoinPool.commonPool-worker-1] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 16:18:59.144 [parallel-12] ERROR com.datacenter.extract.service.AIModelCaller - ❌ AI调用失败，耗时: 30004ms，错误: Did not observe any item or terminal signal within 30000ms in 'flatMap' (and no fallback has been configured)
+2025-06-24 16:18:59.144 [ForkJoinPool.commonPool-worker-1] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 489
+2025-06-24 16:18:59.144 [ForkJoinPool.commonPool-worker-1] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 16:19:31.176 [parallel-5] ERROR com.datacenter.extract.service.AIModelCaller - ❌ AI调用失败，耗时: 30007ms，错误: Did not observe any item or terminal signal within 30000ms in 'flatMap' (and no fallback has been configured)
+2025-06-24 16:19:31.178 [ForkJoinPool.commonPool-worker-1] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 404
+2025-06-24 16:19:31.178 [ForkJoinPool.commonPool-worker-1] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-24 16:20:03.205 [parallel-8] ERROR com.datacenter.extract.service.AIModelCaller - ❌ AI调用失败，耗时: 30008ms，错误: Did not observe any item or terminal signal within 30000ms in 'flatMap' (and no fallback has been configured)
+2025-06-24 16:20:03.206 [ForkJoinPool.commonPool-worker-1] ERROR com.datacenter.extract.service.SmartAIProvider - AI提取失败，类型: triples，文本长度: 346
+2025-06-24 16:20:03.206 [ForkJoinPool.commonPool-worker-1] ERROR c.datacenter.extract.service.TextExtractionService - 提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
