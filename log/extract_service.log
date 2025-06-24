@@ -11565,3 +11565,1746 @@ Identify and stop the process that's listening on port 2701 or configure this ap
 2025-06-24 18:16:50.681 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 成龙 --[获得]--> 终身成就奖
 2025-06-24 18:16:50.681 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🎉 成功保存提取数据到MySQL数据库 (localhost:3306/extract-graph)
 2025-06-24 18:16:50.685 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.controller.ExtractController - Extract request completed successfully in 10673ms
+2025-06-24 18:23:59.452 [main] INFO  com.datacenter.extract.ExtractServiceApplication - Starting ExtractServiceApplication using Java 17.0.6 with PID 32317 (/Users/admin/workspace/AGENT/extract-service/target/classes started by admin in /Users/admin/workspace/AGENT/extract-service)
+2025-06-24 18:23:59.454 [main] INFO  com.datacenter.extract.ExtractServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-24 18:24:00.391 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-06-24 18:24:00.392 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-24 18:24:00.501 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 105 ms. Found 7 JPA repository interfaces.
+2025-06-24 18:24:00.522 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-06-24 18:24:00.523 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-06-24 18:24:00.535 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.CelebrityCelebrityRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 18:24:00.535 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.CelebrityEventRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 18:24:00.535 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.CelebrityRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 18:24:00.535 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.CelebrityWorkRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 18:24:00.535 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.EventRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 18:24:00.536 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.EventWorkRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 18:24:00.537 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.WorkRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 18:24:00.537 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 9 ms. Found 0 Redis repository interfaces.
+2025-06-24 18:24:01.988 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration boolean -> org.hibernate.type.BasicTypeReference@62cf86d6
+2025-06-24 18:24:01.991 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration boolean -> org.hibernate.type.BasicTypeReference@62cf86d6
+2025-06-24 18:24:01.991 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Boolean -> org.hibernate.type.BasicTypeReference@62cf86d6
+2025-06-24 18:24:01.991 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration numeric_boolean -> org.hibernate.type.BasicTypeReference@6071631f
+2025-06-24 18:24:01.991 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration org.hibernate.type.NumericBooleanConverter -> org.hibernate.type.BasicTypeReference@6071631f
+2025-06-24 18:24:01.992 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration true_false -> org.hibernate.type.BasicTypeReference@2ca132ad
+2025-06-24 18:24:01.992 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration org.hibernate.type.TrueFalseConverter -> org.hibernate.type.BasicTypeReference@2ca132ad
+2025-06-24 18:24:01.992 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration yes_no -> org.hibernate.type.BasicTypeReference@6706da3d
+2025-06-24 18:24:01.993 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration org.hibernate.type.YesNoConverter -> org.hibernate.type.BasicTypeReference@6706da3d
+2025-06-24 18:24:01.993 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration byte -> org.hibernate.type.BasicTypeReference@7438c3d5
+2025-06-24 18:24:01.993 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration byte -> org.hibernate.type.BasicTypeReference@7438c3d5
+2025-06-24 18:24:01.993 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Byte -> org.hibernate.type.BasicTypeReference@7438c3d5
+2025-06-24 18:24:01.993 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration binary -> org.hibernate.type.BasicTypeReference@1fba3fd6
+2025-06-24 18:24:01.994 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration byte[] -> org.hibernate.type.BasicTypeReference@1fba3fd6
+2025-06-24 18:24:01.994 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration [B -> org.hibernate.type.BasicTypeReference@1fba3fd6
+2025-06-24 18:24:01.995 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration binary_wrapper -> org.hibernate.type.BasicTypeReference@3aab42d6
+2025-06-24 18:24:01.995 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration wrapper-binary -> org.hibernate.type.BasicTypeReference@3aab42d6
+2025-06-24 18:24:01.995 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration image -> org.hibernate.type.BasicTypeReference@17332039
+2025-06-24 18:24:01.995 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration blob -> org.hibernate.type.BasicTypeReference@776e7dfb
+2025-06-24 18:24:01.996 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.sql.Blob -> org.hibernate.type.BasicTypeReference@776e7dfb
+2025-06-24 18:24:01.996 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration materialized_blob -> org.hibernate.type.BasicTypeReference@71418a4a
+2025-06-24 18:24:01.996 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration materialized_blob_wrapper -> org.hibernate.type.BasicTypeReference@67ecf7ed
+2025-06-24 18:24:01.996 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration short -> org.hibernate.type.BasicTypeReference@69d021c1
+2025-06-24 18:24:01.996 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration short -> org.hibernate.type.BasicTypeReference@69d021c1
+2025-06-24 18:24:01.996 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Short -> org.hibernate.type.BasicTypeReference@69d021c1
+2025-06-24 18:24:01.997 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration integer -> org.hibernate.type.BasicTypeReference@6d5508a5
+2025-06-24 18:24:01.997 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration int -> org.hibernate.type.BasicTypeReference@6d5508a5
+2025-06-24 18:24:01.997 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Integer -> org.hibernate.type.BasicTypeReference@6d5508a5
+2025-06-24 18:24:01.997 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration long -> org.hibernate.type.BasicTypeReference@103bcc9f
+2025-06-24 18:24:01.997 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration long -> org.hibernate.type.BasicTypeReference@103bcc9f
+2025-06-24 18:24:01.997 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Long -> org.hibernate.type.BasicTypeReference@103bcc9f
+2025-06-24 18:24:01.997 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration float -> org.hibernate.type.BasicTypeReference@106802ea
+2025-06-24 18:24:01.998 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration float -> org.hibernate.type.BasicTypeReference@106802ea
+2025-06-24 18:24:01.998 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Float -> org.hibernate.type.BasicTypeReference@106802ea
+2025-06-24 18:24:01.998 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration double -> org.hibernate.type.BasicTypeReference@785ef70f
+2025-06-24 18:24:01.998 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration double -> org.hibernate.type.BasicTypeReference@785ef70f
+2025-06-24 18:24:01.998 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Double -> org.hibernate.type.BasicTypeReference@785ef70f
+2025-06-24 18:24:01.999 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration big_integer -> org.hibernate.type.BasicTypeReference@3d8bd881
+2025-06-24 18:24:02.000 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.math.BigInteger -> org.hibernate.type.BasicTypeReference@3d8bd881
+2025-06-24 18:24:02.000 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration big_decimal -> org.hibernate.type.BasicTypeReference@731ab49b
+2025-06-24 18:24:02.000 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.math.BigDecimal -> org.hibernate.type.BasicTypeReference@731ab49b
+2025-06-24 18:24:02.000 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration character -> org.hibernate.type.BasicTypeReference@23358740
+2025-06-24 18:24:02.000 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration char -> org.hibernate.type.BasicTypeReference@23358740
+2025-06-24 18:24:02.000 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Character -> org.hibernate.type.BasicTypeReference@23358740
+2025-06-24 18:24:02.000 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration character_nchar -> org.hibernate.type.BasicTypeReference@2cdcfaa6
+2025-06-24 18:24:02.000 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration string -> org.hibernate.type.BasicTypeReference@4ff0706c
+2025-06-24 18:24:02.000 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.String -> org.hibernate.type.BasicTypeReference@4ff0706c
+2025-06-24 18:24:02.000 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration nstring -> org.hibernate.type.BasicTypeReference@6968bb65
+2025-06-24 18:24:02.001 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration characters -> org.hibernate.type.BasicTypeReference@66682e8f
+2025-06-24 18:24:02.001 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration char[] -> org.hibernate.type.BasicTypeReference@66682e8f
+2025-06-24 18:24:02.001 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration [C -> org.hibernate.type.BasicTypeReference@66682e8f
+2025-06-24 18:24:02.001 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration wrapper-characters -> org.hibernate.type.BasicTypeReference@2d2af12e
+2025-06-24 18:24:02.002 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration text -> org.hibernate.type.BasicTypeReference@611587f7
+2025-06-24 18:24:02.002 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration ntext -> org.hibernate.type.BasicTypeReference@4d0abb23
+2025-06-24 18:24:02.002 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration clob -> org.hibernate.type.BasicTypeReference@6ab1f85b
+2025-06-24 18:24:02.002 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.sql.Clob -> org.hibernate.type.BasicTypeReference@6ab1f85b
+2025-06-24 18:24:02.002 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration nclob -> org.hibernate.type.BasicTypeReference@10e8c7a2
+2025-06-24 18:24:02.002 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.sql.NClob -> org.hibernate.type.BasicTypeReference@10e8c7a2
+2025-06-24 18:24:02.002 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration materialized_clob -> org.hibernate.type.BasicTypeReference@5d8fd077
+2025-06-24 18:24:02.002 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration materialized_clob_char_array -> org.hibernate.type.BasicTypeReference@4544ab46
+2025-06-24 18:24:02.002 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration materialized_clob_character_array -> org.hibernate.type.BasicTypeReference@2052f095
+2025-06-24 18:24:02.002 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration materialized_nclob -> org.hibernate.type.BasicTypeReference@76d1f6ea
+2025-06-24 18:24:02.002 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration materialized_nclob_character_array -> org.hibernate.type.BasicTypeReference@55fe9c2f
+2025-06-24 18:24:02.002 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration materialized_nclob_char_array -> org.hibernate.type.BasicTypeReference@3580134d
+2025-06-24 18:24:02.002 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration Duration -> org.hibernate.type.BasicTypeReference@2e19b30
+2025-06-24 18:24:02.003 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.Duration -> org.hibernate.type.BasicTypeReference@2e19b30
+2025-06-24 18:24:02.003 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration LocalDateTime -> org.hibernate.type.BasicTypeReference@7b7e4b20
+2025-06-24 18:24:02.003 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.LocalDateTime -> org.hibernate.type.BasicTypeReference@7b7e4b20
+2025-06-24 18:24:02.003 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration LocalDate -> org.hibernate.type.BasicTypeReference@5ac0bf84
+2025-06-24 18:24:02.003 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.LocalDate -> org.hibernate.type.BasicTypeReference@5ac0bf84
+2025-06-24 18:24:02.004 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration LocalTime -> org.hibernate.type.BasicTypeReference@6fefc5ea
+2025-06-24 18:24:02.005 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.LocalTime -> org.hibernate.type.BasicTypeReference@6fefc5ea
+2025-06-24 18:24:02.005 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration OffsetDateTime -> org.hibernate.type.BasicTypeReference@6159fb3c
+2025-06-24 18:24:02.005 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.OffsetDateTime -> org.hibernate.type.BasicTypeReference@6159fb3c
+2025-06-24 18:24:02.005 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration OffsetDateTimeWithTimezone -> org.hibernate.type.BasicTypeReference@68f79b7c
+2025-06-24 18:24:02.006 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration OffsetDateTimeWithoutTimezone -> org.hibernate.type.BasicTypeReference@37142579
+2025-06-24 18:24:02.006 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration OffsetTime -> org.hibernate.type.BasicTypeReference@264576e4
+2025-06-24 18:24:02.006 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.OffsetTime -> org.hibernate.type.BasicTypeReference@264576e4
+2025-06-24 18:24:02.006 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration OffsetTimeUtc -> org.hibernate.type.BasicTypeReference@86bf90b
+2025-06-24 18:24:02.006 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration OffsetTimeWithTimezone -> org.hibernate.type.BasicTypeReference@5c13af01
+2025-06-24 18:24:02.006 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration OffsetTimeWithoutTimezone -> org.hibernate.type.BasicTypeReference@4aba7617
+2025-06-24 18:24:02.006 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration ZonedDateTime -> org.hibernate.type.BasicTypeReference@47c5cbf2
+2025-06-24 18:24:02.006 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.ZonedDateTime -> org.hibernate.type.BasicTypeReference@47c5cbf2
+2025-06-24 18:24:02.007 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration ZonedDateTimeWithTimezone -> org.hibernate.type.BasicTypeReference@1031c1a0
+2025-06-24 18:24:02.007 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration ZonedDateTimeWithoutTimezone -> org.hibernate.type.BasicTypeReference@519b0f00
+2025-06-24 18:24:02.008 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration date -> org.hibernate.type.BasicTypeReference@4888d1ea
+2025-06-24 18:24:02.008 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.sql.Date -> org.hibernate.type.BasicTypeReference@4888d1ea
+2025-06-24 18:24:02.008 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration time -> org.hibernate.type.BasicTypeReference@217b0952
+2025-06-24 18:24:02.008 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.sql.Time -> org.hibernate.type.BasicTypeReference@217b0952
+2025-06-24 18:24:02.008 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration timestamp -> org.hibernate.type.BasicTypeReference@3fd9e01c
+2025-06-24 18:24:02.008 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.sql.Timestamp -> org.hibernate.type.BasicTypeReference@3fd9e01c
+2025-06-24 18:24:02.008 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.util.Date -> org.hibernate.type.BasicTypeReference@3fd9e01c
+2025-06-24 18:24:02.008 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration calendar -> org.hibernate.type.BasicTypeReference@36330be8
+2025-06-24 18:24:02.008 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.util.Calendar -> org.hibernate.type.BasicTypeReference@36330be8
+2025-06-24 18:24:02.008 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.util.GregorianCalendar -> org.hibernate.type.BasicTypeReference@36330be8
+2025-06-24 18:24:02.008 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration calendar_date -> org.hibernate.type.BasicTypeReference@38ba8b45
+2025-06-24 18:24:02.008 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration calendar_time -> org.hibernate.type.BasicTypeReference@41f23499
+2025-06-24 18:24:02.009 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration instant -> org.hibernate.type.BasicTypeReference@31dbf5bb
+2025-06-24 18:24:02.009 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.Instant -> org.hibernate.type.BasicTypeReference@31dbf5bb
+2025-06-24 18:24:02.009 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration uuid -> org.hibernate.type.BasicTypeReference@1f19d423
+2025-06-24 18:24:02.009 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.util.UUID -> org.hibernate.type.BasicTypeReference@1f19d423
+2025-06-24 18:24:02.009 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration pg-uuid -> org.hibernate.type.BasicTypeReference@1f19d423
+2025-06-24 18:24:02.009 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration uuid-binary -> org.hibernate.type.BasicTypeReference@73958426
+2025-06-24 18:24:02.009 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration uuid-char -> org.hibernate.type.BasicTypeReference@23933031
+2025-06-24 18:24:02.009 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration class -> org.hibernate.type.BasicTypeReference@4d0b7fd5
+2025-06-24 18:24:02.009 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Class -> org.hibernate.type.BasicTypeReference@4d0b7fd5
+2025-06-24 18:24:02.010 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration currency -> org.hibernate.type.BasicTypeReference@1ce2029b
+2025-06-24 18:24:02.010 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration Currency -> org.hibernate.type.BasicTypeReference@1ce2029b
+2025-06-24 18:24:02.011 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.util.Currency -> org.hibernate.type.BasicTypeReference@1ce2029b
+2025-06-24 18:24:02.011 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration locale -> org.hibernate.type.BasicTypeReference@43090195
+2025-06-24 18:24:02.011 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.util.Locale -> org.hibernate.type.BasicTypeReference@43090195
+2025-06-24 18:24:02.011 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration serializable -> org.hibernate.type.BasicTypeReference@7921a37d
+2025-06-24 18:24:02.011 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.io.Serializable -> org.hibernate.type.BasicTypeReference@7921a37d
+2025-06-24 18:24:02.011 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration timezone -> org.hibernate.type.BasicTypeReference@6fc28e5b
+2025-06-24 18:24:02.013 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.util.TimeZone -> org.hibernate.type.BasicTypeReference@6fc28e5b
+2025-06-24 18:24:02.015 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration ZoneOffset -> org.hibernate.type.BasicTypeReference@6338afe2
+2025-06-24 18:24:02.016 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.ZoneOffset -> org.hibernate.type.BasicTypeReference@6338afe2
+2025-06-24 18:24:02.017 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration url -> org.hibernate.type.BasicTypeReference@68360fb9
+2025-06-24 18:24:02.017 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.net.URL -> org.hibernate.type.BasicTypeReference@68360fb9
+2025-06-24 18:24:02.017 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration row_version -> org.hibernate.type.BasicTypeReference@1c787389
+2025-06-24 18:24:02.021 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration object -> org.hibernate.type.JavaObjectType@6bf54260
+2025-06-24 18:24:02.022 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Object -> org.hibernate.type.JavaObjectType@6bf54260
+2025-06-24 18:24:02.022 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration null -> org.hibernate.type.NullType@674e4c82
+2025-06-24 18:24:02.023 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration imm_date -> org.hibernate.type.BasicTypeReference@572b4072
+2025-06-24 18:24:02.024 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration imm_time -> org.hibernate.type.BasicTypeReference@322ab6ce
+2025-06-24 18:24:02.025 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration imm_timestamp -> org.hibernate.type.BasicTypeReference@5b74902c
+2025-06-24 18:24:02.025 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration imm_calendar -> org.hibernate.type.BasicTypeReference@4e4bfd9c
+2025-06-24 18:24:02.025 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration imm_calendar_date -> org.hibernate.type.BasicTypeReference@43ee1cf7
+2025-06-24 18:24:02.025 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration imm_calendar_time -> org.hibernate.type.BasicTypeReference@24954e82
+2025-06-24 18:24:02.025 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration imm_binary -> org.hibernate.type.BasicTypeReference@5b1f5fcc
+2025-06-24 18:24:02.025 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration imm_serializable -> org.hibernate.type.BasicTypeReference@4a29fe2e
+2025-06-24 18:24:02.121 [main] INFO  o.s.o.j.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-24 18:24:02.135 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-24 18:24:02.245 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2c3b0cc8
+2025-06-24 18:24:02.247 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-24 18:24:02.280 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-24 18:24:02.282 [main] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-06-24 18:24:02.300 [main] DEBUG o.h.type.descriptor.sql.spi.DdlTypeRegistry - addDescriptor(12, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@38363e96) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@35c95869)
+2025-06-24 18:24:02.300 [main] DEBUG o.h.type.descriptor.sql.spi.DdlTypeRegistry - addDescriptor(-9, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@558aa1f1) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@361d8567)
+2025-06-24 18:24:02.300 [main] DEBUG o.h.type.descriptor.sql.spi.DdlTypeRegistry - addDescriptor(-3, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@3fd6dfbc) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@4023d23f)
+2025-06-24 18:24:02.301 [main] DEBUG o.h.type.descriptor.sql.spi.DdlTypeRegistry - addDescriptor(4003, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@402676e3) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@1a4ae53d)
+2025-06-24 18:24:02.301 [main] DEBUG o.h.type.descriptor.sql.spi.DdlTypeRegistry - addDescriptor(4001, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@1368e2f7) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@4d84688f)
+2025-06-24 18:24:02.301 [main] DEBUG o.h.type.descriptor.sql.spi.DdlTypeRegistry - addDescriptor(4002, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@3ee68eb2) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@7348e75e)
+2025-06-24 18:24:02.302 [main] DEBUG o.h.type.descriptor.sql.spi.DdlTypeRegistry - addDescriptor(2004, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@27e3dc9a) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@49cd08f9)
+2025-06-24 18:24:02.302 [main] DEBUG o.h.type.descriptor.sql.spi.DdlTypeRegistry - addDescriptor(2005, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@43549c6c) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@7792e14f)
+2025-06-24 18:24:02.302 [main] DEBUG o.h.type.descriptor.sql.spi.DdlTypeRegistry - addDescriptor(2011, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@4eace42b) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@6f87a7c7)
+2025-06-24 18:24:02.303 [main] DEBUG o.h.type.descriptor.jdbc.spi.JdbcTypeRegistry - addDescriptor(NCharTypeDescriptor) replaced previous registration(CharTypeDescriptor)
+2025-06-24 18:24:02.303 [main] DEBUG o.h.type.descriptor.jdbc.spi.JdbcTypeRegistry - addDescriptor(NVarcharTypeDescriptor) replaced previous registration(VarcharTypeDescriptor)
+2025-06-24 18:24:02.303 [main] DEBUG o.h.type.descriptor.jdbc.spi.JdbcTypeRegistry - addDescriptor(LongNVarcharTypeDescriptor) replaced previous registration(LongVarcharTypeDescriptor)
+2025-06-24 18:24:02.304 [main] DEBUG o.h.type.descriptor.jdbc.spi.JdbcTypeRegistry - addDescriptor(NClobTypeDescriptor(DEFAULT)) replaced previous registration(ClobTypeDescriptor(DEFAULT))
+2025-06-24 18:24:02.304 [main] DEBUG o.h.type.descriptor.jdbc.spi.JdbcTypeRegistry - addDescriptor(2005, ClobTypeDescriptor(STREAM_BINDING)) replaced previous registration(ClobTypeDescriptor(DEFAULT))
+2025-06-24 18:24:02.305 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration null -> org.hibernate.type.NullType@18a38bba
+2025-06-24 18:24:02.305 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Type registration key [null] overrode previous entry : `org.hibernate.type.NullType@674e4c82`
+2025-06-24 18:24:02.307 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration Duration -> basicType@1(java.time.Duration,2)
+2025-06-24 18:24:02.307 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.Duration -> basicType@1(java.time.Duration,2)
+2025-06-24 18:24:02.310 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration org.hibernate.type.OffsetDateTimeType -> basicType@2(java.time.OffsetDateTime,3003)
+2025-06-24 18:24:02.310 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration OffsetDateTime -> basicType@2(java.time.OffsetDateTime,3003)
+2025-06-24 18:24:02.310 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.OffsetDateTime -> basicType@2(java.time.OffsetDateTime,3003)
+2025-06-24 18:24:02.310 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration org.hibernate.type.ZonedDateTimeType -> basicType@3(java.time.ZonedDateTime,3003)
+2025-06-24 18:24:02.310 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration ZonedDateTime -> basicType@3(java.time.ZonedDateTime,3003)
+2025-06-24 18:24:02.310 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.ZonedDateTime -> basicType@3(java.time.ZonedDateTime,3003)
+2025-06-24 18:24:02.310 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration org.hibernate.type.OffsetTimeType -> basicType@4(java.time.OffsetTime,3007)
+2025-06-24 18:24:02.310 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration OffsetTime -> basicType@4(java.time.OffsetTime,3007)
+2025-06-24 18:24:02.311 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.OffsetTime -> basicType@4(java.time.OffsetTime,3007)
+2025-06-24 18:24:02.311 [main] DEBUG org.hibernate.type.spi.TypeConfiguration$Scope - Scoping TypeConfiguration [org.hibernate.type.spi.TypeConfiguration@f310675] to MetadataBuildingContext [org.hibernate.boot.internal.MetadataBuildingContextRootImpl@424ec990]
+2025-06-24 18:24:02.912 [main] DEBUG org.hibernate.type.spi.TypeConfiguration$Scope - Scoping TypeConfiguration [org.hibernate.type.spi.TypeConfiguration@f310675] to SessionFactoryImplementor [org.hibernate.internal.SessionFactoryImpl@60be9fdf]
+2025-06-24 18:24:02.915 [main] TRACE org.hibernate.type.spi.TypeConfiguration$Scope - Handling #sessionFactoryCreated from [org.hibernate.internal.SessionFactoryImpl@60be9fdf] for TypeConfiguration
+2025-06-24 18:24:02.915 [main] INFO  o.s.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-24 18:24:03.756 [main] INFO  c.datacenter.extract.controller.ExtractController - ExtractController initialized successfully
+2025-06-24 18:24:04.219 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 3 endpoint(s) beneath base path '/actuator'
+2025-06-24 18:24:04.386 [main] INFO  o.s.a.m.s.autoconfigure.McpServerAutoConfiguration - Enable tools capabilities, notification: true
+2025-06-24 18:24:04.429 [main] INFO  o.s.a.m.s.autoconfigure.McpServerAutoConfiguration - Registered tools: 2
+2025-06-24 18:24:04.430 [main] INFO  o.s.a.m.s.autoconfigure.McpServerAutoConfiguration - Enable resources capabilities, notification: true
+2025-06-24 18:24:04.433 [main] INFO  o.s.a.m.s.autoconfigure.McpServerAutoConfiguration - Enable prompts capabilities, notification: true
+2025-06-24 18:24:04.433 [main] INFO  o.s.a.m.s.autoconfigure.McpServerAutoConfiguration - Enable completions capabilities
+2025-06-24 18:24:04.975 [main] INFO  o.s.boot.web.embedded.netty.NettyWebServer - Netty started on port 2701
+2025-06-24 18:24:04.993 [main] INFO  com.datacenter.extract.ExtractServiceApplication - Started ExtractServiceApplication in 6.175 seconds (process running for 7.225)
+2025-06-24 18:24:33.353 [reactor-http-nio-9] INFO  io.modelcontextprotocol.server.McpAsyncServer - Client initialize request - Protocol: 2025-03-26, Capabilities: ClientCapabilities[experimental=null, roots=RootCapabilities[listChanged=false], sampling=null], Info: Implementation[name=cursor-vscode, version=1.0.0]
+2025-06-24 18:24:33.352 [reactor-http-nio-8] INFO  io.modelcontextprotocol.server.McpAsyncServer - Client initialize request - Protocol: 2025-03-26, Capabilities: ClientCapabilities[experimental=null, roots=RootCapabilities[listChanged=false], sampling=null], Info: Implementation[name=cursor-vscode, version=1.0.0]
+2025-06-24 18:24:33.374 [reactor-http-nio-9] WARN  io.modelcontextprotocol.server.McpAsyncServer - Client requested unsupported protocol version: 2025-03-26, so the server will suggest the 2024-11-05 version instead
+2025-06-24 18:24:33.374 [reactor-http-nio-8] WARN  io.modelcontextprotocol.server.McpAsyncServer - Client requested unsupported protocol version: 2025-03-26, so the server will suggest the 2024-11-05 version instead
+2025-06-24 18:25:14.446 [reactor-http-nio-8] INFO  io.modelcontextprotocol.server.McpAsyncServer - Client initialize request - Protocol: 2025-03-26, Capabilities: ClientCapabilities[experimental=null, roots=RootCapabilities[listChanged=false], sampling=null], Info: Implementation[name=cursor-vscode, version=1.0.0]
+2025-06-24 18:25:14.449 [reactor-http-nio-8] WARN  io.modelcontextprotocol.server.McpAsyncServer - Client requested unsupported protocol version: 2025-03-26, so the server will suggest the 2024-11-05 version instead
+2025-06-24 18:25:31.843 [reactor-http-nio-2] INFO  io.modelcontextprotocol.server.McpAsyncServer - Client initialize request - Protocol: 2025-03-26, Capabilities: ClientCapabilities[experimental=null, roots=RootCapabilities[listChanged=false], sampling=null], Info: Implementation[name=cursor-vscode, version=1.0.0]
+2025-06-24 18:25:31.843 [reactor-http-nio-2] WARN  io.modelcontextprotocol.server.McpAsyncServer - Client requested unsupported protocol version: 2025-03-26, so the server will suggest the 2024-11-05 version instead
+2025-06-24 18:37:31.849 [SpringApplicationShutdownHook] INFO  o.s.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-24 18:37:31.850 [SpringApplicationShutdownHook] TRACE org.hibernate.type.spi.TypeConfiguration$Scope - Handling #sessionFactoryClosed from [org.hibernate.internal.SessionFactoryImpl@60be9fdf] for TypeConfiguration
+2025-06-24 18:37:31.850 [SpringApplicationShutdownHook] DEBUG org.hibernate.type.spi.TypeConfiguration$Scope - Un-scoping TypeConfiguration [org.hibernate.type.spi.TypeConfiguration$Scope@eb56c6c] from SessionFactory [org.hibernate.internal.SessionFactoryImpl@60be9fdf]
+2025-06-24 18:37:31.852 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-24 18:37:31.860 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-24 18:41:27.530 [main] INFO  com.datacenter.extract.ExtractServiceApplication - Starting ExtractServiceApplication using Java 17.0.6 with PID 33310 (/Users/admin/workspace/AGENT/extract-service/target/classes started by admin in /Users/admin/workspace/AGENT/extract-service)
+2025-06-24 18:41:27.533 [main] INFO  com.datacenter.extract.ExtractServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-24 18:41:28.533 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-06-24 18:41:28.534 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-24 18:41:28.643 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 105 ms. Found 7 JPA repository interfaces.
+2025-06-24 18:41:28.665 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-06-24 18:41:28.667 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-06-24 18:41:28.683 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.CelebrityCelebrityRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 18:41:28.684 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.CelebrityEventRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 18:41:28.684 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.CelebrityRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 18:41:28.684 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.CelebrityWorkRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 18:41:28.684 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.EventRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 18:41:28.684 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.EventWorkRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 18:41:28.684 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.WorkRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 18:41:28.684 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 12 ms. Found 0 Redis repository interfaces.
+2025-06-24 18:41:32.433 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration boolean -> org.hibernate.type.BasicTypeReference@484b5a21
+2025-06-24 18:41:32.436 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration boolean -> org.hibernate.type.BasicTypeReference@484b5a21
+2025-06-24 18:41:32.436 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Boolean -> org.hibernate.type.BasicTypeReference@484b5a21
+2025-06-24 18:41:32.436 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration numeric_boolean -> org.hibernate.type.BasicTypeReference@be1c08a
+2025-06-24 18:41:32.436 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration org.hibernate.type.NumericBooleanConverter -> org.hibernate.type.BasicTypeReference@be1c08a
+2025-06-24 18:41:32.436 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration true_false -> org.hibernate.type.BasicTypeReference@10408ea
+2025-06-24 18:41:32.436 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration org.hibernate.type.TrueFalseConverter -> org.hibernate.type.BasicTypeReference@10408ea
+2025-06-24 18:41:32.437 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration yes_no -> org.hibernate.type.BasicTypeReference@3d7b3b18
+2025-06-24 18:41:32.438 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration org.hibernate.type.YesNoConverter -> org.hibernate.type.BasicTypeReference@3d7b3b18
+2025-06-24 18:41:32.438 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration byte -> org.hibernate.type.BasicTypeReference@186dcb05
+2025-06-24 18:41:32.438 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration byte -> org.hibernate.type.BasicTypeReference@186dcb05
+2025-06-24 18:41:32.439 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Byte -> org.hibernate.type.BasicTypeReference@186dcb05
+2025-06-24 18:41:32.439 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration binary -> org.hibernate.type.BasicTypeReference@1d0dad12
+2025-06-24 18:41:32.439 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration byte[] -> org.hibernate.type.BasicTypeReference@1d0dad12
+2025-06-24 18:41:32.440 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration [B -> org.hibernate.type.BasicTypeReference@1d0dad12
+2025-06-24 18:41:32.440 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration binary_wrapper -> org.hibernate.type.BasicTypeReference@3c6fb501
+2025-06-24 18:41:32.441 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration wrapper-binary -> org.hibernate.type.BasicTypeReference@3c6fb501
+2025-06-24 18:41:32.441 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration image -> org.hibernate.type.BasicTypeReference@5e7e7a7e
+2025-06-24 18:41:32.441 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration blob -> org.hibernate.type.BasicTypeReference@1ff81b0d
+2025-06-24 18:41:32.441 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.sql.Blob -> org.hibernate.type.BasicTypeReference@1ff81b0d
+2025-06-24 18:41:32.441 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration materialized_blob -> org.hibernate.type.BasicTypeReference@1c610f
+2025-06-24 18:41:32.441 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration materialized_blob_wrapper -> org.hibernate.type.BasicTypeReference@773c7147
+2025-06-24 18:41:32.441 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration short -> org.hibernate.type.BasicTypeReference@5abc5854
+2025-06-24 18:41:32.441 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration short -> org.hibernate.type.BasicTypeReference@5abc5854
+2025-06-24 18:41:32.441 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Short -> org.hibernate.type.BasicTypeReference@5abc5854
+2025-06-24 18:41:32.441 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration integer -> org.hibernate.type.BasicTypeReference@5c3007d
+2025-06-24 18:41:32.442 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration int -> org.hibernate.type.BasicTypeReference@5c3007d
+2025-06-24 18:41:32.442 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Integer -> org.hibernate.type.BasicTypeReference@5c3007d
+2025-06-24 18:41:32.442 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration long -> org.hibernate.type.BasicTypeReference@66b40dd3
+2025-06-24 18:41:32.442 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration long -> org.hibernate.type.BasicTypeReference@66b40dd3
+2025-06-24 18:41:32.442 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Long -> org.hibernate.type.BasicTypeReference@66b40dd3
+2025-06-24 18:41:32.442 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration float -> org.hibernate.type.BasicTypeReference@7296fe0b
+2025-06-24 18:41:32.442 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration float -> org.hibernate.type.BasicTypeReference@7296fe0b
+2025-06-24 18:41:32.442 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Float -> org.hibernate.type.BasicTypeReference@7296fe0b
+2025-06-24 18:41:32.443 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration double -> org.hibernate.type.BasicTypeReference@4a5066f5
+2025-06-24 18:41:32.443 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration double -> org.hibernate.type.BasicTypeReference@4a5066f5
+2025-06-24 18:41:32.443 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Double -> org.hibernate.type.BasicTypeReference@4a5066f5
+2025-06-24 18:41:32.443 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration big_integer -> org.hibernate.type.BasicTypeReference@578d472a
+2025-06-24 18:41:32.443 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.math.BigInteger -> org.hibernate.type.BasicTypeReference@578d472a
+2025-06-24 18:41:32.443 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration big_decimal -> org.hibernate.type.BasicTypeReference@1191029d
+2025-06-24 18:41:32.443 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.math.BigDecimal -> org.hibernate.type.BasicTypeReference@1191029d
+2025-06-24 18:41:32.443 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration character -> org.hibernate.type.BasicTypeReference@54b2d002
+2025-06-24 18:41:32.443 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration char -> org.hibernate.type.BasicTypeReference@54b2d002
+2025-06-24 18:41:32.443 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Character -> org.hibernate.type.BasicTypeReference@54b2d002
+2025-06-24 18:41:32.443 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration character_nchar -> org.hibernate.type.BasicTypeReference@1d1c63af
+2025-06-24 18:41:32.444 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration string -> org.hibernate.type.BasicTypeReference@2095c331
+2025-06-24 18:41:32.445 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.String -> org.hibernate.type.BasicTypeReference@2095c331
+2025-06-24 18:41:32.445 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration nstring -> org.hibernate.type.BasicTypeReference@3909a854
+2025-06-24 18:41:32.445 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration characters -> org.hibernate.type.BasicTypeReference@7b795db7
+2025-06-24 18:41:32.445 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration char[] -> org.hibernate.type.BasicTypeReference@7b795db7
+2025-06-24 18:41:32.445 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration [C -> org.hibernate.type.BasicTypeReference@7b795db7
+2025-06-24 18:41:32.445 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration wrapper-characters -> org.hibernate.type.BasicTypeReference@586486c
+2025-06-24 18:41:32.445 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration text -> org.hibernate.type.BasicTypeReference@b849fa6
+2025-06-24 18:41:32.446 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration ntext -> org.hibernate.type.BasicTypeReference@7fbbdd8a
+2025-06-24 18:41:32.446 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration clob -> org.hibernate.type.BasicTypeReference@4e9ea32f
+2025-06-24 18:41:32.446 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.sql.Clob -> org.hibernate.type.BasicTypeReference@4e9ea32f
+2025-06-24 18:41:32.446 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration nclob -> org.hibernate.type.BasicTypeReference@79ec57b8
+2025-06-24 18:41:32.446 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.sql.NClob -> org.hibernate.type.BasicTypeReference@79ec57b8
+2025-06-24 18:41:32.446 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration materialized_clob -> org.hibernate.type.BasicTypeReference@56ba8e8c
+2025-06-24 18:41:32.446 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration materialized_clob_char_array -> org.hibernate.type.BasicTypeReference@774c5e5c
+2025-06-24 18:41:32.446 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration materialized_clob_character_array -> org.hibernate.type.BasicTypeReference@4cf01c41
+2025-06-24 18:41:32.446 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration materialized_nclob -> org.hibernate.type.BasicTypeReference@57bac3f0
+2025-06-24 18:41:32.446 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration materialized_nclob_character_array -> org.hibernate.type.BasicTypeReference@55f6f965
+2025-06-24 18:41:32.447 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration materialized_nclob_char_array -> org.hibernate.type.BasicTypeReference@40ddf339
+2025-06-24 18:41:32.447 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration Duration -> org.hibernate.type.BasicTypeReference@c83ed77
+2025-06-24 18:41:32.447 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.Duration -> org.hibernate.type.BasicTypeReference@c83ed77
+2025-06-24 18:41:32.447 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration LocalDateTime -> org.hibernate.type.BasicTypeReference@d271a54
+2025-06-24 18:41:32.447 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.LocalDateTime -> org.hibernate.type.BasicTypeReference@d271a54
+2025-06-24 18:41:32.447 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration LocalDate -> org.hibernate.type.BasicTypeReference@6ff8e744
+2025-06-24 18:41:32.447 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.LocalDate -> org.hibernate.type.BasicTypeReference@6ff8e744
+2025-06-24 18:41:32.447 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration LocalTime -> org.hibernate.type.BasicTypeReference@409395b9
+2025-06-24 18:41:32.447 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.LocalTime -> org.hibernate.type.BasicTypeReference@409395b9
+2025-06-24 18:41:32.447 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration OffsetDateTime -> org.hibernate.type.BasicTypeReference@53e82089
+2025-06-24 18:41:32.447 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.OffsetDateTime -> org.hibernate.type.BasicTypeReference@53e82089
+2025-06-24 18:41:32.447 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration OffsetDateTimeWithTimezone -> org.hibernate.type.BasicTypeReference@66a8751a
+2025-06-24 18:41:32.447 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration OffsetDateTimeWithoutTimezone -> org.hibernate.type.BasicTypeReference@4ec27c4c
+2025-06-24 18:41:32.448 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration OffsetTime -> org.hibernate.type.BasicTypeReference@12200670
+2025-06-24 18:41:32.450 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.OffsetTime -> org.hibernate.type.BasicTypeReference@12200670
+2025-06-24 18:41:32.451 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration OffsetTimeUtc -> org.hibernate.type.BasicTypeReference@5e80d5
+2025-06-24 18:41:32.451 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration OffsetTimeWithTimezone -> org.hibernate.type.BasicTypeReference@257b3561
+2025-06-24 18:41:32.452 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration OffsetTimeWithoutTimezone -> org.hibernate.type.BasicTypeReference@78861d9e
+2025-06-24 18:41:32.452 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration ZonedDateTime -> org.hibernate.type.BasicTypeReference@6a878778
+2025-06-24 18:41:32.452 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.ZonedDateTime -> org.hibernate.type.BasicTypeReference@6a878778
+2025-06-24 18:41:32.452 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration ZonedDateTimeWithTimezone -> org.hibernate.type.BasicTypeReference@1eabfad5
+2025-06-24 18:41:32.452 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration ZonedDateTimeWithoutTimezone -> org.hibernate.type.BasicTypeReference@6207145c
+2025-06-24 18:41:32.452 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration date -> org.hibernate.type.BasicTypeReference@2a259f6f
+2025-06-24 18:41:32.452 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.sql.Date -> org.hibernate.type.BasicTypeReference@2a259f6f
+2025-06-24 18:41:32.453 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration time -> org.hibernate.type.BasicTypeReference@7ccf6114
+2025-06-24 18:41:32.453 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.sql.Time -> org.hibernate.type.BasicTypeReference@7ccf6114
+2025-06-24 18:41:32.453 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration timestamp -> org.hibernate.type.BasicTypeReference@3df3410a
+2025-06-24 18:41:32.453 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.sql.Timestamp -> org.hibernate.type.BasicTypeReference@3df3410a
+2025-06-24 18:41:32.453 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.util.Date -> org.hibernate.type.BasicTypeReference@3df3410a
+2025-06-24 18:41:32.453 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration calendar -> org.hibernate.type.BasicTypeReference@670c171c
+2025-06-24 18:41:32.454 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.util.Calendar -> org.hibernate.type.BasicTypeReference@670c171c
+2025-06-24 18:41:32.454 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.util.GregorianCalendar -> org.hibernate.type.BasicTypeReference@670c171c
+2025-06-24 18:41:32.454 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration calendar_date -> org.hibernate.type.BasicTypeReference@61d42275
+2025-06-24 18:41:32.454 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration calendar_time -> org.hibernate.type.BasicTypeReference@6614289a
+2025-06-24 18:41:32.454 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration instant -> org.hibernate.type.BasicTypeReference@4148ce43
+2025-06-24 18:41:32.454 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.Instant -> org.hibernate.type.BasicTypeReference@4148ce43
+2025-06-24 18:41:32.454 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration uuid -> org.hibernate.type.BasicTypeReference@46fb9581
+2025-06-24 18:41:32.454 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.util.UUID -> org.hibernate.type.BasicTypeReference@46fb9581
+2025-06-24 18:41:32.454 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration pg-uuid -> org.hibernate.type.BasicTypeReference@46fb9581
+2025-06-24 18:41:32.454 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration uuid-binary -> org.hibernate.type.BasicTypeReference@6fcc0a1
+2025-06-24 18:41:32.454 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration uuid-char -> org.hibernate.type.BasicTypeReference@416b681c
+2025-06-24 18:41:32.455 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration class -> org.hibernate.type.BasicTypeReference@46d69ca4
+2025-06-24 18:41:32.455 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Class -> org.hibernate.type.BasicTypeReference@46d69ca4
+2025-06-24 18:41:32.456 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration currency -> org.hibernate.type.BasicTypeReference@5c9b5e62
+2025-06-24 18:41:32.456 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration Currency -> org.hibernate.type.BasicTypeReference@5c9b5e62
+2025-06-24 18:41:32.456 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.util.Currency -> org.hibernate.type.BasicTypeReference@5c9b5e62
+2025-06-24 18:41:32.456 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration locale -> org.hibernate.type.BasicTypeReference@3c826498
+2025-06-24 18:41:32.456 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.util.Locale -> org.hibernate.type.BasicTypeReference@3c826498
+2025-06-24 18:41:32.456 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration serializable -> org.hibernate.type.BasicTypeReference@2633d09c
+2025-06-24 18:41:32.456 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.io.Serializable -> org.hibernate.type.BasicTypeReference@2633d09c
+2025-06-24 18:41:32.457 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration timezone -> org.hibernate.type.BasicTypeReference@54f25b42
+2025-06-24 18:41:32.458 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.util.TimeZone -> org.hibernate.type.BasicTypeReference@54f25b42
+2025-06-24 18:41:32.458 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration ZoneOffset -> org.hibernate.type.BasicTypeReference@521c67f0
+2025-06-24 18:41:32.459 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.ZoneOffset -> org.hibernate.type.BasicTypeReference@521c67f0
+2025-06-24 18:41:32.459 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration url -> org.hibernate.type.BasicTypeReference@7d156f8f
+2025-06-24 18:41:32.459 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.net.URL -> org.hibernate.type.BasicTypeReference@7d156f8f
+2025-06-24 18:41:32.459 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration row_version -> org.hibernate.type.BasicTypeReference@451af781
+2025-06-24 18:41:32.461 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration object -> org.hibernate.type.JavaObjectType@2d7aa291
+2025-06-24 18:41:32.461 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.lang.Object -> org.hibernate.type.JavaObjectType@2d7aa291
+2025-06-24 18:41:32.462 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration null -> org.hibernate.type.NullType@279e1422
+2025-06-24 18:41:32.463 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration imm_date -> org.hibernate.type.BasicTypeReference@af3295f
+2025-06-24 18:41:32.463 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration imm_time -> org.hibernate.type.BasicTypeReference@27dc81be
+2025-06-24 18:41:32.464 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration imm_timestamp -> org.hibernate.type.BasicTypeReference@3595086b
+2025-06-24 18:41:32.464 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration imm_calendar -> org.hibernate.type.BasicTypeReference@627d35ff
+2025-06-24 18:41:32.464 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration imm_calendar_date -> org.hibernate.type.BasicTypeReference@7157413e
+2025-06-24 18:41:32.464 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration imm_calendar_time -> org.hibernate.type.BasicTypeReference@3245efdb
+2025-06-24 18:41:32.464 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration imm_binary -> org.hibernate.type.BasicTypeReference@2f0e7fa8
+2025-06-24 18:41:32.465 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration imm_serializable -> org.hibernate.type.BasicTypeReference@24d7657b
+2025-06-24 18:41:32.553 [main] INFO  o.s.o.j.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-24 18:41:32.567 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-06-24 18:41:32.670 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7c8689e
+2025-06-24 18:41:32.671 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-06-24 18:41:32.702 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-24 18:41:32.702 [main] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-06-24 18:41:32.717 [main] DEBUG o.h.type.descriptor.sql.spi.DdlTypeRegistry - addDescriptor(12, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@6b6c0b7c) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@5b1f0f26)
+2025-06-24 18:41:32.717 [main] DEBUG o.h.type.descriptor.sql.spi.DdlTypeRegistry - addDescriptor(-9, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@7120daa6) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@6cbb6c41)
+2025-06-24 18:41:32.717 [main] DEBUG o.h.type.descriptor.sql.spi.DdlTypeRegistry - addDescriptor(-3, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@6787bd41) replaced previous registration(org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@44c2e8a8)
+2025-06-24 18:41:32.717 [main] DEBUG o.h.type.descriptor.sql.spi.DdlTypeRegistry - addDescriptor(4003, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@3340ff7c) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@42e4431)
+2025-06-24 18:41:32.717 [main] DEBUG o.h.type.descriptor.sql.spi.DdlTypeRegistry - addDescriptor(4001, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@5e198c40) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@dcdb883)
+2025-06-24 18:41:32.717 [main] DEBUG o.h.type.descriptor.sql.spi.DdlTypeRegistry - addDescriptor(4002, org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@39420d59) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@4fbbd98c)
+2025-06-24 18:41:32.717 [main] DEBUG o.h.type.descriptor.sql.spi.DdlTypeRegistry - addDescriptor(2004, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@5dd227b7) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@3d3b852e)
+2025-06-24 18:41:32.717 [main] DEBUG o.h.type.descriptor.sql.spi.DdlTypeRegistry - addDescriptor(2005, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@14ba7f15) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@55cb3b7)
+2025-06-24 18:41:32.718 [main] DEBUG o.h.type.descriptor.sql.spi.DdlTypeRegistry - addDescriptor(2011, org.hibernate.type.descriptor.sql.internal.CapacityDependentDdlType@497fd334) replaced previous registration(org.hibernate.type.descriptor.sql.internal.DdlTypeImpl@280c3dc0)
+2025-06-24 18:41:32.718 [main] DEBUG o.h.type.descriptor.jdbc.spi.JdbcTypeRegistry - addDescriptor(NCharTypeDescriptor) replaced previous registration(CharTypeDescriptor)
+2025-06-24 18:41:32.718 [main] DEBUG o.h.type.descriptor.jdbc.spi.JdbcTypeRegistry - addDescriptor(NVarcharTypeDescriptor) replaced previous registration(VarcharTypeDescriptor)
+2025-06-24 18:41:32.718 [main] DEBUG o.h.type.descriptor.jdbc.spi.JdbcTypeRegistry - addDescriptor(LongNVarcharTypeDescriptor) replaced previous registration(LongVarcharTypeDescriptor)
+2025-06-24 18:41:32.719 [main] DEBUG o.h.type.descriptor.jdbc.spi.JdbcTypeRegistry - addDescriptor(NClobTypeDescriptor(DEFAULT)) replaced previous registration(ClobTypeDescriptor(DEFAULT))
+2025-06-24 18:41:32.719 [main] DEBUG o.h.type.descriptor.jdbc.spi.JdbcTypeRegistry - addDescriptor(2005, ClobTypeDescriptor(STREAM_BINDING)) replaced previous registration(ClobTypeDescriptor(DEFAULT))
+2025-06-24 18:41:32.720 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration null -> org.hibernate.type.NullType@19f99aaf
+2025-06-24 18:41:32.720 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Type registration key [null] overrode previous entry : `org.hibernate.type.NullType@279e1422`
+2025-06-24 18:41:32.722 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration Duration -> basicType@1(java.time.Duration,2)
+2025-06-24 18:41:32.722 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.Duration -> basicType@1(java.time.Duration,2)
+2025-06-24 18:41:32.724 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration org.hibernate.type.OffsetDateTimeType -> basicType@2(java.time.OffsetDateTime,3003)
+2025-06-24 18:41:32.724 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration OffsetDateTime -> basicType@2(java.time.OffsetDateTime,3003)
+2025-06-24 18:41:32.724 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.OffsetDateTime -> basicType@2(java.time.OffsetDateTime,3003)
+2025-06-24 18:41:32.724 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration org.hibernate.type.ZonedDateTimeType -> basicType@3(java.time.ZonedDateTime,3003)
+2025-06-24 18:41:32.724 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration ZonedDateTime -> basicType@3(java.time.ZonedDateTime,3003)
+2025-06-24 18:41:32.724 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.ZonedDateTime -> basicType@3(java.time.ZonedDateTime,3003)
+2025-06-24 18:41:32.724 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration org.hibernate.type.OffsetTimeType -> basicType@4(java.time.OffsetTime,3007)
+2025-06-24 18:41:32.724 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration OffsetTime -> basicType@4(java.time.OffsetTime,3007)
+2025-06-24 18:41:32.725 [main] DEBUG org.hibernate.type.BasicTypeRegistry - Adding type registration java.time.OffsetTime -> basicType@4(java.time.OffsetTime,3007)
+2025-06-24 18:41:32.725 [main] DEBUG org.hibernate.type.spi.TypeConfiguration$Scope - Scoping TypeConfiguration [org.hibernate.type.spi.TypeConfiguration@4c0bfe9e] to MetadataBuildingContext [org.hibernate.boot.internal.MetadataBuildingContextRootImpl@490fbeaa]
+2025-06-24 18:41:33.352 [main] DEBUG org.hibernate.type.spi.TypeConfiguration$Scope - Scoping TypeConfiguration [org.hibernate.type.spi.TypeConfiguration@4c0bfe9e] to SessionFactoryImplementor [org.hibernate.internal.SessionFactoryImpl@5a183fa6]
+2025-06-24 18:41:33.357 [main] TRACE org.hibernate.type.spi.TypeConfiguration$Scope - Handling #sessionFactoryCreated from [org.hibernate.internal.SessionFactoryImpl@5a183fa6] for TypeConfiguration
+2025-06-24 18:41:33.358 [main] INFO  o.s.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-24 18:41:33.992 [main] INFO  c.datacenter.extract.controller.ExtractController - ExtractController initialized successfully
+2025-06-24 18:41:34.417 [main] INFO  o.s.b.actuate.endpoint.web.EndpointLinksResolver - Exposing 3 endpoint(s) beneath base path '/actuator'
+2025-06-24 18:41:34.559 [main] INFO  o.s.a.m.s.autoconfigure.McpServerAutoConfiguration - Enable tools capabilities, notification: true
+2025-06-24 18:41:34.591 [main] INFO  o.s.a.m.s.autoconfigure.McpServerAutoConfiguration - Registered tools: 2
+2025-06-24 18:41:34.591 [main] INFO  o.s.a.m.s.autoconfigure.McpServerAutoConfiguration - Enable resources capabilities, notification: true
+2025-06-24 18:41:34.594 [main] INFO  o.s.a.m.s.autoconfigure.McpServerAutoConfiguration - Enable prompts capabilities, notification: true
+2025-06-24 18:41:34.596 [main] INFO  o.s.a.m.s.autoconfigure.McpServerAutoConfiguration - Enable completions capabilities
+2025-06-24 18:41:35.000 [main] INFO  o.s.boot.web.embedded.netty.NettyWebServer - Netty started on port 2701
+2025-06-24 18:41:35.014 [main] INFO  com.datacenter.extract.ExtractServiceApplication - Started ExtractServiceApplication in 8.124 seconds (process running for 8.812)
+2025-06-24 18:42:12.229 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.controller.ExtractController - Received extract request - extractParams: triples, textLength: 0
+2025-06-24 18:42:12.240 [ForkJoinPool.commonPool-worker-1] WARN  c.datacenter.extract.controller.ExtractController - Extract request failed - empty text content
+2025-06-24 18:42:12.266 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.controller.ExtractController - Received extract request - extractParams: triples, textLength: 0
+2025-06-24 18:42:12.269 [ForkJoinPool.commonPool-worker-1] WARN  c.datacenter.extract.controller.ExtractController - Extract request failed - empty text content
+2025-06-24 18:42:12.280 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.controller.ExtractController - Received extract request - extractParams: triples, textLength: 0
+2025-06-24 18:42:12.282 [ForkJoinPool.commonPool-worker-1] WARN  c.datacenter.extract.controller.ExtractController - Extract request failed - empty text content
+2025-06-24 18:42:12.288 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.controller.ExtractController - Received extract request - extractParams: triples, textLength: 34
+2025-06-24 18:42:12.290 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.service.TextExtractionService - 开始文本提取，输入长度: 34, 参数: triples
+2025-06-24 18:42:12.298 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.AIModelCaller - 🎯 开始AI调用，文本长度: 34，当前并发数: 1
+2025-06-24 18:42:12.298 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.AIModelCaller - ⏱️  动态计算超时时间: 30秒
+2025-06-24 18:42:20.944 [reactor-http-nio-5] INFO  com.datacenter.extract.service.AIModelCaller - ✅ AI调用成功，耗时: 8645ms，响应长度: 351
+2025-06-24 18:42:20.950 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.SmartAIProvider - AI提取成功，文本长度: 34
+2025-06-24 18:42:20.970 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 开始保存提取数据到数据库，数据长度: 351
+2025-06-24 18:42:20.970 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 原始AI返回数据: {
+  "triples": [
+    {
+      "subject": "张艺谋",
+      "predicate": "合作伙伴",
+      "object": "巩俐",
+      "confidence": 0.95
+    },
+    {
+      "subject": "张艺谋",
+      "predicate": "配偶",
+      "object": "陈婷",
+      "confidence": 0.95
+    },
+    {
+      "subject": "刘德华",
+      "predicate": "好友",
+      "object": "梁朝伟",
+      "confidence": 0.95
+    }
+  ]
+}
+2025-06-24 18:42:20.971 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 提取的JSON部分: {
+  "triples": [
+    {
+      "subject": "张艺谋",
+      "predicate": "合作伙伴",
+      "object": "巩俐",
+      "confidence": 0.95
+    },
+    {
+      "subject": "张艺谋",
+      "predicate": "配偶",
+      "object": "陈婷",
+      "confidence": 0.95
+    },
+    {
+      "subject": "刘德华",
+      "predicate": "好友",
+      "object": "梁朝伟",
+      "confidence": 0.95
+    }
+  ]
+}
+2025-06-24 18:42:20.972 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 成功解析提取结果，包含 1 个主要字段: [triples]
+2025-06-24 18:42:20.972 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 处理 3 个三元组，包括实体和关系保存
+2025-06-24 18:42:21.051 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:42:21.072 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 人员 张艺谋 已存在，跳过插入
+2025-06-24 18:42:21.073 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:42:21.075 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 人员 巩俐 已存在，跳过插入
+2025-06-24 18:42:21.082 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:42:21.125 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:42:21.169 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity_celebrity
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 18:42:21.186 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存人人关系: 张艺谋 -> 巩俐 [合作伙伴]
+2025-06-24 18:42:21.187 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 张艺谋 --[合作伙伴]--> 巩俐
+2025-06-24 18:42:21.191 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:42:21.196 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 人员 张艺谋 已存在，跳过插入
+2025-06-24 18:42:21.197 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:42:21.203 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity
+        (baike, birthdate, celebrity_id, company, education, gender, `group`, name, nationality, position, profession, relatives, resume, spouse) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-06-24 18:42:21.208 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - ✅ 成功保存人员: 陈婷 (通过三元组提取)
+2025-06-24 18:42:21.210 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:42:21.214 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:42:21.217 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity_celebrity
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 18:42:21.220 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存人人关系: 张艺谋 -> 陈婷 [配偶]
+2025-06-24 18:42:21.220 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 张艺谋 --[配偶]--> 陈婷
+2025-06-24 18:42:21.222 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:42:21.228 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity
+        (baike, birthdate, celebrity_id, company, education, gender, `group`, name, nationality, position, profession, relatives, resume, spouse) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-06-24 18:42:21.232 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - ✅ 成功保存人员: 刘德华 (通过三元组提取)
+2025-06-24 18:42:21.233 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:42:21.237 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity
+        (baike, birthdate, celebrity_id, company, education, gender, `group`, name, nationality, position, profession, relatives, resume, spouse) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+2025-06-24 18:42:21.241 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - ✅ 成功保存人员: 梁朝伟 (通过三元组提取)
+2025-06-24 18:42:21.243 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:42:21.254 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:42:21.258 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity_celebrity
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 18:42:21.262 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存人人关系: 刘德华 -> 梁朝伟 [好友]
+2025-06-24 18:42:21.263 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 刘德华 --[好友]--> 梁朝伟
+2025-06-24 18:42:21.264 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🎉 成功保存提取数据到MySQL数据库 (localhost:3306/extract-graph)
+2025-06-24 18:42:21.272 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.controller.ExtractController - Extract request completed successfully in 8984ms
+2025-06-24 18:42:22.315 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.controller.ExtractController - Received extract request - extractParams: triples, textLength: 36
+2025-06-24 18:42:22.317 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.service.TextExtractionService - 开始文本提取，输入长度: 36, 参数: triples
+2025-06-24 18:42:22.319 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.AIModelCaller - 🎯 开始AI调用，文本长度: 36，当前并发数: 1
+2025-06-24 18:42:22.319 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.AIModelCaller - ⏱️  动态计算超时时间: 30秒
+2025-06-24 18:42:30.984 [reactor-http-nio-5] INFO  com.datacenter.extract.service.AIModelCaller - ✅ AI调用成功，耗时: 8665ms，响应长度: 356
+2025-06-24 18:42:30.985 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.SmartAIProvider - AI提取成功，文本长度: 36
+2025-06-24 18:42:30.990 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 开始保存提取数据到数据库，数据长度: 356
+2025-06-24 18:42:30.990 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 原始AI返回数据: {
+  "triples": [
+    {
+      "subject": "张艺谋",
+      "predicate": "导演",
+      "object": "《红高粱》",
+      "confidence": 0.95
+    },
+    {
+      "subject": "巩俐",
+      "predicate": "主演",
+      "object": "《红高粱》",
+      "confidence": 0.95
+    },
+    {
+      "subject": "周杰伦",
+      "predicate": "演唱",
+      "object": "《青花瓷》",
+      "confidence": 0.95
+    }
+  ]
+}
+2025-06-24 18:42:30.990 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 提取的JSON部分: {
+  "triples": [
+    {
+      "subject": "张艺谋",
+      "predicate": "导演",
+      "object": "《红高粱》",
+      "confidence": 0.95
+    },
+    {
+      "subject": "巩俐",
+      "predicate": "主演",
+      "object": "《红高粱》",
+      "confidence": 0.95
+    },
+    {
+      "subject": "周杰伦",
+      "predicate": "演唱",
+      "object": "《青花瓷》",
+      "confidence": 0.95
+    }
+  ]
+}
+2025-06-24 18:42:30.992 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 成功解析提取结果，包含 1 个主要字段: [triples]
+2025-06-24 18:42:30.992 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 处理 3 个三元组，包括实体和关系保存
+2025-06-24 18:42:30.995 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:42:31.000 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 人员 张艺谋 已存在，跳过插入
+2025-06-24 18:42:31.003 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:42:31.008 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 人员 《红高粱》 已存在，跳过插入
+2025-06-24 18:42:31.011 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:42:31.020 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:42:31.025 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity_celebrity
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 18:42:31.027 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存人人关系: 张艺谋 -> 《红高粱》 [导演]
+2025-06-24 18:42:31.028 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 张艺谋 --[导演]--> 《红高粱》
+2025-06-24 18:42:31.029 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:42:31.031 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 人员 巩俐 已存在，跳过插入
+2025-06-24 18:42:31.032 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:42:31.034 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 人员 《红高粱》 已存在，跳过插入
+2025-06-24 18:42:31.035 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:42:31.038 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:42:31.040 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity_celebrity
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 18:42:31.042 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存人人关系: 巩俐 -> 《红高粱》 [主演]
+2025-06-24 18:42:31.042 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 巩俐 --[主演]--> 《红高粱》
+2025-06-24 18:42:31.043 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:42:31.045 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 人员 周杰伦 已存在，跳过插入
+2025-06-24 18:42:31.050 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        w1_0.id 
+    from
+        work w1_0 
+    where
+        w1_0.title=? 
+    limit
+        ?
+2025-06-24 18:42:31.053 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 作品 《青花瓷》 已存在，跳过插入
+2025-06-24 18:42:31.055 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:42:31.059 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        w1_0.id,
+        w1_0.awards,
+        w1_0.baike,
+        w1_0.description,
+        w1_0.`group`,
+        w1_0.platform,
+        w1_0.release_date,
+        w1_0.role,
+        w1_0.title,
+        w1_0.work_id,
+        w1_0.work_type 
+    from
+        work w1_0 
+    where
+        w1_0.title=?
+2025-06-24 18:42:31.063 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity_work
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 18:42:31.067 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存人作品关系: 周杰伦 -> 《青花瓷》 [演唱]
+2025-06-24 18:42:31.067 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 周杰伦 --[演唱]--> 《青花瓷》
+2025-06-24 18:42:31.067 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🎉 成功保存提取数据到MySQL数据库 (localhost:3306/extract-graph)
+2025-06-24 18:42:31.072 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.controller.ExtractController - Extract request completed successfully in 8757ms
+2025-06-24 18:42:32.091 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.controller.ExtractController - Received extract request - extractParams: triples, textLength: 43
+2025-06-24 18:42:32.092 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.service.TextExtractionService - 开始文本提取，输入长度: 43, 参数: triples
+2025-06-24 18:42:32.092 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.AIModelCaller - 🎯 开始AI调用，文本长度: 43，当前并发数: 1
+2025-06-24 18:42:32.092 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.AIModelCaller - ⏱️  动态计算超时时间: 30秒
+2025-06-24 18:42:39.082 [reactor-http-nio-5] INFO  com.datacenter.extract.service.AIModelCaller - ✅ AI调用成功，耗时: 6989ms，响应长度: 264
+2025-06-24 18:42:39.083 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.SmartAIProvider - AI提取成功，文本长度: 43
+2025-06-24 18:42:39.087 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 开始保存提取数据到数据库，数据长度: 264
+2025-06-24 18:42:39.087 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 原始AI返回数据: {
+  "triples": [
+    {
+      "subject": "第41届柏林国际电影节",
+      "predicate": "举行时间",
+      "object": "1991年",
+      "confidence": 0.95
+    },
+    {
+      "subject": "2008年北京奥运会开幕式",
+      "predicate": "举办地点",
+      "object": "鸟巢",
+      "confidence": 0.95
+    }
+  ]
+}
+2025-06-24 18:42:39.088 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 提取的JSON部分: {
+  "triples": [
+    {
+      "subject": "第41届柏林国际电影节",
+      "predicate": "举行时间",
+      "object": "1991年",
+      "confidence": 0.95
+    },
+    {
+      "subject": "2008年北京奥运会开幕式",
+      "predicate": "举办地点",
+      "object": "鸟巢",
+      "confidence": 0.95
+    }
+  ]
+}
+2025-06-24 18:42:39.089 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 成功解析提取结果，包含 1 个主要字段: [triples]
+2025-06-24 18:42:39.089 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 处理 2 个三元组，包括实体和关系保存
+2025-06-24 18:42:39.092 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=? 
+    limit
+        ?
+2025-06-24 18:42:39.095 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 事件 第41届柏林国际电影节 已存在，跳过插入
+2025-06-24 18:42:39.097 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=? 
+    limit
+        ?
+2025-06-24 18:42:39.100 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 事件 1991年 已存在，跳过插入
+2025-06-24 18:42:39.101 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 第41届柏林国际电影节 --[举行时间]--> 1991年
+2025-06-24 18:42:39.103 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=? 
+    limit
+        ?
+2025-06-24 18:42:39.105 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 事件 2008年北京奥运会开幕式 已存在，跳过插入
+2025-06-24 18:42:39.106 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 2008年北京奥运会开幕式 --[举办地点]--> 鸟巢
+2025-06-24 18:42:39.106 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🎉 成功保存提取数据到MySQL数据库 (localhost:3306/extract-graph)
+2025-06-24 18:42:39.108 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.controller.ExtractController - Extract request completed successfully in 7017ms
+2025-06-24 18:42:40.127 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.controller.ExtractController - Received extract request - extractParams: triples, textLength: 37
+2025-06-24 18:42:40.128 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.service.TextExtractionService - 开始文本提取，输入长度: 37, 参数: triples
+2025-06-24 18:42:40.128 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.AIModelCaller - 🎯 开始AI调用，文本长度: 37，当前并发数: 1
+2025-06-24 18:42:40.129 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.AIModelCaller - ⏱️  动态计算超时时间: 30秒
+2025-06-24 18:42:49.211 [reactor-http-nio-5] INFO  com.datacenter.extract.service.AIModelCaller - ✅ AI调用成功，耗时: 9082ms，响应长度: 371
+2025-06-24 18:42:49.212 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.SmartAIProvider - AI提取成功，文本长度: 37
+2025-06-24 18:42:49.216 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 开始保存提取数据到数据库，数据长度: 371
+2025-06-24 18:42:49.216 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 原始AI返回数据: {
+  "triples": [
+    {
+      "subject": "张艺谋",
+      "predicate": "参加",
+      "object": "柏林电影节颁奖典礼",
+      "confidence": 0.95
+    },
+    {
+      "subject": "张艺谋",
+      "predicate": "获奖",
+      "object": "柏林电影节颁奖典礼",
+      "confidence": 0.95
+    },
+    {
+      "subject": "张艺谋",
+      "predicate": "担任",
+      "object": "北京奥运会开幕式总导演",
+      "confidence": 0.95
+    }
+  ]
+}
+2025-06-24 18:42:49.216 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 提取的JSON部分: {
+  "triples": [
+    {
+      "subject": "张艺谋",
+      "predicate": "参加",
+      "object": "柏林电影节颁奖典礼",
+      "confidence": 0.95
+    },
+    {
+      "subject": "张艺谋",
+      "predicate": "获奖",
+      "object": "柏林电影节颁奖典礼",
+      "confidence": 0.95
+    },
+    {
+      "subject": "张艺谋",
+      "predicate": "担任",
+      "object": "北京奥运会开幕式总导演",
+      "confidence": 0.95
+    }
+  ]
+}
+2025-06-24 18:42:49.218 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 成功解析提取结果，包含 1 个主要字段: [triples]
+2025-06-24 18:42:49.218 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 处理 3 个三元组，包括实体和关系保存
+2025-06-24 18:42:49.221 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:42:49.225 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 人员 张艺谋 已存在，跳过插入
+2025-06-24 18:42:49.228 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=? 
+    limit
+        ?
+2025-06-24 18:42:49.231 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 事件 柏林电影节颁奖典礼 已存在，跳过插入
+2025-06-24 18:42:49.233 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:42:49.240 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id,
+        e1_0.event_id,
+        e1_0.event_name,
+        e1_0.event_type,
+        e1_0.`group`,
+        e1_0.time 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=?
+2025-06-24 18:42:49.244 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity_event
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 18:42:49.247 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存人事件关系: 张艺谋 -> 柏林电影节颁奖典礼 [参加]
+2025-06-24 18:42:49.247 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 张艺谋 --[参加]--> 柏林电影节颁奖典礼
+2025-06-24 18:42:49.250 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:42:49.253 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 人员 张艺谋 已存在，跳过插入
+2025-06-24 18:42:49.254 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=? 
+    limit
+        ?
+2025-06-24 18:42:49.256 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 事件 柏林电影节颁奖典礼 已存在，跳过插入
+2025-06-24 18:42:49.258 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:42:49.262 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id,
+        e1_0.event_id,
+        e1_0.event_name,
+        e1_0.event_type,
+        e1_0.`group`,
+        e1_0.time 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=?
+2025-06-24 18:42:49.264 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity_event
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 18:42:49.268 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存人事件关系: 张艺谋 -> 柏林电影节颁奖典礼 [获奖]
+2025-06-24 18:42:49.268 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 张艺谋 --[获奖]--> 柏林电影节颁奖典礼
+2025-06-24 18:42:49.269 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:42:49.272 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 人员 张艺谋 已存在，跳过插入
+2025-06-24 18:42:49.273 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=? 
+    limit
+        ?
+2025-06-24 18:42:49.276 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 事件 北京奥运会开幕式总导演 已存在，跳过插入
+2025-06-24 18:42:49.278 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:42:49.288 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id,
+        e1_0.event_id,
+        e1_0.event_name,
+        e1_0.event_type,
+        e1_0.`group`,
+        e1_0.time 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=?
+2025-06-24 18:42:49.291 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity_event
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 18:42:49.293 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存人事件关系: 张艺谋 -> 北京奥运会开幕式总导演 [担任]
+2025-06-24 18:42:49.293 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 张艺谋 --[担任]--> 北京奥运会开幕式总导演
+2025-06-24 18:42:49.293 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🎉 成功保存提取数据到MySQL数据库 (localhost:3306/extract-graph)
+2025-06-24 18:42:49.297 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.controller.ExtractController - Extract request completed successfully in 9170ms
+2025-06-24 18:42:50.316 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.controller.ExtractController - Received extract request - extractParams: triples, textLength: 39
+2025-06-24 18:42:50.316 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.service.TextExtractionService - 开始文本提取，输入长度: 39, 参数: triples
+2025-06-24 18:42:50.316 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.AIModelCaller - 🎯 开始AI调用，文本长度: 39，当前并发数: 1
+2025-06-24 18:42:50.316 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.AIModelCaller - ⏱️  动态计算超时时间: 30秒
+2025-06-24 18:42:59.444 [reactor-http-nio-5] INFO  com.datacenter.extract.service.AIModelCaller - ✅ AI调用成功，耗时: 9127ms，响应长度: 366
+2025-06-24 18:42:59.445 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.SmartAIProvider - AI提取成功，文本长度: 39
+2025-06-24 18:42:59.448 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 开始保存提取数据到数据库，数据长度: 366
+2025-06-24 18:42:59.448 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 原始AI返回数据: {
+  "triples": [
+    {
+      "subject": "电影《红高粱》",
+      "predicate": "获得",
+      "object": "金熊奖",
+      "confidence": 0.95
+    },
+    {
+      "subject": "电影《红高粱》",
+      "predicate": "展映",
+      "object": "柏林电影节",
+      "confidence": 0.95
+    },
+    {
+      "subject": "《青花瓷》",
+      "predicate": "演出",
+      "object": "奥运会开幕式",
+      "confidence": 0.95
+    }
+  ]
+}
+2025-06-24 18:42:59.449 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 提取的JSON部分: {
+  "triples": [
+    {
+      "subject": "电影《红高粱》",
+      "predicate": "获得",
+      "object": "金熊奖",
+      "confidence": 0.95
+    },
+    {
+      "subject": "电影《红高粱》",
+      "predicate": "展映",
+      "object": "柏林电影节",
+      "confidence": 0.95
+    },
+    {
+      "subject": "《青花瓷》",
+      "predicate": "演出",
+      "object": "奥运会开幕式",
+      "confidence": 0.95
+    }
+  ]
+}
+2025-06-24 18:42:59.451 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 成功解析提取结果，包含 1 个主要字段: [triples]
+2025-06-24 18:42:59.451 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 处理 3 个三元组，包括实体和关系保存
+2025-06-24 18:42:59.451 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 电影《红高粱》 --[获得]--> 金熊奖
+2025-06-24 18:42:59.453 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=? 
+    limit
+        ?
+2025-06-24 18:42:59.458 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        event
+        (event_id, event_name, event_type, `group`, time) 
+    values
+        (?, ?, ?, ?, ?)
+2025-06-24 18:42:59.462 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - ✅ 成功保存事件: 电影《红高粱》 (通过三元组提取)
+2025-06-24 18:42:59.464 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=? 
+    limit
+        ?
+2025-06-24 18:42:59.467 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 事件 柏林电影节 已存在，跳过插入
+2025-06-24 18:42:59.467 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 电影《红高粱》 --[展映]--> 柏林电影节
+2025-06-24 18:42:59.468 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        w1_0.id 
+    from
+        work w1_0 
+    where
+        w1_0.title=? 
+    limit
+        ?
+2025-06-24 18:42:59.472 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 作品 《青花瓷》 已存在，跳过插入
+2025-06-24 18:42:59.473 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=? 
+    limit
+        ?
+2025-06-24 18:42:59.476 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 事件 奥运会开幕式 已存在，跳过插入
+2025-06-24 18:42:59.477 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id,
+        e1_0.event_id,
+        e1_0.event_name,
+        e1_0.event_type,
+        e1_0.`group`,
+        e1_0.time 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=?
+2025-06-24 18:42:59.481 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        w1_0.id,
+        w1_0.awards,
+        w1_0.baike,
+        w1_0.description,
+        w1_0.`group`,
+        w1_0.platform,
+        w1_0.release_date,
+        w1_0.role,
+        w1_0.title,
+        w1_0.work_id,
+        w1_0.work_type 
+    from
+        work w1_0 
+    where
+        w1_0.title=?
+2025-06-24 18:42:59.486 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        event_work
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 18:42:59.488 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存事件作品关系(反向): 奥运会开幕式 -> 《青花瓷》 [在_演出]
+2025-06-24 18:42:59.488 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 《青花瓷》 --[演出]--> 奥运会开幕式
+2025-06-24 18:42:59.489 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🎉 成功保存提取数据到MySQL数据库 (localhost:3306/extract-graph)
+2025-06-24 18:42:59.493 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.controller.ExtractController - Extract request completed successfully in 9177ms
+2025-06-24 18:43:00.515 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.controller.ExtractController - Received extract request - extractParams: triples, textLength: 43
+2025-06-24 18:43:00.515 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.service.TextExtractionService - 开始文本提取，输入长度: 43, 参数: triples
+2025-06-24 18:43:00.515 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.AIModelCaller - 🎯 开始AI调用，文本长度: 43，当前并发数: 1
+2025-06-24 18:43:00.515 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.AIModelCaller - ⏱️  动态计算超时时间: 30秒
+2025-06-24 18:43:12.005 [reactor-http-nio-5] INFO  com.datacenter.extract.service.AIModelCaller - ✅ AI调用成功，耗时: 11490ms，响应长度: 469
+2025-06-24 18:43:12.005 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.SmartAIProvider - AI提取成功，文本长度: 43
+2025-06-24 18:43:12.009 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 开始保存提取数据到数据库，数据长度: 469
+2025-06-24 18:43:12.009 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 原始AI返回数据: {
+  "triples": [
+    {
+      "subject": "成龙",
+      "predicate": "主演",
+      "object": "《醉拳》",
+      "confidence": 0.95
+    },
+    {
+      "subject": "《醉拳》",
+      "predicate": "首映于",
+      "object": "香港电影节",
+      "confidence": 0.95
+    },
+    {
+      "subject": "成龙",
+      "predicate": "参加",
+      "object": "电影节颁奖典礼",
+      "confidence": 0.95
+    },
+    {
+      "subject": "成龙",
+      "predicate": "获得",
+      "object": "终身成就奖",
+      "confidence": 0.95
+    }
+  ]
+}
+2025-06-24 18:43:12.009 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 提取的JSON部分: {
+  "triples": [
+    {
+      "subject": "成龙",
+      "predicate": "主演",
+      "object": "《醉拳》",
+      "confidence": 0.95
+    },
+    {
+      "subject": "《醉拳》",
+      "predicate": "首映于",
+      "object": "香港电影节",
+      "confidence": 0.95
+    },
+    {
+      "subject": "成龙",
+      "predicate": "参加",
+      "object": "电影节颁奖典礼",
+      "confidence": 0.95
+    },
+    {
+      "subject": "成龙",
+      "predicate": "获得",
+      "object": "终身成就奖",
+      "confidence": 0.95
+    }
+  ]
+}
+2025-06-24 18:43:12.012 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 成功解析提取结果，包含 1 个主要字段: [triples]
+2025-06-24 18:43:12.012 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 处理 4 个三元组，包括实体和关系保存
+2025-06-24 18:43:12.014 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:43:12.017 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 人员 成龙 已存在，跳过插入
+2025-06-24 18:43:12.018 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:43:12.021 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 人员 《醉拳》 已存在，跳过插入
+2025-06-24 18:43:12.028 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:43:12.033 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:43:12.035 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity_celebrity
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 18:43:12.038 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存人人关系: 成龙 -> 《醉拳》 [主演]
+2025-06-24 18:43:12.038 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 成龙 --[主演]--> 《醉拳》
+2025-06-24 18:43:12.039 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        w1_0.id 
+    from
+        work w1_0 
+    where
+        w1_0.title=? 
+    limit
+        ?
+2025-06-24 18:43:12.041 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 作品 《醉拳》 已存在，跳过插入
+2025-06-24 18:43:12.042 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=? 
+    limit
+        ?
+2025-06-24 18:43:12.044 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 事件 香港电影节 已存在，跳过插入
+2025-06-24 18:43:12.045 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id,
+        e1_0.event_id,
+        e1_0.event_name,
+        e1_0.event_type,
+        e1_0.`group`,
+        e1_0.time 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=?
+2025-06-24 18:43:12.048 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        w1_0.id,
+        w1_0.awards,
+        w1_0.baike,
+        w1_0.description,
+        w1_0.`group`,
+        w1_0.platform,
+        w1_0.release_date,
+        w1_0.role,
+        w1_0.title,
+        w1_0.work_id,
+        w1_0.work_type 
+    from
+        work w1_0 
+    where
+        w1_0.title=?
+2025-06-24 18:43:12.051 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        event_work
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 18:43:12.053 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存事件作品关系(反向): 香港电影节 -> 《醉拳》 [在_首映于]
+2025-06-24 18:43:12.053 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 《醉拳》 --[首映于]--> 香港电影节
+2025-06-24 18:43:12.054 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:43:12.056 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 人员 成龙 已存在，跳过插入
+2025-06-24 18:43:12.057 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=? 
+    limit
+        ?
+2025-06-24 18:43:12.058 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 事件 电影节颁奖典礼 已存在，跳过插入
+2025-06-24 18:43:12.059 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:43:12.064 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id,
+        e1_0.event_id,
+        e1_0.event_name,
+        e1_0.event_type,
+        e1_0.`group`,
+        e1_0.time 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=?
+2025-06-24 18:43:12.066 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity_event
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 18:43:12.068 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存人事件关系: 成龙 -> 电影节颁奖典礼 [参加]
+2025-06-24 18:43:12.068 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 成龙 --[参加]--> 电影节颁奖典礼
+2025-06-24 18:43:12.069 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:43:12.070 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 人员 成龙 已存在，跳过插入
+2025-06-24 18:43:12.072 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 18:43:12.074 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 人员 终身成就奖 已存在，跳过插入
+2025-06-24 18:43:12.075 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:43:12.077 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 18:43:12.080 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity_celebrity
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 18:43:12.082 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存人人关系: 成龙 -> 终身成就奖 [获得]
+2025-06-24 18:43:12.082 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 成龙 --[获得]--> 终身成就奖
+2025-06-24 18:43:12.082 [ForkJoinPool.commonPool-worker-1] INFO  com.datacenter.extract.service.DatabaseService - 🎉 成功保存提取数据到MySQL数据库 (localhost:3306/extract-graph)
+2025-06-24 18:43:12.086 [ForkJoinPool.commonPool-worker-1] INFO  c.datacenter.extract.controller.ExtractController - Extract request completed successfully in 11571ms
