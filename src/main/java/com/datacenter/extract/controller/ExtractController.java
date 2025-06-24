@@ -1,5 +1,6 @@
 package com.datacenter.extract.controller;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.datacenter.extract.service.TextExtractionService;
 import org.slf4j.Logger;
@@ -24,17 +25,37 @@ public class ExtractController {
     }
 
     /**
-     * 统一文本提取接口
+     * 统一文本提取接口 - 支持JSON数组格式
      */
     @PostMapping("/extract")
     public CompletableFuture<JSONObject> extract(@RequestBody JSONObject request) {
         return CompletableFuture.supplyAsync(() -> {
             long startTime = System.currentTimeMillis();
-            String textInput = request.getString("textInput");
-            String extractParams = request.getString("extractParams");
 
-            logger.info("Received extract request - extractParams: {}, textLength: {}",
-                    extractParams, textInput != null ? textInput.length() : 0);
+            // 设置默认提取参数
+            String extractParams = request.getString("extractParams");
+            if (extractParams == null || extractParams.trim().isEmpty()) {
+                extractParams = "triples";
+            }
+
+            // 处理textInput，支持字符串或JSON数组格式
+            String textInput = null;
+            try {
+                // 尝试作为JSONArray获取
+                JSONArray textInputObj = request.getJSONArray("textInput");
+                if (textInputObj != null && !textInputObj.isEmpty()) {
+                    // JSON数组格式，转换为JSON字符串传递给Service
+                    textInput = textInputObj.toJSONString();
+                    logger.info(
+                            "Received extract request - extractParams: {}, textInputType: JSONArray, arraySize: {}, textLength: {}",
+                            extractParams, textInputObj.size(), textInput.length());
+                }
+            } catch (Exception e) {
+                // 如果不是数组，则作为字符串获取
+                textInput = request.getString("textInput");
+                logger.info("Received extract request - extractParams: {}, textInputType: String, textLength: {}",
+                        extractParams, textInput != null ? textInput.length() : 0);
+            }
 
             if (textInput == null || textInput.trim().isEmpty()) {
                 logger.warn("Extract request failed - empty text content");
@@ -130,10 +151,12 @@ public class ExtractController {
                 new String[] { "celebrity_celebrity", "celebrity_work", "celebrity_event", "event_work" });
         info.put("database", database);
 
-        // API使用
+        // API使用 - 更新支持数组格式
         JSONObject api = new JSONObject();
         api.put("endpoint", "POST /api/v1/extract");
-        api.put("request_format", "{\"textInput\":\"文本内容\", \"extractParams\":\"triples\"}");
+        api.put("single_text", "{\"textInput\":\"单个文本\"}");
+        api.put("array_text", "{\"textInput\":[\"文本1\",\"文本2\"]}");
+        api.put("default_params", "extractParams默认值为\"triples\"");
         api.put("health_check", "GET /api/v1/health");
         api.put("service_info", "GET /api/v1/info");
         info.put("api", api);
