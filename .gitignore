@@ -1,0 +1,154 @@
+# Maven构建产物
+target/
+*.jar
+*.war
+*.ear
+*.class
+
+# IDE文件
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.project
+.classpath
+
+# 系统文件
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# 日志文件
+log/
+logs/
+*.log
+
+# 临时文件
+*.tmp
+*.temp
+*.pid
+*.seed
+*.pid.lock
+
+# 依赖目录
+node_modules/
+.pnpm-debug.log*
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+
+# 配置文件中的敏感信息
+application-local.yml
+application-local.yaml
+application-dev.yml
+application-dev.yaml
+*.env
+.env.*
+
+# Spring Boot
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# 测试覆盖率报告
+coverage/
+*.lcov
+
+# 缓存文件
+.cache/
+*.cache
+
+# 备份文件
+*.bak
+*.backup
+*_backup.*
+database_integration_test_original.py
+test_optimization_summary.md
+
+# 编译器生成的文件
+*.o
+*.so
+*.dylib
+
+# 包文件
+*.tar.gz
+*.zip
+*.rar
+
+# 文档生成
+docs/build/
+site/
+
+# JetBrains
+*.hprof
+
+# Eclipse
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.metadata
+.loadpath
+.recommenders
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# PyDev specific (Python IDE for Eclipse)
+*.pydevproject
+
+# CDT-specific (C/C++ Development Tooling)
+.cproject
+
+# CDT- autotools
+.autotools
+
+# Java annotation processor (APT)
+.factorypath
+
+# PDT-specific (PHP Development Tools)
+.buildpath
+
+# sbteclipse plugin
+.target
+
+# Tern plugin
+.tern-project
+
+# TeXlipse plugin
+.texlipse
+
+# STS (Spring Tool Suite)
+.springBeans
+
+# Code Recommenders
+.recommenders/
+
+# Annotation Processing
+.apt_generated
+.apt_generated_test
+
+# Scala IDE specific (Scala & Java development for Eclipse)
+.cache-main
+.scala_dependencies
+.worksheet
+
+# 项目特定的忽略文件
+plantext
+*.md~
+*conflicted*
