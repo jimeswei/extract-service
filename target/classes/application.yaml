@@ -1,0 +1,151 @@
+# ========================================
+# 智能文本提取服务 - 系统架构设计文档配置
+# ========================================
+
+server:
+  port: 2701
+  
+spring:
+  application:
+    name: extract-service
+    
+  # 数据库配置 - 按照plantext文档
+  datasource:
+    url: jdbc:mysql://localhost:3306/extract-graph?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+        
+  # Redis配置
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+    
+# MCP SSE 核心配置 - 第3章架构要求
+ai:
+  mcp:
+    server:
+      name: intelligent-extraction-service-prod
+      type: ASYNC
+      version: 1.0.0
+      enabled: true
+      sse-endpoint: /sse
+      sse-message-endpoint: /mcp/message
+      request-timeout: 60000
+      max-connections: 100
+      capabilities:
+        tool: true
+        resource: true
+        prompt: true
+        completion: true
+      
+# 智能配置：自适应参数 - 第4章处理引擎配置 (优化版)
+extraction:
+  ai:
+    providers:
+      deepseek:
+        api-key: sk-cea6dbdbba694338b5f4abe9dfb0975b
+        url: https://api.deepseek.com/v1/chat/completions
+        # 🚀 优化超时配置：基础超时 + 动态调整
+        base-timeout: 30s
+        max-timeout: 180s
+        timeout-per-1000-chars: 10s
+        # 🔄 优化重试配置
+        retry-count: 4
+        retry-base-delay: 2s
+        retry-max-delay: 30s
+        # 🛡️ 并发控制
+        max-concurrent-calls: 5
+        # 📊 监控配置
+        enable-metrics: true
+        fallback-enabled: true
+      local:
+        enabled: true
+        confidence-threshold: 0.7
+        
+  cache:
+    l1:
+      type: caffeine
+      max-size: 1000
+      expire-after-write: 1h
+    l2:
+      type: file
+      max-size: 10000
+      expire-after-write: 24h
+      
+  processing:
+    batch-size: 10
+    parallel-threads: 4
+    timeout: 120s
+    
+  # 🌐 网络配置优化
+  webclient:
+    # 连接池配置
+    connection-pool:
+      max-connections: 50
+      max-idle-time: 30s
+      max-life-time: 60s
+      pending-acquire-timeout: 60s
+    # 超时配置
+    connect-timeout: 10s
+    read-timeout: 180s
+    write-timeout: 60s
+    # SSL配置
+    ssl:
+      handshake-timeout: 10s
+    
+# 智能监控配置 - 第9章监控架构
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,info
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+    distribution:
+      percentiles:
+        http.server.requests: 0.5,0.95,0.99
+
+# 日志配置 - 与logback-spring.xml配合使用
+logging:
+  # 根据logback-spring.xml配置，这里的配置会被覆盖，但保留以防万一
+  level:
+    root: INFO
+    com.datacenter.extract: INFO
+    org.springframework: INFO
+    org.springframework.web: INFO
+    org.springframework.boot: INFO
+    org.hibernate: WARN
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type: TRACE
+    com.zaxxer.hikari: INFO
+    io.lettuce: WARN
+    io.netty: WARN
+    org.apache.http: WARN
+    com.github.benmanes.caffeine: INFO
+  
+  # 日志格式（被logback-spring.xml覆盖）
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%logger{36}] - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+  
+  # 日志文件配置（被logback-spring.xml覆盖）
+  file:
+    name: ./log/extract_service.log
+    max-size: 100MB
+    max-history: 30
+    total-size-cap: 3GB 

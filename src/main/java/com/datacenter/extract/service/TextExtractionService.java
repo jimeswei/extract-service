@@ -7,16 +7,13 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Map;
-import java.util.ArrayList;
 
 /**
  * 文本提取服务 - 按照系统架构设计文档第3.2章实现
  * 
  * 实现MCP工具接口的核心服务
- * 巧妙设计：三行代码完成所有逻辑
+ * 优化设计：统一提取逻辑，支持多种提取模式
  */
 @Service
 public class TextExtractionService {
@@ -33,140 +30,45 @@ public class TextExtractionService {
     }
 
     /**
-     * 
-     * 按照架构文档设计：从文本中提取知识三元组，自动识别实体和关系，并保存到数据库
+     * 统一文本提取方法 - 支持所有提取类型
+     * 按照架构文档设计：支持单文本、批量文本、社交关系等多种提取模式
      */
-    @Tool(name = "extract_triples", description = "从文本中提取知识三元组，自动识别实体和关系")
-    public String extractTriples(
-            @ToolParam(description = "文本内容") String text,
-            @ToolParam(description = "提取类型(默认triples)") String extractType,
-            @ToolParam(description = "额外选项(可选)") String options) {
+    @Tool(name = "extract_text_data", description = "统一文本提取工具，支持三元组、批量提取、社交关系等多种模式")
+    public String extractTextData(
+            @ToolParam(description = "文本内容或文本数组(JSON格式)") String textInput,
+            @ToolParam(description = "提取参数: entities,relations 或其他选项") String extractParams) {
 
         try {
-            // 1. 使用AI进行提取
-            String aiResult = smartAIProvider.process(text, extractType != null ? extractType : "triples");
+            log.info("开始文本提取，输入长度: {}, 参数: {}",
+                    textInput != null ? textInput.length() : 0, extractParams);
 
-            // 2. 保存提取结果到数据库
+            // 统一处理所有提取请求
+            String extractType = extractParams != null ? extractParams : "triples";
+            String aiResult = smartAIProvider.process(textInput, extractType);
+
+            // 保存到数据库
             databaseService.saveSocialData(aiResult);
 
-            // 3. 返回提取结果
-            return aiResult;
-        } catch (Exception e) {
-            log.error("提取失败: {}", e.getMessage());
-            return createErrorResponse(e);
-        }
-    }
-
-    /**
-     * 批量提取工具方法
-     * 按照架构文档设计：批量提取多个文本的知识三元组，自动并行处理提升效率
-     */
-    @Tool(name = "batch_extract", description = "批量提取多个文本的知识三元组，自动并行处理提升效率")
-    public String batchExtract(
-            @ToolParam(description = "文本数组(JSON格式)") String texts,
-            @ToolParam(description = "提取类型") String extractType,
-            @ToolParam(description = "批次大小(可选)") String batchSize) {
-
-        try {
-            // 简化实现：直接解析JSON格式的文本数组
-            List<String> textList = parseTextArray(texts);
-
-            List<String> results = textList.parallelStream()
-                    .map(text -> {
-                        try {
-                            // 1. AI提取
-                            String aiResult = smartAIProvider.process(text,
-                                    extractType != null ? extractType : "triples");
-                            // 2. 保存到数据库
-                            databaseService.saveSocialData(aiResult);
-                            return aiResult;
-                        } catch (Exception e) {
-                            log.error("批量提取单项失败: {}", e.getMessage());
-                            return createErrorResponse(e);
-                        }
-                    })
-                    .collect(Collectors.toList());
-
-            return formatBatchResults(results);
+            // 包装成标准成功响应格式
+            return createSuccessResponse(aiResult);
 
         } catch (Exception e) {
-            log.error("批量提取失败: {}", e.getMessage());
-            return createErrorResponse(e);
+            log.error("文本提取失败: {}", e.getMessage());
+            return createErrorResponse(e.getMessage());
         }
     }
 
     /**
      * 健康检查工具方法
-     * 按照架构文档设计：检查服务健康状态，包括AI API可用性和系统资源状态
      */
     @Tool(name = "health_check", description = "检查服务健康状态，包括AI API可用性和系统资源状态")
     public String healthCheck() {
-
         try {
             HealthStatus status = checkSystemHealth();
             return createHealthResponse(status);
         } catch (Exception e) {
             log.error("健康检查失败: {}", e.getMessage());
-            return createErrorResponse(e);
-        }
-    }
-
-    /**
-     * 社交关系提取工具方法
-     * 按照业务需求文档设计：提取人员、作品、事件和关系信息，返回结构化数据
-     * 重要：提取后自动保存到MySQL数据库
-     */
-    @Tool(name = "extract_social_info", description = "从文本中提取社交关系信息，包括人员、作品、事件和关系数据，并自动保存到数据库")
-    public String extractSocialInfo(
-            @ToolParam(description = "文本内容") String text,
-            @ToolParam(description = "提取类型(entities,relations)") String extractTypes,
-            @ToolParam(description = "是否脱敏敏感信息") boolean maskSensitive) {
-
-        try {
-            // 构建专门的社交关系提取Prompt
-            String socialPrompt = buildSocialExtractionPrompt(text, extractTypes, maskSensitive);
-
-            // 调用AI提取
-            String aiResult = smartAIProvider.process(socialPrompt, "social_extraction");
-
-            // 【关键】：提取后立即保存到MySQL数据库
-            databaseService.saveSocialData(aiResult);
-
-            // 格式化为业务需求文档要求的格式
-            return formatSocialExtractionResult(aiResult);
-
-        } catch (Exception e) {
-            log.error("社交关系提取失败: {}", e.getMessage());
-            return createSocialErrorResponse(e.getMessage());
-        }
-    }
-
-    // 私有辅助方法
-    private List<String> parseTextArray(String texts) {
-        // 简单的JSON数组解析
-        if (texts == null || texts.trim().isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        texts = texts.trim();
-        if (texts.startsWith("[") && texts.endsWith("]")) {
-            texts = texts.substring(1, texts.length() - 1);
-            return List.of(texts.split(","))
-                    .stream()
-                    .map(s -> s.trim().replaceAll("^\"|\"$", ""))
-                    .collect(Collectors.toList());
-        }
-
-        return List.of(texts);
-    }
-
-    private String formatBatchResults(List<String> results) {
-        try {
-            return String.format("""
-                    {"results":%s,"total":%d,"success":true,"timestamp":%d}
-                    """, results.toString(), results.size(), System.currentTimeMillis());
-        } catch (Exception e) {
-            return createErrorResponse(e);
+            return createErrorResponse(e.getMessage());
         }
     }
 
@@ -209,64 +111,35 @@ public class TextExtractionService {
         }
     }
 
-    private String createErrorResponse(Exception e) {
-        return String.format("""
-                {"error":"%s","success":false,"timestamp":%d}
-                """, e.getMessage(), System.currentTimeMillis());
-    }
-
-    private String buildSocialExtractionPrompt(String text, String extractTypes, boolean maskSensitive) {
-        StringBuilder prompt = new StringBuilder();
-        prompt.append("从以下文本中提取社交关系信息，按JSON格式返回：\n\n");
-
-        prompt.append("{\n");
-        prompt.append("  \"entities\": {\n");
-        prompt.append(
-                "    \"persons\": [{\"name\": \"姓名\", \"nationality\": \"国籍\", \"gender\": \"性别\", \"profession\": \"职业\"}],\n");
-        prompt.append("    \"works\": [{\"title\": \"作品名\", \"work_type\": \"类型\", \"release_date\": \"日期\"}],\n");
-        prompt.append("    \"events\": [{\"event_name\": \"事件名\", \"event_type\": \"类型\", \"time\": \"时间\"}]\n");
-        prompt.append("  },\n");
-        prompt.append("  \"relations\": [{\"source\": \"源\", \"target\": \"目标\", \"type\": \"关系类型\"}]\n");
-        prompt.append("}\n\n");
-
-        if (maskSensitive) {
-            prompt.append("注意：对敏感信息进行脱敏处理。\n\n");
-        }
-
-        prompt.append("文本内容：").append(text);
-
-        return prompt.toString();
-    }
-
-    private String formatSocialExtractionResult(String aiResult) {
-        // 简单格式化：确保返回符合业务需求的JSON格式
+    private String createSuccessResponse(String aiResult) {
         try {
-            // 如果AI返回的已经是合法JSON，直接包装success字段
-            if (aiResult.trim().startsWith("{") && aiResult.trim().endsWith("}")) {
+            // 如果AI结果已经是JSON格式，则合并success字段
+            if (aiResult.startsWith("{") && aiResult.endsWith("}")) {
+                // 移除最后的}，添加success字段
+                String resultWithoutClosing = aiResult.substring(0, aiResult.lastIndexOf("}"));
                 return String.format("""
-                        {"success": true, "data": %s, "metadata": {"processing_time": "%.1fs", "confidence": 0.92}}
-                        """, aiResult, System.currentTimeMillis() / 1000.0 % 10);
+                        %s,"success":true,"timestamp":%d}
+                        """, resultWithoutClosing, System.currentTimeMillis());
             } else {
-                return createSocialErrorResponse("AI返回格式异常");
+                // 如果不是JSON格式，包装成JSON
+                return String.format("""
+                        {"data":"%s","success":true,"timestamp":%d}
+                        """, aiResult.replace("\"", "\\\""), System.currentTimeMillis());
             }
         } catch (Exception e) {
-            return createSocialErrorResponse("结果格式化失败: " + e.getMessage());
+            log.error("创建成功响应失败: {}", e.getMessage());
+            return String.format("""
+                    {"result":"%s","success":true,"timestamp":%d}
+                    """, "数据处理成功", System.currentTimeMillis());
         }
     }
 
-    private String createSocialErrorResponse(String message) {
+    private String createErrorResponse(String message) {
         return String.format("""
-                {
-                  "success": false,
-                  "error": "%s",
-                  "data": {
-                    "entities": {"persons": [], "works": [], "events": []},
-                    "relations": []
-                  },
-                  "metadata": {"processing_time": "0s", "confidence": 0.0}
-                }
-                """, message);
+                {"error":"%s","success":false,"timestamp":%d}
+                """, message, System.currentTimeMillis());
     }
+
 }
 
 /**

@@ -4,9 +4,17 @@ import com.datacenter.extract.entity.Celebrity;
 import com.datacenter.extract.entity.Work;
 import com.datacenter.extract.entity.Event;
 import com.datacenter.extract.entity.EventType;
+import com.datacenter.extract.entity.CelebrityCelebrity;
+import com.datacenter.extract.entity.CelebrityWork;
+import com.datacenter.extract.entity.CelebrityEvent;
+import com.datacenter.extract.entity.EventWork;
 import com.datacenter.extract.repository.CelebrityRepository;
 import com.datacenter.extract.repository.WorkRepository;
 import com.datacenter.extract.repository.EventRepository;
+import com.datacenter.extract.repository.CelebrityCelebrityRepository;
+import com.datacenter.extract.repository.CelebrityWorkRepository;
+import com.datacenter.extract.repository.CelebrityEventRepository;
+import com.datacenter.extract.repository.EventWorkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +24,11 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.List;
 import java.util.UUID;
+import java.util.Optional;
 
 /**
  * 数据库服务 - 负责将提取数据存储到MySQL
- * 简洁实现，按照架构设计文档"直接入库"要求
+ * 完整实现，支持所有7张表的数据保存
  */
 @Service
 @Transactional
@@ -35,6 +44,18 @@ public class DatabaseService {
 
     @Autowired
     private EventRepository eventRepository;
+
+    @Autowired
+    private CelebrityCelebrityRepository celebrityCelebrityRepository;
+
+    @Autowired
+    private CelebrityWorkRepository celebrityWorkRepository;
+
+    @Autowired
+    private CelebrityEventRepository celebrityEventRepository;
+
+    @Autowired
+    private EventWorkRepository eventWorkRepository;
 
     /**
      * 保存提取的社交关系数据到数据库
@@ -55,7 +76,7 @@ public class DatabaseService {
             if (data.containsKey("triples")) {
                 @SuppressWarnings("unchecked")
                 List<Map<String, Object>> triples = (List<Map<String, Object>>) data.get("triples");
-                processTriplesData(triples);
+                processTriplesDataWithRelations(triples);
             }
             // 兼容entities格式
             else if (data.containsKey("entities")) {
@@ -70,7 +91,7 @@ public class DatabaseService {
             if (data.containsKey("relations")) {
                 @SuppressWarnings("unchecked")
                 List<Map<String, Object>> relations = (List<Map<String, Object>>) data.get("relations");
-                saveRelations(relations);
+                saveRelationsReal(relations);
             }
 
             log.info("🎉 成功保存提取数据到MySQL数据库 (localhost:3306/extract-graph)");
@@ -81,15 +102,15 @@ public class DatabaseService {
     }
 
     /**
-     * 处理triples格式数据 - 这是AI实际返回的格式
+     * 处理triples格式数据 - 包含关系保存逻辑
      */
-    private void processTriplesData(List<Map<String, Object>> triples) {
+    private void processTriplesDataWithRelations(List<Map<String, Object>> triples) {
         if (triples == null || triples.isEmpty()) {
             log.info("triples为空，跳过处理");
             return;
         }
 
-        log.info("处理 {} 个三元组", triples.size());
+        log.info("处理 {} 个三元组，包括实体和关系保存", triples.size());
 
         // 从triples中提取实体
         for (Map<String, Object> triple : triples) {
@@ -98,23 +119,113 @@ public class DatabaseService {
             String object = (String) triple.get("object");
 
             if (subject != null && !subject.trim().isEmpty()) {
-                // 根据谓词判断主语是人名还是作品名
+                // 保存主语实体
                 if (isPerson(subject, predicate)) {
                     saveSinglePerson(subject, predicate, object);
                 } else if (isWork(subject, predicate)) {
                     saveSingleWork(subject, predicate, object);
+                } else if (isEvent(subject, predicate)) {
+                    saveSingleEvent(subject, predicate, object);
                 }
             }
 
-            // 处理宾语也可能是实体的情况
+            // 保存宾语实体
             if (object != null && !object.trim().isEmpty()) {
                 if (isPerson(object, predicate)) {
                     saveSinglePerson(object, predicate, subject);
+                } else if (isWork(object, predicate)) {
+                    saveSingleWork(object, predicate, subject);
+                } else if (isEvent(object, predicate)) {
+                    saveSingleEvent(object, predicate, subject);
                 }
             }
 
+            // 保存关系
+            saveTripleRelation(subject, predicate, object);
+
             // 记录关系
             log.info("🔗 关系记录: {} --[{}]--> {}", subject, predicate, object);
+        }
+    }
+
+    /**
+     * 保存三元组关系到对应的关系表
+     */
+    private void saveTripleRelation(String subject, String predicate, String object) {
+        try {
+            boolean subjectIsPerson = isPerson(subject, predicate);
+            boolean objectIsPerson = isPerson(object, predicate);
+            boolean subjectIsWork = isWork(subject, predicate);
+            boolean objectIsWork = isWork(object, predicate);
+            boolean subjectIsEvent = isEvent(subject, predicate);
+            boolean objectIsEvent = isEvent(object, predicate);
+
+            // 人-人关系
+            if (subjectIsPerson && objectIsPerson) {
+                CelebrityCelebrity relation = new CelebrityCelebrity(
+                        getCelebrityIdByName(subject),
+                        getCelebrityIdByName(object),
+                        predicate);
+                celebrityCelebrityRepository.save(relation);
+                log.info("✅ 保存人人关系: {} -> {} [{}]", subject, object, predicate);
+            }
+            // 人-作品关系
+            else if (subjectIsPerson && objectIsWork) {
+                CelebrityWork relation = new CelebrityWork(
+                        getCelebrityIdByName(subject),
+                        getWorkIdByTitle(object),
+                        predicate);
+                celebrityWorkRepository.save(relation);
+                log.info("✅ 保存人作品关系: {} -> {} [{}]", subject, object, predicate);
+            }
+            // 作品-人关系 (反向)
+            else if (subjectIsWork && objectIsPerson) {
+                CelebrityWork relation = new CelebrityWork(
+                        getCelebrityIdByName(object),
+                        getWorkIdByTitle(subject),
+                        "参与_" + predicate);
+                celebrityWorkRepository.save(relation);
+                log.info("✅ 保存人作品关系(反向): {} -> {} [{}]", object, subject, "参与_" + predicate);
+            }
+            // 人-事件关系
+            else if (subjectIsPerson && objectIsEvent) {
+                CelebrityEvent relation = new CelebrityEvent(
+                        getCelebrityIdByName(subject),
+                        getEventIdByName(object),
+                        predicate);
+                celebrityEventRepository.save(relation);
+                log.info("✅ 保存人事件关系: {} -> {} [{}]", subject, object, predicate);
+            }
+            // 事件-人关系 (反向)
+            else if (subjectIsEvent && objectIsPerson) {
+                CelebrityEvent relation = new CelebrityEvent(
+                        getCelebrityIdByName(object),
+                        getEventIdByName(subject),
+                        "参与_" + predicate);
+                celebrityEventRepository.save(relation);
+                log.info("✅ 保存人事件关系(反向): {} -> {} [{}]", object, subject, "参与_" + predicate);
+            }
+            // 事件-作品关系
+            else if (subjectIsEvent && objectIsWork) {
+                EventWork relation = new EventWork(
+                        getEventIdByName(subject),
+                        getWorkIdByTitle(object),
+                        predicate);
+                eventWorkRepository.save(relation);
+                log.info("✅ 保存事件作品关系: {} -> {} [{}]", subject, object, predicate);
+            }
+            // 作品-事件关系 (反向)
+            else if (subjectIsWork && objectIsEvent) {
+                EventWork relation = new EventWork(
+                        getEventIdByName(object),
+                        getWorkIdByTitle(subject),
+                        "在_" + predicate);
+                eventWorkRepository.save(relation);
+                log.info("✅ 保存事件作品关系(反向): {} -> {} [{}]", object, subject, "在_" + predicate);
+            }
+
+        } catch (Exception e) {
+            log.error("保存关系失败: {} -> {} [{}], 错误: {}", subject, object, predicate, e.getMessage());
         }
     }
 
@@ -126,7 +237,8 @@ public class DatabaseService {
         return predicate.contains("出生") || predicate.contains("结婚") || predicate.contains("职业") ||
                 predicate.contains("导演") || predicate.contains("主演") || predicate.contains("歌手") ||
                 predicate.contains("演员") || predicate.contains("制片") || predicate.contains("编剧") ||
-                entity.matches(".*[杰明华伦龙云飞雪莉].*"); // 简单的人名模式匹配
+                predicate.contains("合作") || predicate.contains("配偶") || predicate.contains("朋友") ||
+                entity.matches(".*[杰明华伦龙云飞雪莉艺谋德华连杰朝伟润发学友富城黎明成龙].*"); // 扩展人名模式匹配
     }
 
     /**
@@ -136,72 +248,73 @@ public class DatabaseService {
         // 作品通常用书名号包围，或包含特定词汇
         return entity.startsWith("《") && entity.endsWith("》") ||
                 predicate.contains("作品") || predicate.contains("电影") || predicate.contains("歌曲") ||
-                predicate.contains("专辑") || predicate.contains("小说");
+                predicate.contains("专辑") || predicate.contains("小说") || predicate.contains("主演") ||
+                predicate.contains("演唱") || entity.contains("专辑");
     }
 
     /**
-     * 保存单个人员信息
+     * 判断是否为事件实体
      */
-    private void saveSinglePerson(String name, String predicate, String value) {
-        try {
-            // 检查是否已存在
-            if (celebrityRepository.existsByName(name)) {
-                log.info("人员 {} 已存在，跳过插入", name);
-                return;
-            }
+    private boolean isEvent(String entity, String predicate) {
+        return entity.contains("颁奖典礼") || entity.contains("电影节") || entity.contains("开幕式") ||
+                entity.contains("活动") || entity.contains("仪式") || entity.contains("节目") ||
+                predicate.contains("参加") || predicate.contains("举行") || predicate.contains("展映");
+    }
 
-            // 创建Celebrity实体
-            Celebrity celebrity = new Celebrity();
-            celebrity.setCelebrityId(generateId());
-            celebrity.setName(name);
+    // 辅助方法：根据名字获取celebrity_id
+    private String getCelebrityIdByName(String name) {
+        Optional<Celebrity> celebrity = celebrityRepository.findByName(name);
+        return celebrity.isPresent() ? celebrity.get().getCelebrityId() : generateId();
+    }
 
-            // 根据谓词设置相应字段
-            if (predicate.contains("职业") || predicate.contains("歌手") || predicate.contains("演员")) {
-                celebrity.setProfession(value);
-            } else if (predicate.contains("出生")) {
-                celebrity.setBirthdate(value);
-            } else if (predicate.contains("结婚") || predicate.contains("配偶")) {
-                celebrity.setSpouse(value);
-            }
+    // 辅助方法：根据标题获取work_id
+    private String getWorkIdByTitle(String title) {
+        Optional<Work> work = workRepository.findByTitle(title);
+        return work.isPresent() ? work.get().getWorkId() : generateId();
+    }
 
-            // 保存到数据库
-            celebrityRepository.save(celebrity);
-            log.info("✅ 成功保存人员: {} (通过三元组提取)", name);
-
-        } catch (Exception e) {
-            log.error("保存人员 {} 失败: {}", name, e.getMessage());
-        }
+    // 辅助方法：根据名称获取event_id
+    private String getEventIdByName(String eventName) {
+        Optional<Event> event = eventRepository.findByEventName(eventName);
+        return event.isPresent() ? event.get().getEventId() : generateId();
     }
 
     /**
-     * 保存单个作品信息
+     * 保存单个事件信息
      */
-    private void saveSingleWork(String title, String predicate, String value) {
+    private void saveSingleEvent(String eventName, String predicate, String value) {
         try {
             // 检查是否已存在
-            if (workRepository.existsByTitle(title)) {
-                log.info("作品 {} 已存在，跳过插入", title);
+            if (eventRepository.existsByEventName(eventName)) {
+                log.info("事件 {} 已存在，跳过插入", eventName);
                 return;
             }
 
-            // 创建Work实体
-            Work work = new Work();
-            work.setWorkId(generateId());
-            work.setTitle(title);
+            // 创建Event实体
+            Event event = new Event();
+            event.setEventId(generateId());
+            event.setEventName(eventName);
 
             // 根据谓词设置相应字段
-            if (predicate.contains("类型")) {
-                work.setWorkType(value);
-            } else if (predicate.contains("发布") || predicate.contains("上映")) {
-                work.setReleaseDate(value);
+            if (predicate.contains("时间") || predicate.contains("举行")) {
+                event.setTime(value);
+            }
+
+            // 设置事件类型
+            if (eventName.contains("颁奖典礼")) {
+                event.setEventType(EventType.颁奖典礼);
+            } else if (eventName.contains("电影节")) {
+                event.setEventType(EventType.其他);
+            } else {
+                event.setEventType(EventType.其他);
             }
 
             // 保存到数据库
-            workRepository.save(work);
-            log.info("✅ 成功保存作品: {} (通过三元组提取)", title);
+            eventRepository.save(event);
+            log.info("✅ 成功保存事件: {} (通过三元组提取)", eventName);
 
         } catch (Exception e) {
-            log.error("保存作品 {} 失败: {}", title, e.getMessage());
+            log.error("保存事件 {} 失败: {}", eventName, e.getMessage());
         }
     }
 
@@ -322,22 +435,6 @@ public class DatabaseService {
     }
 
     /**
-     * 保存关系信息到关系表 - 简化实现
-     * 注：关系表需要复杂的映射逻辑，暂时记录日志
-     */
-    private void saveRelations(List<Map<String, Object>> relations) {
-        for (Map<String, Object> relation : relations) {
-            String source = (String) relation.get("source");
-            String target = (String) relation.get("target");
-            String type = (String) relation.get("type");
-
-            // TODO: 实现关系表的复杂映射逻辑
-            // 需要确定source和target是人员、作品还是事件，然后写入对应关系表
-            log.info("🔗 关系记录: {} --[{}]--> {}", source, type, target);
-        }
-    }
-
-    /**
      * 解析提取结果JSON
      */
     private Map<String, Object> parseExtractionResult(String result) {
@@ -398,5 +495,86 @@ public class DatabaseService {
      */
     private String generateId() {
         return "ID_" + UUID.randomUUID().toString().substring(0, 8);
+    }
+
+    /**
+     * 保存单个人员信息
+     */
+    private void saveSinglePerson(String name, String predicate, String value) {
+        try {
+            // 检查是否已存在
+            if (celebrityRepository.existsByName(name)) {
+                log.info("人员 {} 已存在，跳过插入", name);
+                return;
+            }
+
+            // 创建Celebrity实体
+            Celebrity celebrity = new Celebrity();
+            celebrity.setCelebrityId(generateId());
+            celebrity.setName(name);
+
+            // 根据谓词设置相应字段
+            if (predicate.contains("职业") || predicate.contains("歌手") || predicate.contains("演员")) {
+                celebrity.setProfession(value);
+            } else if (predicate.contains("出生")) {
+                celebrity.setBirthdate(value);
+            } else if (predicate.contains("结婚") || predicate.contains("配偶")) {
+                celebrity.setSpouse(value);
+            }
+
+            // 保存到数据库
+            celebrityRepository.save(celebrity);
+            log.info("✅ 成功保存人员: {} (通过三元组提取)", name);
+
+        } catch (Exception e) {
+            log.error("保存人员 {} 失败: {}", name, e.getMessage());
+        }
+    }
+
+    /**
+     * 保存单个作品信息
+     */
+    private void saveSingleWork(String title, String predicate, String value) {
+        try {
+            // 检查是否已存在
+            if (workRepository.existsByTitle(title)) {
+                log.info("作品 {} 已存在，跳过插入", title);
+                return;
+            }
+
+            // 创建Work实体
+            Work work = new Work();
+            work.setWorkId(generateId());
+            work.setTitle(title);
+
+            // 根据谓词设置相应字段
+            if (predicate.contains("类型")) {
+                work.setWorkType(value);
+            } else if (predicate.contains("发布") || predicate.contains("上映")) {
+                work.setReleaseDate(value);
+            }
+
+            // 保存到数据库
+            workRepository.save(work);
+            log.info("✅ 成功保存作品: {} (通过三元组提取)", title);
+
+        } catch (Exception e) {
+            log.error("保存作品 {} 失败: {}", title, e.getMessage());
+        }
+    }
+
+    /**
+     * 保存关系信息到关系表 - 完整实现
+     */
+    private void saveRelationsReal(List<Map<String, Object>> relations) {
+        for (Map<String, Object> relation : relations) {
+            String source = (String) relation.get("source");
+            String target = (String) relation.get("target");
+            String type = (String) relation.get("type");
+
+            // 实现关系表的映射逻辑
+            saveTripleRelation(source, type, target);
+            log.info("🔗 关系记录: {} --[{}]--> {}", source, type, target);
+        }
     }
 }
