@@ -1,9 +1,0 @@
-com/datacenter/extract/config/MCPConfig.class
-com/datacenter/extract/service/TextExtractionService.class
-com/datacenter/extract/service/SmartAIProvider.class
-com/datacenter/extract/service/CacheKeyGenerator.class
-com/datacenter/extract/service/MemoryUtils.class
-com/datacenter/extract/service/AIModelCaller.class
-com/datacenter/extract/controller/ExtractController.class
-com/datacenter/extract/ExtractServiceApplication.class
-com/datacenter/extract/service/HealthStatus.class

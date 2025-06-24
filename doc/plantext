@@ -1,2 +1,6 @@
+jdk17
+springboot 3.2.x
 mysql: 
-ip: 192.168.3.78, user: root,port: 3307, password: 123456
+ip: localhost user: root,port: 3306, password: 123456, database: extract-graph
+redis 
+ip: localhost, port: 6379

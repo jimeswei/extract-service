@@ -1,5 +1,6 @@
 package com.datacenter.extract.controller;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.datacenter.extract.service.SmartAIProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -8,10 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-/**
- * 文本提取REST控制器
- * 按照架构文档要求提供标准API接口
- */
 @RestController
 @RequestMapping("/api/v1")
 @CrossOrigin(origins = "*")
@@ -24,102 +21,91 @@ public class ExtractController {
         this.smartAIProvider = smartAIProvider;
     }
 
-    /**
-     * 单文本提取接口 - 按照产品需求文档API设计
-     */
     @PostMapping("/extract")
-    public CompletableFuture<String> extract(@RequestBody Map<String, String> request) {
+    public CompletableFuture<JSONObject> extract(@RequestBody JSONObject request) {
         return CompletableFuture.supplyAsync(() -> {
-            String text = request.get("text");
-            String extractType = request.getOrDefault("extractType", "triples");
+            String text = request.getString("text");
+            String extractTypeTemp = request.getString("extractType");
+            final String extractType = (extractTypeTemp == null || extractTypeTemp.isEmpty()) ? "triples" : extractTypeTemp;
 
             if (text == null || text.trim().isEmpty()) {
-                return """
-                        {"error":"文本内容不能为空","success":false}
-                        """;
+                JSONObject error = new JSONObject();
+                error.put("error", "文本内容不能为空");
+                error.put("success", false);
+                error.put("timestamp", System.currentTimeMillis());
+                return error;
             }
 
-            return smartAIProvider.process(text, extractType);
+            String result = smartAIProvider.process(text, extractType);
+            return JSONObject.parseObject(result);
         });
     }
 
-    /**
-     * 批量提取接口
-     */
     @PostMapping("/extract/batch")
-    public CompletableFuture<String> batchExtract(@RequestBody Map<String, Object> request) {
+    public CompletableFuture<JSONObject> batchExtract(@RequestBody JSONObject request) {
         return CompletableFuture.supplyAsync(() -> {
-            @SuppressWarnings("unchecked")
-            List<String> texts = (List<String>) request.get("texts");
-            String extractType = (String) request.getOrDefault("extractType", "triples");
+            List<String> texts = request.getList("texts", String.class);
+            String extractTypeTemp = request.getString("extractType");
+            final String extractType = (extractTypeTemp == null || extractTypeTemp.isEmpty()) ? "triples" : extractTypeTemp;
 
             if (texts == null || texts.isEmpty()) {
-                return """
-                        {"error":"文本列表不能为空","success":false}
-                        """;
+                JSONObject error = new JSONObject();
+                error.put("error", "文本列表不能为空");
+                error.put("success", false);
+                error.put("timestamp", System.currentTimeMillis());
+                return error;
             }
 
-            // 简单并行处理
             List<String> results = texts.parallelStream()
                     .map(text -> smartAIProvider.process(text, extractType))
                     .toList();
 
-            try {
-                return new com.fasterxml.jackson.databind.ObjectMapper()
-                        .writeValueAsString(Map.of(
-                                "results", results,
-                                "total", texts.size(),
-                                "success", true,
-                                "timestamp", System.currentTimeMillis()));
-            } catch (Exception e) {
-                return """
-                        {"error":"批量处理失败","success":false}
-                        """;
-            }
+            JSONObject response = new JSONObject();
+            response.put("results", results);
+            response.put("total", texts.size());
+            response.put("extractType", extractType);
+            response.put("success", true);
+            response.put("timestamp", System.currentTimeMillis());
+            return response;
         });
     }
 
-    /**
-     * 健康检查接口
-     */
     @GetMapping("/health")
-    public Map<String, Object> health() {
+    public JSONObject health() {
         Runtime runtime = Runtime.getRuntime();
         long totalMemory = runtime.totalMemory();
         long freeMemory = runtime.freeMemory();
         double memoryUsage = (double) (totalMemory - freeMemory) / totalMemory * 100;
 
-        Map<String, Object> health = Map.of(
-                "service", "extract-service",
-                "status", memoryUsage < 90 ? "healthy" : "degraded",
-                "memory_usage", String.format("%.2f%%", memoryUsage),
-                "timestamp", System.currentTimeMillis());
+        JSONObject health = new JSONObject();
+        health.put("service", "extract-service");
+        health.put("status", memoryUsage < 90 ? "healthy" : "degraded");
+        health.put("memory_usage", String.format("%.2f%%", memoryUsage));
+        health.put("timestamp", System.currentTimeMillis());
 
-        // 合并缓存统计信息
-        Map<String, Object> result = new java.util.HashMap<>(health);
-        result.putAll(smartAIProvider.getCacheStats());
+        Map<String, Object> cacheStats = smartAIProvider.getCacheStats();
+        health.putAll(cacheStats);
 
-        return result;
+        return health;
     }
 
-    /**
-     * 服务信息接口
-     */
     @GetMapping("/info")
-    public Map<String, Object> info() {
-        return Map.of(
-                "service", "intelligent-extraction-service",
-                "version", "1.0.0",
-                "description", "按照系统架构设计文档实现的智能文本提取服务",
-                "features", new String[] {
-                        "知识三元组提取",
-                        "智能缓存",
-                        "容错降级",
-                        "批量处理"
-                },
-                "architecture", "MCP工具接口层 → 业务编排层 → 核心处理层 → 基础设施层",
-                "ai_provider", "Deepseek API",
-                "cache_provider", "Caffeine",
-                "timestamp", System.currentTimeMillis());
+    public JSONObject info() {
+        JSONObject info = new JSONObject();
+        info.put("service", "intelligent-extraction-service");
+        info.put("version", "1.0.0");
+        info.put("description", "按照系统架构设计文档实现的智能文本提取服务");
+        info.put("features", new String[] {
+                "知识三元组提取",
+                "智能缓存",
+                "容错降级",
+                "批量处理"
+        });
+        info.put("architecture", "MCP工具接口层 → 业务编排层 → 核心处理层 → 基础设施层");
+        info.put("ai_provider", "Deepseek API");
+        info.put("cache_provider", "Caffeine");
+        info.put("json_provider", "FastJSON2");
+        info.put("timestamp", System.currentTimeMillis());
+        return info;
     }
 }
