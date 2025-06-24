@@ -11,7 +11,7 @@ spring:
     
   # 数据库配置 - 按照plantext文档
   datasource:
-    url: jdbc:mysql://localhost:3306/extract-graph?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://192.168.3.78:3307/extract-graph?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -29,8 +29,8 @@ spring:
   # Redis配置
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: 192.168.3.78
+      port: 6380
       timeout: 2000ms
     
 # MCP SSE 核心配置 - 第3章架构要求

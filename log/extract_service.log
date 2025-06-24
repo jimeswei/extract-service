@@ -19155,3 +19155,575 @@ Identify and stop the process that's listening on port 2701 or configure this ap
 2025-06-24 20:32:06.964 [ForkJoinPool.commonPool-worker-2] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 《青花瓷》 --[获奖]--> 金曲奖
 2025-06-24 20:32:06.964 [ForkJoinPool.commonPool-worker-2] INFO  com.datacenter.extract.service.DatabaseService - 🎉 成功保存提取数据到MySQL数据库 (localhost:3306/extract-graph)
 2025-06-24 20:32:06.968 [ForkJoinPool.commonPool-worker-2] INFO  c.datacenter.extract.controller.ExtractController - Extract request completed successfully in 42ms
+2025-06-24 20:35:09.947 [ForkJoinPool.commonPool-worker-3] INFO  c.datacenter.extract.controller.ExtractController - Received extract request - extractParams: triples, textInputType: JSONArray, arraySize: 4, textLength: 88
+2025-06-24 20:35:09.947 [ForkJoinPool.commonPool-worker-3] INFO  c.datacenter.extract.service.TextExtractionService - 开始文本提取，输入长度: 88, 参数: triples
+2025-06-24 20:35:09.950 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 开始保存提取数据到数据库，数据长度: 806
+2025-06-24 20:35:09.950 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 原始AI返回数据: {
+  "triples": [
+    {
+      "subject": "成龙",
+      "predicate": "主演",
+      "object": "《醉拳》",
+      "confidence": 0.95
+    },
+    {
+      "subject": "《醉拳》",
+      "predicate": "首映于",
+      "object": "香港电影节",
+      "confidence": 0.95
+    },
+    {
+      "subject": "成龙",
+      "predicate": "参加",
+      "object": "电影节颁奖典礼",
+      "confidence": 0.95
+    },
+    {
+      "subject": "成龙",
+      "predicate": "获得",
+      "object": "终身成就奖",
+      "confidence": 0.95
+    },
+    {
+      "subject": "李小龙",
+      "predicate": "师父",
+      "object": "成龙",
+      "confidence": 0.95
+    },
+    {
+      "subject": "功夫电影节",
+      "predicate": "展映",
+      "object": "《醉拳》",
+      "confidence": 0.95
+    },
+    {
+      "subject": "功夫电影节",
+      "predicate": "展映",
+      "object": "《龙争虎斗》",
+      "confidence": 0.95
+    }
+  ]
+}
+2025-06-24 20:35:09.950 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 提取的JSON部分: {
+  "triples": [
+    {
+      "subject": "成龙",
+      "predicate": "主演",
+      "object": "《醉拳》",
+      "confidence": 0.95
+    },
+    {
+      "subject": "《醉拳》",
+      "predicate": "首映于",
+      "object": "香港电影节",
+      "confidence": 0.95
+    },
+    {
+      "subject": "成龙",
+      "predicate": "参加",
+      "object": "电影节颁奖典礼",
+      "confidence": 0.95
+    },
+    {
+      "subject": "成龙",
+      "predicate": "获得",
+      "object": "终身成就奖",
+      "confidence": 0.95
+    },
+    {
+      "subject": "李小龙",
+      "predicate": "师父",
+      "object": "成龙",
+      "confidence": 0.95
+    },
+    {
+      "subject": "功夫电影节",
+      "predicate": "展映",
+      "object": "《醉拳》",
+      "confidence": 0.95
+    },
+    {
+      "subject": "功夫电影节",
+      "predicate": "展映",
+      "object": "《龙争虎斗》",
+      "confidence": 0.95
+    }
+  ]
+}
+2025-06-24 20:35:09.950 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 成功解析提取结果，包含 1 个主要字段: [triples]
+2025-06-24 20:35:09.950 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 处理 7 个三元组，包括实体和关系保存
+2025-06-24 20:35:09.951 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 20:35:09.954 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 人员 成龙 已存在，跳过插入
+2025-06-24 20:35:09.954 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 20:35:09.956 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 人员 《醉拳》 已存在，跳过插入
+2025-06-24 20:35:09.956 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 20:35:09.958 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 20:35:09.960 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity_celebrity
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 20:35:09.963 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存人人关系: 成龙 -> 《醉拳》 [主演]
+2025-06-24 20:35:09.963 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 成龙 --[主演]--> 《醉拳》
+2025-06-24 20:35:09.963 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        w1_0.id 
+    from
+        work w1_0 
+    where
+        w1_0.title=? 
+    limit
+        ?
+2025-06-24 20:35:09.965 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 作品 《醉拳》 已存在，跳过插入
+2025-06-24 20:35:09.965 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=? 
+    limit
+        ?
+2025-06-24 20:35:09.967 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 事件 香港电影节 已存在，跳过插入
+2025-06-24 20:35:09.967 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id,
+        e1_0.event_id,
+        e1_0.event_name,
+        e1_0.event_type,
+        e1_0.`group`,
+        e1_0.time 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=?
+2025-06-24 20:35:09.970 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        w1_0.id,
+        w1_0.awards,
+        w1_0.baike,
+        w1_0.description,
+        w1_0.`group`,
+        w1_0.platform,
+        w1_0.release_date,
+        w1_0.role,
+        w1_0.title,
+        w1_0.work_id,
+        w1_0.work_type 
+    from
+        work w1_0 
+    where
+        w1_0.title=?
+2025-06-24 20:35:09.972 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        event_work
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 20:35:09.974 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存事件作品关系(反向): 香港电影节 -> 《醉拳》 [在_首映于]
+2025-06-24 20:35:09.974 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 《醉拳》 --[首映于]--> 香港电影节
+2025-06-24 20:35:09.975 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 20:35:09.978 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 人员 成龙 已存在，跳过插入
+2025-06-24 20:35:09.978 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=? 
+    limit
+        ?
+2025-06-24 20:35:09.980 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 事件 电影节颁奖典礼 已存在，跳过插入
+2025-06-24 20:35:09.981 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 20:35:09.983 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id,
+        e1_0.event_id,
+        e1_0.event_name,
+        e1_0.event_type,
+        e1_0.`group`,
+        e1_0.time 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=?
+2025-06-24 20:35:09.986 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity_event
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 20:35:09.988 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存人事件关系: 成龙 -> 电影节颁奖典礼 [参加]
+2025-06-24 20:35:09.988 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 成龙 --[参加]--> 电影节颁奖典礼
+2025-06-24 20:35:09.988 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 20:35:09.991 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 人员 成龙 已存在，跳过插入
+2025-06-24 20:35:09.991 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 20:35:09.995 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 人员 终身成就奖 已存在，跳过插入
+2025-06-24 20:35:09.996 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 20:35:09.998 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 20:35:09.999 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity_celebrity
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 20:35:10.000 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存人人关系: 成龙 -> 终身成就奖 [获得]
+2025-06-24 20:35:10.001 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 成龙 --[获得]--> 终身成就奖
+2025-06-24 20:35:10.001 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 20:35:10.003 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 人员 李小龙 已存在，跳过插入
+2025-06-24 20:35:10.003 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 20:35:10.005 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 人员 成龙 已存在，跳过插入
+2025-06-24 20:35:10.006 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 20:35:10.007 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 20:35:10.010 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity_celebrity
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 20:35:10.011 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存人人关系: 李小龙 -> 成龙 [师父]
+2025-06-24 20:35:10.011 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 李小龙 --[师父]--> 成龙
+2025-06-24 20:35:10.012 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=? 
+    limit
+        ?
+2025-06-24 20:35:10.015 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 事件 功夫电影节 已存在，跳过插入
+2025-06-24 20:35:10.016 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        w1_0.id 
+    from
+        work w1_0 
+    where
+        w1_0.title=? 
+    limit
+        ?
+2025-06-24 20:35:10.017 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 作品 《醉拳》 已存在，跳过插入
+2025-06-24 20:35:10.018 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id,
+        e1_0.event_id,
+        e1_0.event_name,
+        e1_0.event_type,
+        e1_0.`group`,
+        e1_0.time 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=?
+2025-06-24 20:35:10.019 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        w1_0.id,
+        w1_0.awards,
+        w1_0.baike,
+        w1_0.description,
+        w1_0.`group`,
+        w1_0.platform,
+        w1_0.release_date,
+        w1_0.role,
+        w1_0.title,
+        w1_0.work_id,
+        w1_0.work_type 
+    from
+        work w1_0 
+    where
+        w1_0.title=?
+2025-06-24 20:35:10.021 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        event_work
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 20:35:10.023 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存事件作品关系: 功夫电影节 -> 《醉拳》 [展映]
+2025-06-24 20:35:10.023 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 功夫电影节 --[展映]--> 《醉拳》
+2025-06-24 20:35:10.024 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=? 
+    limit
+        ?
+2025-06-24 20:35:10.026 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 事件 功夫电影节 已存在，跳过插入
+2025-06-24 20:35:10.026 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=? 
+    limit
+        ?
+2025-06-24 20:35:10.028 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 人员 《龙争虎斗》 已存在，跳过插入
+2025-06-24 20:35:10.031 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.id,
+        c1_0.baike,
+        c1_0.birthdate,
+        c1_0.celebrity_id,
+        c1_0.company,
+        c1_0.education,
+        c1_0.gender,
+        c1_0.`group`,
+        c1_0.name,
+        c1_0.nationality,
+        c1_0.position,
+        c1_0.profession,
+        c1_0.relatives,
+        c1_0.resume,
+        c1_0.spouse 
+    from
+        celebrity c1_0 
+    where
+        c1_0.name=?
+2025-06-24 20:35:10.034 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.id,
+        e1_0.event_id,
+        e1_0.event_name,
+        e1_0.event_type,
+        e1_0.`group`,
+        e1_0.time 
+    from
+        event e1_0 
+    where
+        e1_0.event_name=?
+2025-06-24 20:35:10.037 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        celebrity_event
+        (e_type, `from`, `to`) 
+    values
+        (?, ?, ?)
+2025-06-24 20:35:10.040 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - ✅ 保存人事件关系(反向): 《龙争虎斗》 -> 功夫电影节 [参与_展映]
+2025-06-24 20:35:10.040 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 🔗 关系记录: 功夫电影节 --[展映]--> 《龙争虎斗》
+2025-06-24 20:35:10.040 [ForkJoinPool.commonPool-worker-3] INFO  com.datacenter.extract.service.DatabaseService - 🎉 成功保存提取数据到MySQL数据库 (localhost:3306/extract-graph)
+2025-06-24 20:35:10.045 [ForkJoinPool.commonPool-worker-3] INFO  c.datacenter.extract.controller.ExtractController - Extract request completed successfully in 98ms
+2025-06-24 20:41:52.339 [SpringApplicationShutdownHook] INFO  o.s.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-24 20:41:52.341 [SpringApplicationShutdownHook] TRACE org.hibernate.type.spi.TypeConfiguration$Scope - Handling #sessionFactoryClosed from [org.hibernate.internal.SessionFactoryImpl@298cfe89] for TypeConfiguration
+2025-06-24 20:41:52.341 [SpringApplicationShutdownHook] DEBUG org.hibernate.type.spi.TypeConfiguration$Scope - Un-scoping TypeConfiguration [org.hibernate.type.spi.TypeConfiguration$Scope@49f4d410] from SessionFactory [org.hibernate.internal.SessionFactoryImpl@298cfe89]
+2025-06-24 20:41:52.342 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-06-24 20:41:52.348 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-06-24 20:41:55.434 [main] INFO  com.datacenter.extract.ExtractServiceApplication - Starting ExtractServiceApplication using Java 17.0.6 with PID 45485 (/Users/admin/workspace/AGENT/extract-service/target/classes started by admin in /Users/admin/workspace/AGENT/extract-service)
+2025-06-24 20:41:55.436 [main] INFO  com.datacenter.extract.ExtractServiceApplication - No active profile set, falling back to 1 default profile: "default"
+2025-06-24 20:41:56.393 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-06-24 20:41:56.395 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-24 20:41:56.520 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 120 ms. Found 7 JPA repository interfaces.
+2025-06-24 20:41:56.544 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-06-24 20:41:56.545 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-06-24 20:41:56.558 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.CelebrityCelebrityRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 20:41:56.558 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.CelebrityEventRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 20:41:56.559 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.CelebrityRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 20:41:56.559 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.CelebrityWorkRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 20:41:56.559 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.EventRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 20:41:56.560 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.EventWorkRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 20:41:56.561 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.datacenter.extract.repository.WorkRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-24 20:41:56.561 [main] INFO  o.s.d.r.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 12 ms. Found 0 Redis repository interfaces.
