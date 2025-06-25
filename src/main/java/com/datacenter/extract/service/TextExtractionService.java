@@ -3,6 +3,7 @@ package com.datacenter.extract.service;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ public class TextExtractionService {
     }
 
     /**
-     * 统一文本提取方法 - 支持所有提取类型
+     * 统一文本提取方法 - 异步处理，立即返回成功响应
      * 按照架构文档设计：支持单文本、批量文本、社交关系等多种提取模式
      */
     @Tool(name = "extract_text_data", description = "统一文本提取工具，支持三元组、批量提取、社交关系等多种模式")
@@ -39,22 +40,45 @@ public class TextExtractionService {
             @ToolParam(description = "提取参数: entities,relations 或其他选项") String extractParams) {
 
         try {
-            log.info("开始文本提取，输入长度: {}, 参数: {}",
+            log.info("提交异步文本提取任务，输入长度: {}, 参数: {}",
                     textInput != null ? textInput.length() : 0, extractParams);
 
-            // 统一处理所有提取请求
+            // 调用异步方法处理
+            processTextAsync(textInput, extractParams);
+
+            // 立即返回成功响应
+            return String.format("""
+                    {"success":true,"message":"任务已提交，正在后台处理","timestamp":%d}
+                    """, System.currentTimeMillis());
+
+        } catch (Exception e) {
+            log.error("提交异步文本提取任务失败: {}", e.getMessage());
+            return createErrorResponse(e.getMessage());
+        }
+    }
+
+    /**
+     * 异步处理文本提取 - 智能处理长文本
+     */
+    @Async("textExtractionExecutor")
+    public void processTextAsync(String textInput, String extractParams) {
+        try {
+            log.info("开始异步文本提取，线程: {}, 文本长度: {}",
+                    Thread.currentThread().getName(),
+                    textInput != null ? textInput.length() : 0);
+
+            // 统一处理所有提取请求，SmartAIProvider会自动判断是否需要长文本处理
             String extractType = extractParams != null ? extractParams : "triples";
             String aiResult = smartAIProvider.process(textInput, extractType);
 
             // 保存到数据库
             databaseService.saveSocialData(aiResult);
 
-            // 包装成标准成功响应格式
-            return createSuccessResponse(aiResult);
+            log.info("异步文本提取完成，处理文本长度: {}",
+                    textInput != null ? textInput.length() : 0);
 
         } catch (Exception e) {
-            log.error("文本提取失败: {}", e.getMessage());
-            return createErrorResponse(e.getMessage());
+            log.error("异步文本提取失败，错误: {}", e.getMessage());
         }
     }
 
