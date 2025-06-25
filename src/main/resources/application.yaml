@@ -146,6 +146,3 @@ logging:
   # 日志文件配置（被logback-spring.xml覆盖）
   file:
     name: ./log/extract_service.log
-    max-size: 100MB
-    max-history: 30
-    total-size-cap: 3GB 
