@@ -5,7 +5,7 @@
 
 ## 🎯 项目概述
 
-基于Spring Boot和Spring AI的智能文本提取服务，支持知识图谱构建和实体关系抽取，集成MySQL数据库自动存储提取结果。
+基于Spring Boot和Spring AI的智能文本提取服务，采用**统一异步处理架构**，支持知识图谱构建和实体关系抽取，集成MySQL数据库自动存储提取结果。
 
 ## 🚀 核心特性
 
@@ -15,11 +15,11 @@
 - **长文本（>2000字符）**：自动分片并行处理
 - **知识图谱提取**：实体、关系、三元组一站式提取
 
-### ⚡ 双模式处理
-- **同步模式**：`/api/v1/extract` - 等待处理完成返回结果
-- **异步模式**：`/api/v1/async/extract` - 立即返回，后台处理
+### ⚡ 统一异步架构
+- **立即响应**：所有请求立即返回状态，后台异步处理
+- **数据库自动保存**：提取结果自动存储到MySQL，无需等待
 - **高并发支持**：专用线程池支持多任务并发
-- **数据库自动保存**：提取结果自动存储到MySQL
+- **智能缓存**：Caffeine高性能缓存提升处理效率
 
 ### 🔧 长文本优化
 - **智能分片**：按语义边界分割，保持信息完整性
@@ -27,17 +27,17 @@
 - **重叠机制**：分片间200字符重叠，避免信息丢失
 - **智能合并**：自动去重和结果合并
 
-### 📊 性能优化
-- **Caffeine缓存**：高性能本地缓存，提升响应速度
-- **响应式架构**：WebClient + CompletableFuture异步处理
-- **并发控制**：信号量限制AI调用，防止过载
-- **动态超时**：根据文本长度智能调整超时时间
+### 📊 架构精简
+- **统一控制器**：AsyncExtractController作为唯一入口
+- **多端点支持**：主要、批量、社交等专用接口
+- **向后兼容**：保持原有异步路径可用
+- **清晰架构**：Controller → Service → Provider → Database
 
 ## 📋 API接口
 
-### 同步处理接口
+### 主要接口
 
-#### 文本提取
+#### 文本提取（推荐）
 ```http
 POST /api/v1/extract
 Content-Type: application/json
@@ -45,6 +45,15 @@ Content-Type: application/json
 {
   "textInput": "您的文本内容",
   "extractParams": "entities,relations"
+}
+```
+
+**响应示例**：
+```json
+{
+  "success": true,
+  "message": "任务已提交，正在后台处理，结果将自动保存到数据库",
+  "timestamp": 1750837558870
 }
 ```
 
@@ -70,37 +79,24 @@ Content-Type: application/json
 }
 ```
 
-#### 服务信息
-```http
-GET /api/v1/info
-```
-
 #### 健康检查
 ```http
 GET /api/v1/health
 ```
 
-### 异步处理接口
-
-#### 异步文本提取
+#### 服务信息
 ```http
-POST /api/v1/async/extract
-Content-Type: application/json
-
-{
-  "textInput": "您的文本内容",
-  "extractParams": "entities,relations"
-}
+GET /api/v1/info
 ```
 
-#### 异步服务信息
-```http
-GET /api/v1/async/info
-```
+### 兼容性接口
 
-#### 异步健康检查
+为保持向后兼容，以下异步接口仍然可用：
+
 ```http
-GET /api/v1/async/health
+POST /api/v1/async/extract     # 异步提取（兼容）
+GET /api/v1/async/health       # 异步健康检查
+GET /api/v1/async/info         # 异步服务信息
 ```
 
 ## 🛠️ 快速开始
@@ -132,9 +128,9 @@ java -jar target/extract-service-1.0.0.jar
 
 ### 4. 功能测试
 
-#### 短文本测试
+#### 快速测试
 ```bash
-curl -X POST http://localhost:2701/api/v1/async/extract \
+curl -X POST http://localhost:2701/api/v1/extract \
   -H "Content-Type: application/json" \
   -d '{
     "textInput": "张三是一名软件工程师，他在北京工作。",
@@ -142,30 +138,25 @@ curl -X POST http://localhost:2701/api/v1/async/extract \
   }'
 ```
 
-#### 长文本测试
+#### 完整测试
 ```bash
-# 运行完整测试脚本
+# 运行统一控制器测试
 python database_integration_test.py
 ```
 
-#### 健康检查
-```bash
-curl http://localhost:2701/api/v1/health
-```
+## 📊 性能特点
 
-## 📊 性能对比
-
-### 处理效率
-| 文本长度 | 同步模式 | 异步模式 | 优势 |
-|---------|---------|---------|------|
-| 500字符 | 2.5秒 | 0.1秒响应 | 立即响应 |
-| 2000字符 | 5.0秒 | 0.1秒响应 | 立即响应 |
-| 5000字符 | 15秒+ | 0.1秒响应 | 支持长文本 |
-| 10000字符 | 30秒+ | 0.1秒响应 | 分片处理 |
+### 响应时间
+| 操作类型 | 响应时间 | 处理方式 |
+|---------|---------|---------|
+| API响应 | < 100ms | 立即返回状态 |
+| 短文本处理 | 后台2-5秒 | 直接AI处理 |
+| 长文本处理 | 后台5-15秒 | 智能分片处理 |
+| 数据库写入 | 自动完成 | 异步保存 |
 
 ### 系统能力
-- **并发处理**：支持多任务同时提取
-- **缓存命中率**：平均80%以上
+- **高并发**：支持多任务同时提取
+- **智能缓存**：命中率80%以上
 - **内存优化**：分片机制减少内存占用
 - **数据一致性**：事务保证数据完整性
 
@@ -176,9 +167,9 @@ curl http://localhost:2701/api/v1/health
 import requests
 import time
 
-def extract_text_async(text, extract_params="entities,relations"):
-    """异步提取文本"""
-    url = "http://localhost:2701/api/v1/async/extract"
+def extract_text(text, extract_params="entities,relations"):
+    """文本提取 - 统一接口"""
+    url = "http://localhost:2701/api/v1/extract"
     data = {
         "textInput": text,
         "extractParams": extract_params
@@ -188,39 +179,54 @@ def extract_text_async(text, extract_params="entities,relations"):
     result = response.json()
     
     if result.get("success"):
-        print("任务提交成功，正在后台处理...")
+        print("✅ 任务提交成功，正在后台处理")
+        print("💡 结果将自动保存到数据库")
         return True
     else:
-        print(f"任务提交失败: {result.get('error')}")
+        print(f"❌ 任务提交失败: {result.get('error')}")
         return False
 
-def extract_text_sync(text, extract_params="entities,relations"):
-    """同步提取文本"""
-    url = "http://localhost:2701/api/v1/extract"
+def extract_batch(texts, extract_params="entities,relations"):
+    """批量提取"""
+    url = "http://localhost:2701/api/v1/extract/batch"
     data = {
-        "textInput": text,
+        "textInput": texts,  # 数组格式
         "extractParams": extract_params
     }
     
-    response = requests.post(url, json=data, timeout=30)
+    response = requests.post(url, json=data, timeout=10)
+    return response.json()
+
+def extract_social(text):
+    """社交关系提取"""
+    url = "http://localhost:2701/api/v1/extract/social"
+    data = {
+        "textInput": text
+        # extractParams 会自动设置为 "entities,relations"
+    }
+    
+    response = requests.post(url, json=data, timeout=10)
     return response.json()
 
 # 使用示例
-text = "您的文本内容..."
-# 异步处理
-if extract_text_async(text):
-    print("任务已提交，正在后台处理...")
-    print("检查数据库可查看处理结果")
+text = "李明是一名AI工程师，他开发了智能聊天机器人。"
 
-# 同步处理
-result = extract_text_sync(text)
-print(result)
+# 单文本提取
+extract_text(text)
+
+# 批量提取
+texts = ["文本1", "文本2", "文本3"]
+extract_batch(texts)
+
+# 社交关系提取
+social_text = "张三和李四是同事关系，他们合作开发项目。"
+extract_social(social_text)
 ```
 
 ### 2. JavaScript调用示例
 ```javascript
-async function extractTextAsync(text, extractParams = 'entities,relations') {
-  const response = await fetch('http://localhost:2701/api/v1/async/extract', {
+async function extractText(text, extractParams = 'entities,relations') {
+  const response = await fetch('http://localhost:2701/api/v1/extract', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -234,23 +240,23 @@ async function extractTextAsync(text, extractParams = 'entities,relations') {
   const result = await response.json();
   
   if (result.success) {
-    console.log('任务提交成功');
+    console.log('✅ 任务提交成功，后台处理中');
     return true;
   } else {
-    console.error('任务提交失败:', result.error);
+    console.error('❌ 任务提交失败:', result.error);
     return false;
   }
 }
 
-async function extractTextSync(text, extractParams = 'entities,relations') {
-  const response = await fetch('http://localhost:2701/api/v1/extract', {
+async function extractBatch(texts) {
+  const response = await fetch('http://localhost:2701/api/v1/extract/batch', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      textInput: text,
-      extractParams: extractParams
+      textInput: texts,  // 数组格式
+      extractParams: 'triples'
     })
   });
   
@@ -258,52 +264,24 @@ async function extractTextSync(text, extractParams = 'entities,relations') {
 }
 ```
 
-### 3. 批量处理
-```python
-def process_multiple_texts(texts):
-    """批量处理多个文本"""
-    # 使用批量接口
-    response = requests.post(
-        "http://localhost:2701/api/v1/extract/batch",
-        json={
-            "textInput": texts,  # 数组格式
-            "extractParams": "entities,relations"
-        }
-    )
-    return response.json()
-
-# 社交关系提取
-def extract_social_relationships(text):
-    """专门的社交关系提取"""
-    response = requests.post(
-        "http://localhost:2701/api/v1/extract/social",
-        json={
-            "textInput": text,
-            "extractParams": "entities,relations"
-        }
-    )
-    return response.json()
-```
-
 ## 🏗️ 系统架构
 
-### 核心组件
+### 精简架构设计
 ```
-双控制器架构:
-├── ExtractController (/api/v1/*)
-│   ├── 同步处理接口
-│   ├── /extract - 单文本提取
-│   ├── /extract/batch - 批量提取
-│   ├── /extract/social - 社交关系提取
-│   └── 等待结果返回
-├── AsyncExtractController (/api/v1/async/*)
-│   ├── 异步处理接口
-│   └── 立即返回响应
+统一异步控制器:
+├── AsyncExtractController (统一入口)
+│   ├── POST /api/v1/extract - 主要提取接口
+│   ├── POST /api/v1/extract/batch - 批量提取
+│   ├── POST /api/v1/extract/social - 社交关系提取
+│   ├── POST /api/v1/async/extract - 兼容接口
+│   ├── GET /api/v1/health - 健康检查
+│   ├── GET /api/v1/info - 服务信息
+│   └── 立即返回响应，后台异步处理
 │
 共享服务层:
 ├── TextExtractionService (核心业务逻辑)
-│   ├── MCP工具接口
-│   └── 异步任务管理
+│   ├── processTextAsync() - 异步处理入口
+│   └── extractTextData() - 同步处理逻辑
 ├── SmartAIProvider (AI处理层)
 │   ├── 文本长度判断
 │   ├── Caffeine缓存
@@ -376,35 +354,45 @@ long-text:
 
 ## ❓ 常见问题
 
-### Q: 如何选择同步还是异步模式？
-A: 异步模式适合快速响应需求，同步模式适合需要立即获取结果的场景。
+### Q: 为什么删除了同步接口？
+A: 统一使用异步处理提供更好的用户体验，避免长时间等待，同时保持架构简洁。
 
-### Q: 如何知道异步任务是否完成？
-A: 异步任务结果会自动保存到数据库，可以通过查询数据库表来确认处理完成。
+### Q: 如何知道提取任务是否完成？
+A: 任务结果会自动保存到数据库，可以通过查询数据库表来确认处理完成。
 
-### Q: 长文本处理会影响提取质量吗？
-A: 不会。系统使用智能分片和重叠机制，确保信息完整性。
-
-### Q: 系统支持的最大文本长度是多少？
-A: 建议不超过50000字符，系统会自动分片处理。
-
-### Q: 如何查看提取结果？
-A: 异步模式的结果自动保存到数据库，同步模式直接返回结果。
+### Q: 兼容性接口会被移除吗？
+A: 不会。我们保持`/api/v1/async/*`路径的向后兼容，确保现有客户端正常工作。
 
 ### Q: 批量接口和单个接口有什么区别？
-A: 批量接口支持一次提交多个文本，提升处理效率。
+A: 批量接口支持一次提交多个文本，底层使用相同的处理逻辑，只是输入格式不同。
 
 ### Q: 社交关系提取接口有什么特点？
-A: 专门优化了社交关系识别算法，提取人际关系效果更好。
+A: 自动设置最适合社交关系识别的参数，无需手动指定extractParams。
 
-## 🏆 核心成就
+### Q: 如何查看提取结果？
+A: 所有提取结果都自动保存到MySQL数据库，可通过SQL查询或数据库管理工具查看。
 
-✅ **双模式支持**：同步/异步双接口，满足不同需求  
-✅ **智能化处理**：自动长短文本识别和处理策略选择  
-✅ **高性能**：分片处理+并发控制+本地缓存  
-✅ **数据完整性**：MySQL事务保证+7表关系图谱  
-✅ **易用性**：统一API接口，丰富的测试脚本  
-✅ **多场景支持**：单文本、批量、社交关系专用接口  
+## 🏆 架构优势
+
+### ✅ 精简设计
+- **统一入口**：AsyncExtractController作为唯一控制器
+- **清晰职责**：每个端点有明确的用途和优化
+- **代码减少**：删除重复代码，提升维护性
+
+### ✅ 用户体验
+- **快速响应**：所有请求立即返回，无需等待
+- **自动保存**：结果自动写入数据库，无需额外操作
+- **智能处理**：根据文本特点选择最佳处理策略
+
+### ✅ 系统性能
+- **高并发**：支持大量并发请求
+- **资源优化**：异步处理避免资源阻塞
+- **智能缓存**：提升重复请求性能
+
+### ✅ 开发友好
+- **简化架构**：减少学习成本
+- **向后兼容**：保护现有投资
+- **易于扩展**：清晰的分层设计
 
 ---
 
@@ -416,6 +404,13 @@ A: 专门优化了社交关系识别算法，提取人际关系效果更好。
 
 ---
 
-> **设计理念**: "简单而强大" - 用清晰的架构实现复杂的业务需求  
-> **架构目标**: 高性能、高可用、易扩展、易维护  
-> **实现成果**: 工业级智能文本提取服务的标准实现
+> **设计理念**: "简单而强大" - 用统一的异步架构实现高效的文本处理  
+> **架构目标**: 高性能、高可用、易使用、易维护  
+> **实现成果**: 精简而强大的智能文本提取服务
+
+
+ssh -T git@github.com
+git add .
+git commit -m "更新readme.md"
+git remote set-url origin  git@github.com:jimeswei/extract-service.git
+git push origin main
