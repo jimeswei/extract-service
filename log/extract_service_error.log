@@ -990,3 +990,31 @@ java.lang.RuntimeException: AI提取失败，无法处理请求。请检查AI服
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
 	at java.base/java.lang.Thread.run(Thread.java:833)
 2025-06-25 12:18:50.526 [TextExtract-4] ERROR c.datacenter.extract.service.TextExtractionService - 异步文本提取失败，错误: AI提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-25 15:46:33.978 [parallel-10] ERROR com.datacenter.extract.service.AIModelCaller - ❌ AI调用失败，耗时: 30026ms，错误: Did not observe any item or terminal signal within 30000ms in 'flatMap' (and no fallback has been configured)
+2025-06-25 15:46:33.979 [TextExtract-4] ERROR com.datacenter.extract.service.SmartAIProvider - ❌ AI提取失败，类型: entities,relations，文本长度: 439
+2025-06-25 15:46:33.979 [TextExtract-4] ERROR com.datacenter.extract.service.SmartAIProvider - 💥 AI提取过程异常: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+java.lang.RuntimeException: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+	at com.datacenter.extract.service.SmartAIProvider.lambda$0(SmartAIProvider.java:77)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.lambda$doComputeIfAbsent$14(BoundedLocalCache.java:2688)
+	at java.base/java.util.concurrent.ConcurrentHashMap.compute(ConcurrentHashMap.java:1916)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.doComputeIfAbsent(BoundedLocalCache.java:2686)
+	at com.github.benmanes.caffeine.cache.BoundedLocalCache.computeIfAbsent(BoundedLocalCache.java:2669)
+	at com.github.benmanes.caffeine.cache.LocalCache.computeIfAbsent(LocalCache.java:112)
+	at com.github.benmanes.caffeine.cache.LocalManualCache.get(LocalManualCache.java:62)
+	at com.datacenter.extract.service.SmartAIProvider.process(SmartAIProvider.java:54)
+	at com.datacenter.extract.service.TextExtractionService.processTextAsync(TextExtractionService.java:72)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:352)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:765)
+	at org.springframework.aop.interceptor.AsyncExecutionInterceptor.lambda$invoke$0(AsyncExecutionInterceptor.java:115)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+2025-06-25 15:46:33.983 [TextExtract-4] ERROR c.datacenter.extract.service.TextExtractionService - 异步文本提取失败，错误: AI提取失败: AI提取失败，无法处理请求。请检查AI服务状态或稍后重试。
+2025-06-25 15:46:45.992 [parallel-11] ERROR com.datacenter.extract.service.AIModelCaller - ❌ AI调用失败，耗时: 40006ms，错误: Did not observe any item or terminal signal within 40000ms in 'flatMap' (and no fallback has been configured)
