@@ -23,11 +23,14 @@ public class TextExtractionService {
 
     private final SmartAIProvider smartAIProvider;
     private final DatabaseService databaseService;
+    private final KnowledgeGraphEngine knowledgeGraphEngine; // v3.0新增
 
     @Autowired
-    public TextExtractionService(SmartAIProvider smartAIProvider, DatabaseService databaseService) {
+    public TextExtractionService(SmartAIProvider smartAIProvider, DatabaseService databaseService,
+            KnowledgeGraphEngine knowledgeGraphEngine) {
         this.smartAIProvider = smartAIProvider;
         this.databaseService = databaseService;
+        this.knowledgeGraphEngine = knowledgeGraphEngine; // v3.0新增
     }
 
     /**
@@ -43,8 +46,8 @@ public class TextExtractionService {
             log.info("提交异步文本提取任务，输入长度: {}, 参数: {}",
                     textInput != null ? textInput.length() : 0, extractParams);
 
-            // 调用异步方法处理
-            processTextAsync(textInput, extractParams);
+            // v3.0升级：调用支持知识图谱模式的异步方法
+            processTextAsync(textInput, extractParams, "standard"); // 默认标准模式，保持向后兼容
 
             // 立即返回成功响应
             return String.format("""
@@ -58,28 +61,42 @@ public class TextExtractionService {
     }
 
     /**
-     * 异步处理文本提取 - 智能处理长文本
+     * 异步处理文本提取 - v3.0升级版，支持知识图谱处理模式
      */
     @Async("textExtractionExecutor")
-    public void processTextAsync(String textInput, String extractParams) {
+    public void processTextAsync(String textInput, String extractParams, String kgMode) {
         try {
-            log.info("开始异步文本提取，线程: {}, 文本长度: {}",
+            log.info("开始异步文本提取，线程: {}, 文本长度: {}, KG模式: {}",
                     Thread.currentThread().getName(),
-                    textInput != null ? textInput.length() : 0);
+                    textInput != null ? textInput.length() : 0, kgMode);
 
-            // 统一处理所有提取请求，SmartAIProvider会自动判断是否需要长文本处理
+            // 阶段1: AI处理 (保持原有逻辑)
             String extractType = extractParams != null ? extractParams : "triples";
             String aiResult = smartAIProvider.process(textInput, extractType);
 
-            // 保存到数据库
+            // 阶段2: 知识图谱智能处理 (v3.0新增)
+            if ("enhanced".equals(kgMode) || "fusion".equals(kgMode)) {
+                aiResult = knowledgeGraphEngine.enhanceKnowledge(aiResult, kgMode);
+            }
+
+            // 阶段3: 数据持久化 (增强版)
             databaseService.saveSocialData(aiResult);
 
-            log.info("异步文本提取完成，处理文本长度: {}",
-                    textInput != null ? textInput.length() : 0);
+            log.info("异步文本提取完成，处理文本长度: {}, KG模式: {}",
+                    textInput != null ? textInput.length() : 0, kgMode);
 
         } catch (Exception e) {
             log.error("异步文本提取失败，错误: {}", e.getMessage());
         }
+    }
+
+    /**
+     * 异步处理文本提取 - 保持向后兼容的旧版本方法
+     */
+    @Async("textExtractionExecutor")
+    public void processTextAsync(String textInput, String extractParams) {
+        // 调用新版本方法，使用标准模式
+        processTextAsync(textInput, extractParams, "standard");
     }
 
     /**

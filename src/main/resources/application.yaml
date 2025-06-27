@@ -1,148 +1,426 @@
 # ========================================
-# 智能文本提取服务 - 系统架构设计文档配置
+# 智能文本提取服务 - 统一配置文件 v6.0
+# 🔧 基础配置 + 🚀 生产环境配置 (消除重复)
 # ========================================
 
-server:
-  port: 2701
-  
+# 默认激活开发环境
 spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:default}
+  main:
+    allow-bean-definition-overriding: true
+  
   application:
     name: extract-service
     
-  # 数据库配置 - 按照plantext文档
+  # 通用数据库配置
   datasource:
-    url: jdbc:mysql://localhost:3306/extract-graph?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/${DB_NAME:extract-graph}?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
     
-  # JPA配置
+  # 通用JPA配置
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-        format_sql: true
+        format_sql: false
         
   # Redis配置
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
       timeout: 2000ms
+
+# 通用服务器配置
+server:
+  port: ${SERVER_PORT:2701}
+
+# 通用监控配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# 通用日志配置
+logging:
+  level:
+    root: INFO
+    com.datacenter.extract: INFO
+    org.springframework: WARN
+    org.hibernate: WARN
+    com.zaxxer.hikari: INFO
+    reactor.netty: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%logger{36}] - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%logger{50}] - %msg%n"
+  file:
+    name: ${LOG_FILE:./log/extract_service.log}
+    max-size: 100MB
+    max-history: ${LOG_MAX_HISTORY:10}
+
+# 通用AI配置
+extraction:
+  ai:
+    providers:
+      deepseek:
+        api-key: ${DEEPSEEK_API_KEY:sk-cea6dbdbba694338b5f4abe9dfb0975b}
+        url: https://api.deepseek.com/v1/chat/completions
+        base-timeout: 30s
+        max-timeout: 180s
+        retry-count: ${AI_RETRY_COUNT:3}
+        max-concurrent-calls: ${AI_MAX_CONCURRENT:3}
+        enable-metrics: true
+        fallback-enabled: true
+
+# 通用缓存配置
+cache:
+  caffeine:
+    default:
+      maximum-size: ${CACHE_DEFAULT_SIZE:1000}
+      expire-after-write: 1h
+
+# 通用知识图谱配置
+knowledge-graph:
+  enabled: true
+  disambiguation:
+    threshold: ${KG_DISAMBIGUATION_THRESHOLD:0.7}
+    max-candidates: ${KG_MAX_CANDIDATES:5}
+    cache-enabled: ${KG_CACHE_ENABLED:false}
+  fusion:
+    conflict-resolution: "confidence-weighted"
+    enable-quality-assessment: ${KG_QUALITY_ASSESSMENT:false}
+    batch-processing: ${KG_BATCH_PROCESSING:false}
+  quality:
+    min-score: 0.6
+    assessment-interval: 1h
+
+---
+# ========================================
+# 🚀 生产环境配置 (Profile: production)
+# ========================================
+spring:
+  config:
+    activate:
+      on-profile: production
+  
+  # 生产数据库优化
+  datasource:
+    url: jdbc:mysql://localhost:3306/${DB_NAME:extraction_db}?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&cachePrepStmts=true&useServerPrepStmts=true&prepStmtCacheSize=250&prepStmtCacheSqlLimit=2048
+    username: ${DB_USERNAME:extract_user}
+    password: ${DB_PASSWORD:extract_2024}
+    # HikariCP 高性能连接池
+    hikari:
+      maximum-pool-size: 30
+      minimum-idle: 10
+      idle-timeout: 300000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      validation-timeout: 5000
+      leak-detection-threshold: 60000
+      connection-test-query: SELECT 1
+      auto-commit: true
+      pool-name: ExtractServicePool-Production
+      
+  # JPA生产优化
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        show_sql: false
+        use_sql_comments: false
+        # 批处理优化
+        jdbc:
+          batch_size: 50
+          fetch_size: 50
+          batch_versioned_data: true
+        order_inserts: true
+        order_updates: true
+        # 二级缓存
+        cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region.factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+        temp:
+          use_jdbc_metadata_defaults: false
+
+# 生产服务器配置
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  tomcat:
+    threads:
+      max: 200
+      min-spare: 50
+    max-connections: 10000
+    accept-count: 100
+    connection-timeout: 20000
+    max-http-form-post-size: 50MB
+    max-swallow-size: 50MB
+    uri-encoding: UTF-8
+
+# 生产监控配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,loggers,threaddump,heapdump,caches
+  endpoint:
+    health:
+      show-details: always
+    metrics:
+      enabled: true
+  metrics:
+    distribution:
+      percentiles:
+        http.server.requests: 0.5,0.95,0.99
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+# 生产日志配置
+logging:
+  level:
+    com.datacenter.extract: INFO
+    org.springframework: WARN
+    org.hibernate: WARN
+    org.apache.tomcat: WARN
+    reactor.netty: WARN
+    com.zaxxer.hikari: WARN
+  file:
+    name: logs/extract-service.log
+    max-history: 30
+
+# 生产AI配置
+extraction:
+  ai:
+    providers:
+      deepseek:
+        timeout-per-1000-chars: 10s
+        retry-count: 4
+        retry-base-delay: 2s
+        retry-max-delay: 30s
+        max-concurrent-calls: 8
+        
+  # 文本处理配置
+  processing:
+    batch-size: 20
+    parallel-threads: 8
+    timeout: 120s
+    max-text-length: 50000
+    chunk-size: 2000
+    chunk-overlap: 200
     
-# MCP SSE 核心配置 - 第3章架构要求
+  # 网络配置优化
+  webclient:
+    connection-pool:
+      max-connections: 50
+      max-idle-time: 30s
+      max-lifetime: 60s
+      pending-acquire-timeout: 60s
+    timeout:
+      connect: 10s
+      read: 180s
+      write: 60s
+    buffer:
+      max-in-memory-size: 10MB
+
+# 生产知识图谱配置
+knowledge-graph:
+  disambiguation:
+    threshold: 0.8
+    max-candidates: 3
+    cache-enabled: true
+    similarity-algorithm: "bert-cosine"
+  fusion:
+    enable-quality-assessment: true
+    batch-processing: true
+    confidence-threshold: 0.75
+  quality:
+    min-score: 0.7
+    assessment-interval: "2h"
+    auto-improvement: true
+  reasoning:
+    enabled: true
+    max-depth: 3
+    confidence-threshold: 0.6
+
+# 生产缓存架构
+cache:
+  caffeine:
+    # L1 主缓存
+    l1-cache:
+      maximum-size: 10000
+      expire-after-write: 30m
+      expire-after-access: 15m
+      record-stats: true
+    # AI结果缓存
+    ai-result-cache:
+      maximum-size: 5000
+      expire-after-write: 2h
+      expire-after-access: 1h
+      record-stats: true
+    # 实体消歧义缓存
+    disambiguation-cache:
+      maximum-size: 2000
+      expire-after-write: 6h
+      expire-after-access: 3h
+      record-stats: true
+    # 相似度计算缓存
+    similarity-cache:
+      maximum-size: 10000
+      expire-after-write: 4h
+      expire-after-access: 2h
+      record-stats: true
+
+# 生产线程池配置
+performance:
+  threads:
+    # 主业务线程池
+    main-business:
+      core-size: 10
+      max-size: 50
+      queue-capacity: 200
+      keep-alive-seconds: 60
+      thread-name-prefix: "main-biz-"
+      rejection-policy: "CallerRunsPolicy"
+    # AI处理线程池
+    ai-processing:
+      core-size: 8
+      max-size: 20
+      queue-capacity: 100
+      keep-alive-seconds: 120
+      thread-name-prefix: "ai-proc-"
+      rejection-policy: "CallerRunsPolicy"
+    # 数据库线程池
+    database:
+      core-size: 5
+      max-size: 15
+      queue-capacity: 50
+      keep-alive-seconds: 300
+      thread-name-prefix: "db-"
+      rejection-policy: "CallerRunsPolicy"
+      
+  # 监控配置
+  monitoring:
+    enabled: true
+    metrics-interval: 30s
+    threshold-alerts: true
+    health-check-interval: 10s
+    task-timeout-minutes: 5
+    cleanup-interval-minutes: 10
+    stats-cache-minutes: 1
+    alert-failure-rate: 20.0
+
+# 生产安全配置
+security:
+  cors:
+    allowed-origins: "*"
+    allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+    allowed-headers: "*"
+    max-age: 3600
+
+# 生产性能指标
+metrics:
+  performance:
+    target-response-time-ms: 2000
+    max-memory-usage-percent: 85
+    min-success-rate-percent: 95
+    alert-thresholds:
+      response-time-p99: 5000
+      error-rate: 5.0
+      memory-usage: 90.0
+      cache-hit-rate: 80.0
+
+# MCP SSE 生产配置
 ai:
   mcp:
     server:
       name: intelligent-extraction-service-prod
       type: ASYNC
-      version: 1.0.0
+      version: 6.0.0
       enabled: true
       sse-endpoint: /sse
       sse-message-endpoint: /mcp/message
-      request-timeout: 60000
-      max-connections: 100
+      request-timeout: 180000
+      max-connections: 200
       capabilities:
         tool: true
         resource: true
         prompt: true
         completion: true
-      
-# 智能配置：自适应参数 - 第4章处理引擎配置 (优化版)
-extraction:
-  ai:
-    providers:
-      deepseek:
-        api-key: sk-cea6dbdbba694338b5f4abe9dfb0975b
-        url: https://api.deepseek.com/v1/chat/completions
-        # 🚀 优化超时配置：基础超时 + 动态调整
-        base-timeout: 30s
-        max-timeout: 180s
-        timeout-per-1000-chars: 10s
-        # 🔄 优化重试配置
-        retry-count: 4
-        retry-base-delay: 2s
-        retry-max-delay: 30s
-        # 🛡️ 并发控制
-        max-concurrent-calls: 5
-        # 📊 监控配置
-        enable-metrics: true
-        fallback-enabled: true
-      local:
-        enabled: true
-        confidence-threshold: 0.7
-        
-  cache:
-    l1:
-      type: caffeine
-      max-size: 1000
-      expire-after-write: 1h
-    l2:
-      type: file
-      max-size: 10000
-      expire-after-write: 24h
-      
-  processing:
-    batch-size: 10
-    parallel-threads: 4
-    timeout: 120s
-    
-  # 🌐 网络配置优化
-  webclient:
-    # 连接池配置
-    connection-pool:
-      max-connections: 50
-      max-idle-time: 30s
-      max-life-time: 60s
-      pending-acquire-timeout: 60s
-    # 超时配置
-    connect-timeout: 10s
-    read-timeout: 180s
-    write-timeout: 60s
-    # SSL配置
-    ssl:
-      handshake-timeout: 10s
-    
-# 智能监控配置 - 第9章监控架构
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,metrics,info
-  prometheus:
-    metrics:
-      export:
-        enabled: true
-    distribution:
-      percentiles:
-        http.server.requests: 0.5,0.95,0.99
+        reasoning: true
+        knowledge-graph: true
 
-# 日志配置 - 与logback-spring.xml配合使用
-logging:
-  # 根据logback-spring.xml配置，这里的配置会被覆盖，但保留以防万一
-  level:
-    root: INFO
-    com.datacenter.extract: INFO
-    org.springframework: INFO
-    org.springframework.web: INFO
-    org.springframework.boot: INFO
-    org.hibernate: WARN
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type: TRACE
-    com.zaxxer.hikari: INFO
-    io.lettuce: WARN
-    io.netty: WARN
-    org.apache.http: WARN
-    com.github.benmanes.caffeine: INFO
+# 业务功能配置
+business:
+  # 功能开关
+  features:
+    entity-disambiguation: true
+    knowledge-fusion: true
+    relation-validation: true
+    quality-assessment: true
+    batch-processing: true
+    
+  # 处理模式配置
+  processing-modes:
+    standard:
+      enabled: true
+      description: "标准AI提取"
+    enhanced:
+      enabled: true
+      description: "AI + 实体消歧义 + 关系验证"
+    fusion:
+      enabled: true
+      description: "完整知识图谱处理链"
+    batch:
+      enabled: true
+      description: "批量处理模式"
+      
+  # 质量控制
+  quality-control:
+    min-confidence-score: 0.7
+    max-processing-time-ms: 300000
+    enable-auto-retry: true
+    enable-human-review: false
+
+# 异步任务配置
+async:
+  task:
+    core-pool-size: 10
+    max-pool-size: 50
+    queue-capacity: 500
+    thread-name-prefix: "async-task-"
+
+---
+# ========================================
+# 🔧 开发环境配置 (Profile: default)
+# ========================================
+spring:
+  config:
+    activate:
+      on-profile: default
   
-  # 日志格式（被logback-spring.xml覆盖）
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%logger{36}] - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
-  
-  # 日志文件配置（被logback-spring.xml覆盖）
-  file:
-    name: ./log/extract_service.log
+  # 开发数据库配置
+  datasource:
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      validation-timeout: 5000

@@ -2,5 +2,8 @@ jdk17
 springboot 3.2.x
 mysql: 
 ip: localhost user: root,port: 3306, password: 123456, database: extract-graph
+version:8.0
 redis 
 ip: localhost, port: 6379
+model: Deepseek, base-url: "https://api.deepseek.com/v1", api-key: sk-cea6dbdbba694338b5f4abe9dfb0975b
+docker 安装的mysql 容器ID： 4c5b862dd161， docker 安装的redis, 容器ID： a680ef6e7bbe

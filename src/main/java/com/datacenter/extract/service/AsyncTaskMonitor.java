@@ -6,56 +6,58 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * 异步任务监控服务
- * 用于监控和统计异步文本提取任务的执行情况
+ * 
+ * 功能：
+ * 1. 任务状态追踪
+ * 2. 性能指标统计
+ * 3. 错误监控
+ * 4. 资源使用监控
  */
 @Service
 public class AsyncTaskMonitor {
 
     private static final Logger log = LoggerFactory.getLogger(AsyncTaskMonitor.class);
 
-    // 任务统计计数器
+    // 任务执行统计
     private final AtomicLong totalTasks = new AtomicLong(0);
-    private final AtomicLong completedTasks = new AtomicLong(0);
+    private final AtomicLong successTasks = new AtomicLong(0);
     private final AtomicLong failedTasks = new AtomicLong(0);
-    private final AtomicLong runningTasks = new AtomicLong(0);
+    private final AtomicLong totalProcessingTime = new AtomicLong(0);
 
-    // 任务执行时间统计
-    private final ConcurrentHashMap<String, Long> taskStartTimes = new ConcurrentHashMap<>();
-    private final AtomicLong totalExecutionTime = new AtomicLong(0);
+    // 活跃任务追踪
+    private final Map<String, TaskInfo> activeTasks = new ConcurrentHashMap<>();
 
     /**
      * 记录任务开始
      */
     public String recordTaskStart(String textInput, String extractParams) {
         String taskId = generateTaskId();
-        long startTime = System.currentTimeMillis();
-
-        taskStartTimes.put(taskId, startTime);
+        TaskInfo taskInfo = new TaskInfo(taskId, textInput, extractParams, System.currentTimeMillis());
+        activeTasks.put(taskId, taskInfo);
         totalTasks.incrementAndGet();
-        runningTasks.incrementAndGet();
 
-        log.info("异步任务开始 - 任务ID: {}, 输入长度: {}, 参数: {}",
+        log.debug("任务开始 - TaskId: {}, TextLength: {}, ExtractParams: {}",
                 taskId, textInput != null ? textInput.length() : 0, extractParams);
-
         return taskId;
     }
 
     /**
-     * 记录任务完成
+     * 记录任务成功
      */
-    public void recordTaskComplete(String taskId) {
-        Long startTime = taskStartTimes.remove(taskId);
-        if (startTime != null) {
-            long duration = System.currentTimeMillis() - startTime;
-            totalExecutionTime.addAndGet(duration);
-            completedTasks.incrementAndGet();
-            runningTasks.decrementAndGet();
+    public void recordTaskSuccess(String taskId) {
+        TaskInfo taskInfo = activeTasks.remove(taskId);
+        if (taskInfo != null) {
+            long duration = System.currentTimeMillis() - taskInfo.startTime;
+            totalProcessingTime.addAndGet(duration);
+            successTasks.incrementAndGet();
 
-            log.info("异步任务完成 - 任务ID: {}, 执行时间: {}ms", taskId, duration);
+            log.info("任务成功 - TaskId: {}, Duration: {}ms", taskId, duration);
         }
     }
 
@@ -63,72 +65,66 @@ public class AsyncTaskMonitor {
      * 记录任务失败
      */
     public void recordTaskFailed(String taskId, String errorMessage) {
-        Long startTime = taskStartTimes.remove(taskId);
-        if (startTime != null) {
-            long duration = System.currentTimeMillis() - startTime;
+        TaskInfo taskInfo = activeTasks.remove(taskId);
+        if (taskInfo != null) {
+            long duration = System.currentTimeMillis() - taskInfo.startTime;
             failedTasks.incrementAndGet();
-            runningTasks.decrementAndGet();
 
-            log.error("异步任务失败 - 任务ID: {}, 执行时间: {}ms, 错误: {}",
+            log.error("任务失败 - TaskId: {}, Duration: {}ms, Error: {}",
                     taskId, duration, errorMessage);
         }
     }
 
     /**
-     * 获取监控统计信息
+     * 获取监控统计
      */
     public Map<String, Object> getMonitorStats() {
-        Map<String, Object> stats = new ConcurrentHashMap<>();
+        Map<String, Object> stats = new HashMap<>();
 
         long total = totalTasks.get();
-        long completed = completedTasks.get();
+        long success = successTasks.get();
         long failed = failedTasks.get();
-        long running = runningTasks.get();
-        long totalTime = totalExecutionTime.get();
 
-        // 基础统计
         stats.put("total_tasks", total);
-        stats.put("completed_tasks", completed);
+        stats.put("success_tasks", success);
         stats.put("failed_tasks", failed);
-        stats.put("running_tasks", running);
+        stats.put("active_tasks", activeTasks.size());
+        stats.put("success_rate", total > 0 ? (double) success / total * 100 : 0.0);
+        stats.put("failure_rate", total > 0 ? (double) failed / total * 100 : 0.0);
 
-        // 成功率统计
-        if (total > 0) {
-            stats.put("success_rate", String.format("%.2f%%", (double) completed / total * 100));
-            stats.put("failure_rate", String.format("%.2f%%", (double) failed / total * 100));
+        if (success > 0) {
+            stats.put("avg_processing_time", totalProcessingTime.get() / success);
         } else {
-            stats.put("success_rate", "0.00%");
-            stats.put("failure_rate", "0.00%");
+            stats.put("avg_processing_time", 0);
         }
-
-        // 性能统计
-        if (completed > 0) {
-            stats.put("average_execution_time", String.format("%.2fms", (double) totalTime / completed));
-        } else {
-            stats.put("average_execution_time", "0.00ms");
-        }
-
-        stats.put("total_execution_time", totalTime + "ms");
-
-        // 系统状态
-        stats.put("status", running > 0 ? "processing" : "idle");
-        stats.put("timestamp", System.currentTimeMillis());
 
         return stats;
     }
 
     /**
-     * 重置监控统计
+     * 获取活跃任务信息
      */
-    public void resetStats() {
-        totalTasks.set(0);
-        completedTasks.set(0);
-        failedTasks.set(0);
-        runningTasks.set(0);
-        totalExecutionTime.set(0);
-        taskStartTimes.clear();
+    public Map<String, TaskInfo> getActiveTasks() {
+        return new HashMap<>(activeTasks);
+    }
 
-        log.info("异步任务监控统计已重置");
+    /**
+     * 清理超时任务
+     */
+    public void cleanupTimeoutTasks() {
+        long currentTime = System.currentTimeMillis();
+        long timeoutThreshold = 5 * 60 * 1000; // 5分钟超时
+
+        activeTasks.entrySet().removeIf(entry -> {
+            TaskInfo taskInfo = entry.getValue();
+            if (currentTime - taskInfo.startTime > timeoutThreshold) {
+                log.warn("清理超时任务 - TaskId: {}, Duration: {}ms",
+                        entry.getKey(), currentTime - taskInfo.startTime);
+                failedTasks.incrementAndGet();
+                return true;
+            }
+            return false;
+        });
     }
 
     /**
@@ -136,20 +132,27 @@ public class AsyncTaskMonitor {
      */
     private String generateTaskId() {
         return "task_" + System.currentTimeMillis() + "_" +
-                Integer.toHexString((int) (Math.random() * 0x10000));
+                UUID.randomUUID().toString().substring(0, 8);
     }
 
     /**
-     * 获取当前运行任务数
+     * 任务信息内部类
      */
-    public long getRunningTaskCount() {
-        return runningTasks.get();
-    }
+    public static class TaskInfo {
+        public final String taskId;
+        public final String textInput;
+        public final String extractParams;
+        public final long startTime;
 
-    /**
-     * 检查是否有任务正在运行
-     */
-    public boolean hasRunningTasks() {
-        return runningTasks.get() > 0;
+        public TaskInfo(String taskId, String textInput, String extractParams, long startTime) {
+            this.taskId = taskId;
+            this.textInput = textInput;
+            this.extractParams = extractParams;
+            this.startTime = startTime;
+        }
+
+        public long getDuration() {
+            return System.currentTimeMillis() - startTime;
+        }
     }
 }
