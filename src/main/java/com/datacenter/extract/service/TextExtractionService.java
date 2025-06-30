@@ -80,7 +80,7 @@ public class TextExtractionService {
             }
 
             // 阶段3: 数据持久化 (增强版)
-            databaseService.saveSocialData(aiResult);
+            databaseService.saveSocialDataEnhanced(aiResult, kgMode);
 
             log.info("异步文本提取完成，处理文本长度: {}, KG模式: {}",
                     textInput != null ? textInput.length() : 0, kgMode);

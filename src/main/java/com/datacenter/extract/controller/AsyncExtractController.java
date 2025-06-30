@@ -4,13 +4,28 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.datacenter.extract.service.OptimizedBusinessService;
 import com.datacenter.extract.service.AsyncTaskMonitor;
+import com.datacenter.extract.service.TextExtractionService;
+import com.datacenter.extract.service.DataMaintenanceService;
 import com.datacenter.extract.util.ResponseBuilder;
+import com.datacenter.extract.entity.Celebrity;
+import com.datacenter.extract.entity.KnowledgeQuality;
+import com.datacenter.extract.entity.EntityDisambiguation;
+import com.datacenter.extract.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.Arrays;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * 异步提取控制器 - 企业级优化版本 v5.0
@@ -34,63 +49,99 @@ public class AsyncExtractController {
 
     private static final Logger log = LoggerFactory.getLogger(AsyncExtractController.class);
 
-    private final OptimizedBusinessService businessService;
+    @Autowired
+    private OptimizedBusinessService businessService;
+
+    @Autowired
+    private TextExtractionService textExtractionService;
+
+    @Autowired
+    private CelebrityRepository celebrityRepository;
+
+    @Autowired
+    private WorkRepository workRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
+
+    @Autowired
+    private CelebrityCelebrityRepository celebrityCelebrityRepository;
+
+    @Autowired
+    private CelebrityWorkRepository celebrityWorkRepository;
+
+    @Autowired
+    private CelebrityEventRepository celebrityEventRepository;
+
+    @Autowired
+    private EventWorkRepository eventWorkRepository;
+
+    @Autowired
+    private KnowledgeQualityRepository qualityRepository;
+
+    @Autowired
+    private EntityDisambiguationRepository disambiguationRepository;
+
+    @Autowired
+    private DataMaintenanceService dataMaintenanceService;
+
     private final AsyncTaskMonitor taskMonitor;
 
     @Autowired
-    public AsyncExtractController(OptimizedBusinessService businessService, AsyncTaskMonitor taskMonitor) {
-        this.businessService = businessService;
+    public AsyncExtractController(AsyncTaskMonitor taskMonitor) {
         this.taskMonitor = taskMonitor;
         log.info("AsyncExtractController initialized with enterprise-grade business service");
     }
 
     /**
-     * 统一文本提取接口 - 企业级优化版本
-     * 
-     * 支持四种处理模式：
-     * - standard: 标准AI提取
-     * - enhanced: AI + 实体消歧义 + 关系验证
-     * - fusion: 完整知识图谱处理链
-     * - batch: 批量处理模式
+     * 统一文本提取接口 - v3.0增强版
+     * 支持知识图谱处理模式
      */
-    @PostMapping("/async/extract")
+    @PostMapping("/extract")
     public JSONObject extractAsync(@RequestBody JSONObject request) {
-        long startTime = System.currentTimeMillis();
-
         try {
-            // 参数提取和验证
-            ExtractRequest extractRequest = parseAndValidateRequest(request);
+            // 提取参数
+            String textInput = request.getString("textInput");
+            String extractParams = request.getString("extractParams");
 
-            log.info("收到异步提取请求 - TextLength: {}, ExtractParams: {}, KgMode: {}",
-                    extractRequest.getTextInput().length(),
-                    extractRequest.getExtractParams(),
-                    extractRequest.getKgMode());
+            // v3.0新增：知识图谱处理模式
+            String kgMode = request.getString("kgMode");
+            if (kgMode == null || kgMode.trim().isEmpty()) {
+                kgMode = "standard";
+            }
 
-            // 提交异步业务处理
-            CompletableFuture<OptimizedBusinessService.BusinessResult> future = businessService.processAsync(
-                    extractRequest.getTextInput(),
-                    extractRequest.getExtractParams(),
-                    extractRequest.getKgMode());
+            // 参数验证
+            if (textInput == null || textInput.trim().isEmpty()) {
+                return ResponseBuilder.error("textInput不能为空").build();
+            }
+
+            // 默认提取参数
+            if (extractParams == null || extractParams.trim().isEmpty()) {
+                extractParams = "triples";
+            }
+
+            // 验证kgMode参数
+            if (!Arrays.asList("standard", "enhanced", "fusion").contains(kgMode)) {
+                log.warn("无效的kgMode参数: {}, 使用默认值: standard", kgMode);
+                kgMode = "standard";
+            }
+
+            log.info("收到提取请求，文本长度: {}, 提取参数: {}, KG模式: {}",
+                    textInput.length(), extractParams, kgMode);
+
+            // 提交异步任务 - v3.0使用增强版方法
+            textExtractionService.processTextAsync(textInput, extractParams, kgMode);
 
             // 立即返回成功响应
-            return ResponseBuilder.success("任务已提交，正在后台智能处理")
-                    .data("task_submitted", true)
-                    .data("kg_mode", extractRequest.getKgMode())
-                    .data("processing_mode", getProcessingModeDescription(extractRequest.getKgMode()))
-                    .data("text_length", extractRequest.getTextInput().length())
-                    .responseTime(System.currentTimeMillis() - startTime)
+            return ResponseBuilder.success("任务已提交，正在智能处理中...")
+                    .data("kg_mode", kgMode)
+                    .data("text_length", textInput.length())
+                    .data("extract_type", extractParams)
                     .build();
 
-        } catch (IllegalArgumentException e) {
-            log.warn("请求参数错误: {}", e.getMessage());
-            return ResponseBuilder.error(e.getMessage())
-                    .responseTime(System.currentTimeMillis() - startTime)
-                    .build();
         } catch (Exception e) {
-            log.error("处理请求异常: {}", e.getMessage(), e);
-            return ResponseBuilder.error("系统繁忙，请稍后重试")
-                    .responseTime(System.currentTimeMillis() - startTime)
-                    .build();
+            log.error("处理提取请求失败", e);
+            return ResponseBuilder.error("处理请求失败: " + e.getMessage()).build();
         }
     }
 
@@ -186,82 +237,156 @@ public class AsyncExtractController {
         }
     }
 
-    // ========================= 私有辅助方法 =========================
-
     /**
-     * 解析和验证请求参数
+     * 知识图谱统计接口 - v3.0新增
      */
-    private ExtractRequest parseAndValidateRequest(JSONObject request) {
-        String textInput = extractTextInput(request);
-        String extractParams = request.getString("extractParams");
-        if (extractParams == null || extractParams.trim().isEmpty()) {
-            extractParams = "triples";
-        }
-        String kgMode = request.getString("kgMode");
-        if (kgMode == null || kgMode.trim().isEmpty()) {
-            kgMode = "standard";
-        }
-
-        // 参数验证
-        if (textInput.trim().isEmpty()) {
-            throw new IllegalArgumentException("文本内容不能为空");
-        }
-
-        if (textInput.length() > 50000) {
-            throw new IllegalArgumentException("文本长度超过限制(50000字符)");
-        }
-
-        if (!isValidKgMode(kgMode)) {
-            throw new IllegalArgumentException("不支持的知识图谱模式: " + kgMode);
-        }
-
-        return new ExtractRequest(textInput, extractParams, kgMode);
-    }
-
-    /**
-     * 提取文本输入 - 支持字符串和数组格式
-     */
-    private String extractTextInput(JSONObject request) {
+    @GetMapping("/kg-stats")
+    public JSONObject getKnowledgeGraphStats() {
         try {
-            // 尝试作为JSONArray获取
-            JSONArray textInputArray = request.getJSONArray("textInput");
-            if (textInputArray != null && !textInputArray.isEmpty()) {
-                return textInputArray.toJSONString();
+            // 统计实体数量
+            long celebrityCount = celebrityRepository.count();
+            long workCount = workRepository.count();
+            long eventCount = eventRepository.count();
+            long totalEntities = celebrityCount + workCount + eventCount;
+
+            // 统计关系数量
+            long ccRelations = celebrityCelebrityRepository.count();
+            long cwRelations = celebrityWorkRepository.count();
+            long ceRelations = celebrityEventRepository.count();
+            long ewRelations = eventWorkRepository.count();
+            long totalRelations = ccRelations + cwRelations + ceRelations + ewRelations;
+
+            // 计算平均质量分数
+            BigDecimal avgQualityScore = calculateAverageQualityScore();
+
+            // 计算消歧义率
+            BigDecimal disambiguationRate = calculateDisambiguationRate();
+
+            return ResponseBuilder.success("知识图谱统计信息")
+                    .data("total_entities", totalEntities)
+                    .data("total_relations", totalRelations)
+                    .data("celebrity_count", celebrityCount)
+                    .data("work_count", workCount)
+                    .data("event_count", eventCount)
+                    .data("avg_quality_score", avgQualityScore)
+                    .data("disambiguation_rate", disambiguationRate)
+                    .data("relation_breakdown", Map.of(
+                            "celebrity_celebrity", ccRelations,
+                            "celebrity_work", cwRelations,
+                            "celebrity_event", ceRelations,
+                            "event_work", ewRelations))
+                    .data("update_time", System.currentTimeMillis())
+                    .build();
+
+        } catch (Exception e) {
+            log.error("获取知识图谱统计失败: {}", e.getMessage());
+            return ResponseBuilder.error("获取统计信息失败: " + e.getMessage()).build();
+        }
+    }
+
+    /**
+     * 实体消歧义查询接口 - v3.0新增
+     */
+    @GetMapping("/entity-disambiguation")
+    public JSONObject queryEntityDisambiguation(@RequestParam String name) {
+        try {
+            // 查找候选实体
+            List<Celebrity> candidates = celebrityRepository.findAll().stream()
+                    .filter(c -> c.getName() != null && c.getName().contains(name))
+                    .limit(10)
+                    .collect(Collectors.toList());
+
+            List<Map<String, Object>> candidateList = new ArrayList<>();
+            for (Celebrity candidate : candidates) {
+                Map<String, Object> info = new HashMap<>();
+                info.put("id", candidate.getCelebrityId());
+                info.put("name", candidate.getName());
+                info.put("profession", candidate.getProfession());
+                info.put("confidence", candidate.getConfidenceScore());
+                info.put("version", candidate.getVersion());
+                candidateList.add(info);
             }
-        } catch (Exception ignored) {
-            // 忽略异常，尝试作为字符串获取
-        }
 
-        String textInput = request.getString("textInput");
-        if (textInput == null) {
-            throw new IllegalArgumentException("textInput参数是必需的");
-        }
+            // 查询该名称的消歧义历史记录
+            List<EntityDisambiguation> disambiguationHistory = disambiguationRepository.findByEntityName(name);
 
-        return textInput;
+            List<Map<String, Object>> historyList = new ArrayList<>();
+            for (EntityDisambiguation record : disambiguationHistory) {
+                Map<String, Object> historyInfo = new HashMap<>();
+                historyInfo.put("canonical_name", record.getCanonicalName());
+                historyInfo.put("similarity_score", record.getSimilarityScore());
+                historyInfo.put("disambiguation_rule", record.getDisambiguationRule());
+                historyInfo.put("entity_type", record.getEntityType());
+                historyInfo.put("context_info", record.getContextInfo());
+                historyInfo.put("created_at", record.getCreatedAt());
+                historyList.add(historyInfo);
+            }
+
+            return ResponseBuilder.success("实体消歧义查询结果")
+                    .data("query", name)
+                    .data("candidate_count", candidateList.size())
+                    .data("candidates", candidateList)
+                    .data("disambiguation_history_count", historyList.size())
+                    .data("disambiguation_history", historyList)
+                    .build();
+
+        } catch (Exception e) {
+            log.error("查询实体消歧义失败: {}", e.getMessage());
+            return ResponseBuilder.error("查询失败: " + e.getMessage()).build();
+        }
     }
 
     /**
-     * 验证知识图谱模式
+     * 知识质量评估查询接口 - v3.0新增
      */
-    private boolean isValidKgMode(String kgMode) {
-        return switch (kgMode.toLowerCase()) {
-            case "standard", "enhanced", "fusion", "batch" -> true;
-            default -> false;
-        };
+    @GetMapping("/knowledge-quality")
+    public JSONObject queryKnowledgeQuality(@RequestParam String entityId) {
+        try {
+            // 查询质量评估记录
+            Optional<KnowledgeQuality> qualityOpt = qualityRepository.findByEntityId(entityId);
+
+            if (qualityOpt.isPresent()) {
+                KnowledgeQuality quality = qualityOpt.get();
+                return ResponseBuilder.success("知识质量评估结果")
+                        .data("entity_id", entityId)
+                        .data("quality_score", quality.getQualityScore())
+                        .data("completeness", quality.getCompleteness())
+                        .data("consistency", quality.getConsistency())
+                        .data("accuracy", quality.getAccuracy())
+                        .data("quality_grade", quality.getQualityGrade())
+                        .data("last_assessed", quality.getLastAssessed())
+                        .build();
+            } else {
+                return ResponseBuilder.error("未找到该实体的质量评估记录").build();
+            }
+
+        } catch (Exception e) {
+            log.error("查询知识质量失败: {}", e.getMessage());
+            return ResponseBuilder.error("查询失败: " + e.getMessage()).build();
+        }
     }
 
     /**
-     * 获取处理模式描述
+     * 数据质量报告接口 - v3.0新增
+     * 获取全面的数据质量分析报告
      */
-    private String getProcessingModeDescription(String kgMode) {
-        return switch (kgMode.toLowerCase()) {
-            case "standard" -> "标准AI提取";
-            case "enhanced" -> "AI提取 + 实体消歧义 + 关系验证";
-            case "fusion" -> "完整知识图谱处理(消歧义+融合+验证+质量评估)";
-            case "batch" -> "批量处理模式";
-            default -> "标准模式";
-        };
+    @GetMapping("/quality-report")
+    public JSONObject getQualityReport() {
+        try {
+            Map<String, Object> report = dataMaintenanceService.getQualityReport();
+
+            return ResponseBuilder.success("数据质量报告")
+                    .data("report", report)
+                    .data("generated_at", System.currentTimeMillis())
+                    .build();
+
+        } catch (Exception e) {
+            log.error("生成数据质量报告失败: {}", e.getMessage());
+            return ResponseBuilder.error("生成报告失败: " + e.getMessage()).build();
+        }
     }
+
+    // ========================= 私有辅助方法 =========================
 
     /**
      * 获取内存使用情况
@@ -295,32 +420,43 @@ public class AsyncExtractController {
     // 启动时间
     private static final long startupTime = System.currentTimeMillis();
 
-    // ========================= 内部类 =========================
+    private BigDecimal calculateAverageQualityScore() {
+        try {
+            List<KnowledgeQuality> qualityRecords = qualityRepository.findAll();
+            if (qualityRecords.isEmpty()) {
+                return BigDecimal.ZERO;
+            }
 
-    /**
-     * 请求数据传输对象 - 值对象模式
-     */
-    private static class ExtractRequest {
-        private final String textInput;
-        private final String extractParams;
-        private final String kgMode;
+            double sum = qualityRecords.stream()
+                    .mapToDouble(q -> q.getQualityScore().doubleValue())
+                    .sum();
 
-        public ExtractRequest(String textInput, String extractParams, String kgMode) {
-            this.textInput = textInput;
-            this.extractParams = extractParams;
-            this.kgMode = kgMode;
+            return BigDecimal.valueOf(sum / qualityRecords.size())
+                    .setScale(2, RoundingMode.HALF_UP);
+
+        } catch (Exception e) {
+            log.warn("计算平均质量分数失败: {}", e.getMessage());
+            return BigDecimal.ZERO;
         }
+    }
 
-        public String getTextInput() {
-            return textInput;
-        }
+    private BigDecimal calculateDisambiguationRate() {
+        try {
+            long totalDisambiguations = disambiguationRepository.count();
+            long totalEntities = celebrityRepository.count() +
+                    workRepository.count() +
+                    eventRepository.count();
 
-        public String getExtractParams() {
-            return extractParams;
-        }
+            if (totalEntities == 0) {
+                return BigDecimal.ZERO;
+            }
 
-        public String getKgMode() {
-            return kgMode;
+            return BigDecimal.valueOf((double) totalDisambiguations / totalEntities)
+                    .setScale(2, RoundingMode.HALF_UP);
+
+        } catch (Exception e) {
+            log.warn("计算消歧义率失败: {}", e.getMessage());
+            return BigDecimal.ZERO;
         }
     }
 }

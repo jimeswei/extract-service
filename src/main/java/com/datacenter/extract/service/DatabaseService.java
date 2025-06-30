@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.UUID;
 import java.util.Optional;
+import java.math.BigDecimal;
 
 /**
  * 数据库服务 - 负责将提取数据存储到MySQL
@@ -57,12 +58,25 @@ public class DatabaseService {
     @Autowired
     private EventWorkRepository eventWorkRepository;
 
+    @Autowired
+    private KnowledgeGraphEngine knowledgeGraphEngine;
+
+    @Autowired
+    private EntityDisambiguator entityDisambiguator;
+
+    @Autowired
+    private KnowledgeFusion knowledgeFusion;
+
     /**
-     * 保存提取的社交关系数据到数据库
+     * 保存提取的社交关系数据到数据库 - v3.0增强版
+     * 
+     * @param extractionResult AI提取结果
+     * @param kgMode           知识图谱处理模式 (standard/enhanced/fusion)
      */
-    public void saveSocialData(String extractionResult) {
+    public void saveSocialDataEnhanced(String extractionResult, String kgMode) {
         try {
-            log.info("开始保存提取数据到数据库，数据长度: {}", extractionResult != null ? extractionResult.length() : 0);
+            log.info("开始保存提取数据到数据库，模式: {}, 数据长度: {}",
+                    kgMode, extractionResult != null ? extractionResult.length() : 0);
 
             // 解析AI提取结果
             Map<String, Object> data = parseExtractionResult(extractionResult);
@@ -70,6 +84,21 @@ public class DatabaseService {
             if (data.isEmpty()) {
                 log.warn("解析结果为空，跳过数据库保存");
                 return;
+            }
+
+            // v3.0: 根据模式进行知识图谱处理
+            if ("enhanced".equals(kgMode) || "fusion".equals(kgMode)) {
+                log.info("应用知识图谱增强处理，模式: {}", kgMode);
+
+                // 实体消歧义
+                if (data.containsKey("triples")) {
+                    data = entityDisambiguator.disambiguate(data);
+                }
+
+                // 知识融合（仅fusion模式）
+                if ("fusion".equals(kgMode)) {
+                    data = knowledgeFusion.fuseKnowledge(data);
+                }
             }
 
             // 优先处理triples格式（AI实际返回格式）
@@ -94,11 +123,18 @@ public class DatabaseService {
                 saveRelationsReal(relations);
             }
 
-            log.info("🎉 成功保存提取数据到MySQL数据库 (localhost:3306/extract-graph)");
+            log.info("🎉 成功保存提取数据到MySQL数据库 (模式: {})", kgMode);
 
         } catch (Exception e) {
             log.error("保存数据失败: {}", e.getMessage(), e);
         }
+    }
+
+    /**
+     * 保存提取的社交关系数据到数据库 - 向后兼容版本
+     */
+    public void saveSocialData(String extractionResult) {
+        saveSocialDataEnhanced(extractionResult, "standard");
     }
 
     /**
@@ -280,38 +316,78 @@ public class DatabaseService {
     }
 
     /**
-     * 保存单个事件信息
+     * 保存单个事件信息 - 支持知识融合
      */
     private void saveSingleEvent(String eventName, String predicate, String value) {
         try {
-            // 检查是否已存在
-            if (eventRepository.existsByEventName(eventName)) {
-                log.info("事件 {} 已存在，跳过插入", eventName);
-                return;
-            }
+            // 查找已存在的实体
+            Optional<Event> existingOpt = eventRepository.findByEventName(eventName);
 
-            // 创建Event实体
-            Event event = new Event();
-            event.setEventId(generateId());
-            event.setEventName(eventName);
+            if (existingOpt.isPresent()) {
+                // 存在则进行知识融合
+                Event existing = existingOpt.get();
+                log.info("发现已存在事件: {}，进行知识融合", eventName);
 
-            // 根据谓词设置相应字段
-            if (predicate.contains("时间") || predicate.contains("举行")) {
-                event.setTime(value);
-            }
+                // 根据谓词更新或补充属性
+                boolean updated = false;
 
-            // 设置事件类型
-            if (eventName.contains("颁奖典礼")) {
-                event.setEventType(EventType.颁奖典礼);
-            } else if (eventName.contains("电影节")) {
-                event.setEventType(EventType.其他);
+                if ((predicate.contains("时间") || predicate.contains("举行")) && existing.getTime() == null) {
+                    existing.setTime(value);
+                    updated = true;
+                }
+
+                // 如果事件类型未设置，尝试设置
+                if (existing.getEventType() == null) {
+                    if (eventName.contains("颁奖典礼")) {
+                        existing.setEventType(EventType.颁奖典礼);
+                        updated = true;
+                    } else if (eventName.contains("电影节")) {
+                        existing.setEventType(EventType.其他);
+                        updated = true;
+                    }
+                }
+
+                // 更新置信度（如果有）
+                if (existing.getConfidenceScore() != null) {
+                    existing.setConfidenceScore(
+                            BigDecimal.valueOf((existing.getConfidenceScore().doubleValue() + 0.9) / 2));
+                } else {
+                    existing.setConfidenceScore(BigDecimal.valueOf(0.9));
+                }
+
+                if (updated) {
+                    existing.setVersion(existing.getVersion() != null ? existing.getVersion() + 1 : 2);
+                    eventRepository.save(existing);
+                    log.info("✅ 成功融合更新事件信息: {} (版本: {})", eventName, existing.getVersion());
+                } else {
+                    log.info("事件 {} 信息已完整，无需更新", eventName);
+                }
+
             } else {
-                event.setEventType(EventType.其他);
-            }
+                // 不存在则创建新实体
+                Event event = new Event();
+                event.setEventId(generateId());
+                event.setEventName(eventName);
+                event.setConfidenceScore(BigDecimal.valueOf(0.8));
+                event.setVersion(1);
 
-            // 保存到数据库
-            eventRepository.save(event);
-            log.info("✅ 成功保存事件: {} (通过三元组提取)", eventName);
+                // 根据谓词设置相应字段
+                if (predicate.contains("时间") || predicate.contains("举行")) {
+                    event.setTime(value);
+                }
+
+                // 设置事件类型
+                if (eventName.contains("颁奖典礼")) {
+                    event.setEventType(EventType.颁奖典礼);
+                } else if (eventName.contains("电影节")) {
+                    event.setEventType(EventType.其他);
+                } else {
+                    event.setEventType(EventType.其他);
+                }
+
+                eventRepository.save(event);
+                log.info("✅ 成功创建新事件: {} (通过三元组提取)", eventName);
+            }
 
         } catch (Exception e) {
             log.error("保存事件 {} 失败: {}", eventName, e.getMessage());
@@ -319,7 +395,7 @@ public class DatabaseService {
     }
 
     /**
-     * 保存人员信息到celebrity表 - 真实MySQL入库
+     * 保存人员信息到celebrity表 - 支持知识融合
      */
     private void savePersons(Map<String, Object> entities) {
         if (!entities.containsKey("persons"))
@@ -331,33 +407,56 @@ public class DatabaseService {
         for (Map<String, Object> person : persons) {
             String name = (String) person.get("name");
 
-            // 检查是否已存在，避免重复插入
-            if (celebrityRepository.existsByName(name)) {
-                log.info("人员 {} 已存在，跳过插入", name);
-                continue;
+            // 查找已存在的实体
+            Optional<Celebrity> existingOpt = celebrityRepository.findByName(name);
+
+            if (existingOpt.isPresent()) {
+                // 存在则进行知识融合
+                Celebrity existing = existingOpt.get();
+                log.info("发现已存在人员: {}，进行知识融合", name);
+
+                // 使用知识融合服务进行属性合并
+                Celebrity newData = new Celebrity();
+                newData.setName(name);
+                newData.setNationality((String) person.get("nationality"));
+                newData.setBirthdate((String) person.get("birthdate"));
+                newData.setGender((String) person.get("gender"));
+                newData.setProfession((String) person.get("profession"));
+                newData.setSpouse((String) person.get("spouse"));
+                newData.setCompany((String) person.get("company"));
+                newData.setPosition((String) person.get("position"));
+                newData.setEducation((String) person.get("education"));
+                newData.setConfidenceScore(BigDecimal.valueOf(0.85));
+
+                // 调用知识融合服务
+                Celebrity fused = knowledgeFusion.fuseCelebrityAttributes(existing, newData);
+                celebrityRepository.save(fused);
+                log.info("✅ 成功融合更新人员: {} (版本: {})", name, fused.getVersion());
+
+            } else {
+                // 不存在则创建新实体
+                Celebrity celebrity = new Celebrity();
+                celebrity.setCelebrityId(generateId());
+                celebrity.setName(name);
+                celebrity.setNationality((String) person.get("nationality"));
+                celebrity.setBirthdate((String) person.get("birthdate"));
+                celebrity.setGender((String) person.get("gender"));
+                celebrity.setProfession((String) person.get("profession"));
+                celebrity.setSpouse((String) person.get("spouse"));
+                celebrity.setCompany((String) person.get("company"));
+                celebrity.setPosition((String) person.get("position"));
+                celebrity.setEducation((String) person.get("education"));
+                celebrity.setConfidenceScore(BigDecimal.valueOf(0.8));
+                celebrity.setVersion(1);
+
+                celebrityRepository.save(celebrity);
+                log.info("✅ 成功创建新人员: {}", name);
             }
-
-            // 创建Celebrity实体
-            Celebrity celebrity = new Celebrity();
-            celebrity.setCelebrityId(generateId());
-            celebrity.setName(name);
-            celebrity.setNationality((String) person.get("nationality"));
-            celebrity.setBirthdate((String) person.get("birthdate"));
-            celebrity.setGender((String) person.get("gender"));
-            celebrity.setProfession((String) person.get("profession"));
-            celebrity.setSpouse((String) person.get("spouse"));
-            celebrity.setCompany((String) person.get("company"));
-            celebrity.setPosition((String) person.get("position"));
-            celebrity.setEducation((String) person.get("education"));
-
-            // 保存到数据库
-            celebrityRepository.save(celebrity);
-            log.info("✅ 成功保存人员: {}", name);
         }
     }
 
     /**
-     * 保存作品信息到work表 - 真实MySQL入库
+     * 保存作品信息到work表 - 支持知识融合
      */
     private void saveWorks(Map<String, Object> entities) {
         if (!entities.containsKey("works"))
@@ -369,31 +468,52 @@ public class DatabaseService {
         for (Map<String, Object> workData : works) {
             String title = (String) workData.get("title");
 
-            // 检查是否已存在
-            if (workRepository.existsByTitle(title)) {
-                log.info("作品 {} 已存在，跳过插入", title);
-                continue;
+            // 查找已存在的实体
+            Optional<Work> existingOpt = workRepository.findByTitle(title);
+
+            if (existingOpt.isPresent()) {
+                // 存在则进行知识融合
+                Work existing = existingOpt.get();
+                log.info("发现已存在作品: {}，进行知识融合", title);
+
+                // 使用知识融合服务进行属性合并
+                Work newData = new Work();
+                newData.setTitle(title);
+                newData.setWorkType((String) workData.get("work_type"));
+                newData.setReleaseDate((String) workData.get("release_date"));
+                newData.setRole((String) workData.get("role"));
+                newData.setPlatform((String) workData.get("platform"));
+                newData.setAwards((String) workData.get("awards"));
+                newData.setDescription((String) workData.get("description"));
+                newData.setConfidenceScore(BigDecimal.valueOf(0.85));
+
+                // 调用知识融合服务
+                Work fused = knowledgeFusion.fuseWorkAttributes(existing, newData);
+                workRepository.save(fused);
+                log.info("✅ 成功融合更新作品: {} (版本: {})", title, fused.getVersion());
+
+            } else {
+                // 不存在则创建新实体
+                Work work = new Work();
+                work.setWorkId(generateId());
+                work.setTitle(title);
+                work.setWorkType((String) workData.get("work_type"));
+                work.setReleaseDate((String) workData.get("release_date"));
+                work.setRole((String) workData.get("role"));
+                work.setPlatform((String) workData.get("platform"));
+                work.setAwards((String) workData.get("awards"));
+                work.setDescription((String) workData.get("description"));
+                work.setConfidenceScore(BigDecimal.valueOf(0.8));
+                work.setVersion(1);
+
+                workRepository.save(work);
+                log.info("✅ 成功创建新作品: {}", title);
             }
-
-            // 创建Work实体
-            Work work = new Work();
-            work.setWorkId(generateId());
-            work.setTitle(title);
-            work.setWorkType((String) workData.get("work_type"));
-            work.setReleaseDate((String) workData.get("release_date"));
-            work.setRole((String) workData.get("role"));
-            work.setPlatform((String) workData.get("platform"));
-            work.setAwards((String) workData.get("awards"));
-            work.setDescription((String) workData.get("description"));
-
-            // 保存到数据库
-            workRepository.save(work);
-            log.info("✅ 成功保存作品: {}", title);
         }
     }
 
     /**
-     * 保存事件信息到event表 - 真实MySQL入库
+     * 保存事件信息到event表 - 支持知识融合
      */
     private void saveEvents(Map<String, Object> entities) {
         if (!entities.containsKey("events"))
@@ -405,32 +525,77 @@ public class DatabaseService {
         for (Map<String, Object> eventData : events) {
             String eventName = (String) eventData.get("event_name");
 
-            // 检查是否已存在
-            if (eventRepository.existsByEventName(eventName)) {
-                log.info("事件 {} 已存在，跳过插入", eventName);
-                continue;
-            }
+            // 查找已存在的实体
+            Optional<Event> existingOpt = eventRepository.findByEventName(eventName);
 
-            // 创建Event实体
-            Event event = new Event();
-            event.setEventId(generateId());
-            event.setEventName(eventName);
-            event.setTime((String) eventData.get("time"));
+            if (existingOpt.isPresent()) {
+                // 存在则进行知识融合
+                Event existing = existingOpt.get();
+                log.info("发现已存在事件: {}，进行知识融合", eventName);
 
-            // 处理事件类型
-            String eventTypeStr = (String) eventData.get("event_type");
-            if (eventTypeStr != null) {
-                try {
-                    EventType eventType = EventType.valueOf(eventTypeStr);
-                    event.setEventType(eventType);
-                } catch (IllegalArgumentException e) {
+                // 根据新数据更新或补充属性
+                boolean updated = false;
+
+                String newTime = (String) eventData.get("time");
+                if (newTime != null && existing.getTime() == null) {
+                    existing.setTime(newTime);
+                    updated = true;
+                }
+
+                // 处理事件类型
+                String eventTypeStr = (String) eventData.get("event_type");
+                if (eventTypeStr != null && existing.getEventType() == null) {
+                    try {
+                        EventType eventType = EventType.valueOf(eventTypeStr);
+                        existing.setEventType(eventType);
+                        updated = true;
+                    } catch (IllegalArgumentException e) {
+                        existing.setEventType(EventType.其他);
+                        updated = true;
+                    }
+                }
+
+                // 更新置信度
+                if (existing.getConfidenceScore() != null) {
+                    existing.setConfidenceScore(
+                            BigDecimal.valueOf((existing.getConfidenceScore().doubleValue() + 0.85) / 2));
+                } else {
+                    existing.setConfidenceScore(BigDecimal.valueOf(0.85));
+                }
+
+                if (updated) {
+                    existing.setVersion(existing.getVersion() != null ? existing.getVersion() + 1 : 2);
+                    eventRepository.save(existing);
+                    log.info("✅ 成功融合更新事件: {} (版本: {})", eventName, existing.getVersion());
+                } else {
+                    log.info("事件 {} 信息已完整，无需更新", eventName);
+                }
+
+            } else {
+                // 不存在则创建新实体
+                Event event = new Event();
+                event.setEventId(generateId());
+                event.setEventName(eventName);
+                event.setTime((String) eventData.get("time"));
+                event.setConfidenceScore(BigDecimal.valueOf(0.8));
+                event.setVersion(1);
+
+                // 处理事件类型
+                String eventTypeStr = (String) eventData.get("event_type");
+                if (eventTypeStr != null) {
+                    try {
+                        EventType eventType = EventType.valueOf(eventTypeStr);
+                        event.setEventType(eventType);
+                    } catch (IllegalArgumentException e) {
+                        event.setEventType(EventType.其他);
+                    }
+                } else {
                     event.setEventType(EventType.其他);
                 }
-            }
 
-            // 保存到数据库
-            eventRepository.save(event);
-            log.info("✅ 成功保存事件: {}", eventName);
+                eventRepository.save(event);
+                log.info("✅ 成功创建新事件: {}", eventName);
+            }
         }
     }
 
@@ -498,33 +663,83 @@ public class DatabaseService {
     }
 
     /**
-     * 保存单个人员信息
+     * 保存单个人员信息 - 支持知识融合
      */
     private void saveSinglePerson(String name, String predicate, String value) {
         try {
-            // 检查是否已存在
-            if (celebrityRepository.existsByName(name)) {
-                log.info("人员 {} 已存在，跳过插入", name);
-                return;
+            // 查找已存在的实体
+            Optional<Celebrity> existingOpt = celebrityRepository.findByName(name);
+
+            if (existingOpt.isPresent()) {
+                // 存在则进行知识融合
+                Celebrity existing = existingOpt.get();
+                log.info("发现已存在实体: {}，进行知识融合", name);
+
+                // 根据谓词更新或补充属性
+                boolean updated = false;
+
+                if (predicate.contains("出生") && existing.getBirthdate() == null) {
+                    existing.setBirthdate(value);
+                    updated = true;
+                } else if (predicate.contains("职业") && existing.getProfession() == null) {
+                    existing.setProfession(value);
+                    updated = true;
+                } else if (predicate.contains("国籍") && existing.getNationality() == null) {
+                    existing.setNationality(value);
+                    updated = true;
+                } else if (predicate.contains("配偶") && existing.getSpouse() == null) {
+                    existing.setSpouse(value);
+                    updated = true;
+                } else if (predicate.contains("公司") && existing.getCompany() == null) {
+                    existing.setCompany(value);
+                    updated = true;
+                } else if (predicate.contains("学历") && existing.getEducation() == null) {
+                    existing.setEducation(value);
+                    updated = true;
+                }
+
+                // 更新置信度（如果有）
+                if (existing.getConfidenceScore() != null) {
+                    existing.setConfidenceScore(
+                            BigDecimal.valueOf((existing.getConfidenceScore().doubleValue() + 0.9) / 2));
+                } else {
+                    existing.setConfidenceScore(BigDecimal.valueOf(0.9));
+                }
+
+                if (updated) {
+                    existing.setVersion(existing.getVersion() != null ? existing.getVersion() + 1 : 2);
+                    celebrityRepository.save(existing);
+                    log.info("✅ 成功融合更新人员信息: {} (版本: {})", name, existing.getVersion());
+                } else {
+                    log.info("人员 {} 信息已完整，无需更新", name);
+                }
+
+            } else {
+                // 不存在则创建新实体
+                Celebrity celebrity = new Celebrity();
+                celebrity.setCelebrityId(generateId());
+                celebrity.setName(name);
+                celebrity.setConfidenceScore(BigDecimal.valueOf(0.8));
+                celebrity.setVersion(1);
+
+                // 根据谓词设置相应字段
+                if (predicate.contains("出生")) {
+                    celebrity.setBirthdate(value);
+                } else if (predicate.contains("职业")) {
+                    celebrity.setProfession(value);
+                } else if (predicate.contains("国籍")) {
+                    celebrity.setNationality(value);
+                } else if (predicate.contains("配偶")) {
+                    celebrity.setSpouse(value);
+                } else if (predicate.contains("公司")) {
+                    celebrity.setCompany(value);
+                } else if (predicate.contains("学历")) {
+                    celebrity.setEducation(value);
+                }
+
+                celebrityRepository.save(celebrity);
+                log.info("✅ 成功创建新人员: {} (通过三元组提取)", name);
             }
-
-            // 创建Celebrity实体
-            Celebrity celebrity = new Celebrity();
-            celebrity.setCelebrityId(generateId());
-            celebrity.setName(name);
-
-            // 根据谓词设置相应字段
-            if (predicate.contains("职业") || predicate.contains("歌手") || predicate.contains("演员")) {
-                celebrity.setProfession(value);
-            } else if (predicate.contains("出生")) {
-                celebrity.setBirthdate(value);
-            } else if (predicate.contains("结婚") || predicate.contains("配偶")) {
-                celebrity.setSpouse(value);
-            }
-
-            // 保存到数据库
-            celebrityRepository.save(celebrity);
-            log.info("✅ 成功保存人员: {} (通过三元组提取)", name);
 
         } catch (Exception e) {
             log.error("保存人员 {} 失败: {}", name, e.getMessage());
@@ -532,31 +747,78 @@ public class DatabaseService {
     }
 
     /**
-     * 保存单个作品信息
+     * 保存单个作品信息 - 支持知识融合
      */
     private void saveSingleWork(String title, String predicate, String value) {
         try {
-            // 检查是否已存在
-            if (workRepository.existsByTitle(title)) {
-                log.info("作品 {} 已存在，跳过插入", title);
-                return;
+            // 查找已存在的实体
+            Optional<Work> existingOpt = workRepository.findByTitle(title);
+
+            if (existingOpt.isPresent()) {
+                // 存在则进行知识融合
+                Work existing = existingOpt.get();
+                log.info("发现已存在作品: {}，进行知识融合", title);
+
+                // 根据谓词更新或补充属性
+                boolean updated = false;
+
+                if (predicate.contains("类型") && existing.getWorkType() == null) {
+                    existing.setWorkType(value);
+                    updated = true;
+                } else if (predicate.contains("发布") && existing.getReleaseDate() == null) {
+                    existing.setReleaseDate(value);
+                    updated = true;
+                } else if (predicate.contains("平台") && existing.getPlatform() == null) {
+                    existing.setPlatform(value);
+                    updated = true;
+                } else if (predicate.contains("奖项") && existing.getAwards() == null) {
+                    existing.setAwards(value);
+                    updated = true;
+                } else if (predicate.contains("描述") && existing.getDescription() == null) {
+                    existing.setDescription(value);
+                    updated = true;
+                }
+
+                // 更新置信度（如果有）
+                if (existing.getConfidenceScore() != null) {
+                    existing.setConfidenceScore(
+                            BigDecimal.valueOf((existing.getConfidenceScore().doubleValue() + 0.9) / 2));
+                } else {
+                    existing.setConfidenceScore(BigDecimal.valueOf(0.9));
+                }
+
+                if (updated) {
+                    existing.setVersion(existing.getVersion() != null ? existing.getVersion() + 1 : 2);
+                    workRepository.save(existing);
+                    log.info("✅ 成功融合更新作品信息: {} (版本: {})", title, existing.getVersion());
+                } else {
+                    log.info("作品 {} 信息已完整，无需更新", title);
+                }
+
+            } else {
+                // 不存在则创建新实体
+                Work work = new Work();
+                work.setWorkId(generateId());
+                work.setTitle(title);
+                work.setConfidenceScore(BigDecimal.valueOf(0.8));
+                work.setVersion(1);
+
+                // 根据谓词设置相应字段
+                if (predicate.contains("类型")) {
+                    work.setWorkType(value);
+                } else if (predicate.contains("发布")) {
+                    work.setReleaseDate(value);
+                } else if (predicate.contains("平台")) {
+                    work.setPlatform(value);
+                } else if (predicate.contains("奖项")) {
+                    work.setAwards(value);
+                } else if (predicate.contains("描述")) {
+                    work.setDescription(value);
+                }
+
+                workRepository.save(work);
+                log.info("✅ 成功创建新作品: {} (通过三元组提取)", title);
             }
-
-            // 创建Work实体
-            Work work = new Work();
-            work.setWorkId(generateId());
-            work.setTitle(title);
-
-            // 根据谓词设置相应字段
-            if (predicate.contains("类型")) {
-                work.setWorkType(value);
-            } else if (predicate.contains("发布") || predicate.contains("上映")) {
-                work.setReleaseDate(value);
-            }
-
-            // 保存到数据库
-            workRepository.save(work);
-            log.info("✅ 成功保存作品: {} (通过三元组提取)", title);
 
         } catch (Exception e) {
             log.error("保存作品 {} 失败: {}", title, e.getMessage());
