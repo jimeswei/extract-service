@@ -44,15 +44,15 @@ public class WebClientConfig {
         // 🌐 HTTP客户端配置
         HttpClient httpClient = HttpClient.create(connectionProvider)
                 // 连接超时
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 15000)
                 // 保持连接活跃
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 // TCP无延迟
                 .option(ChannelOption.TCP_NODELAY, true)
                 // 读写超时处理器
                 .doOnConnected(conn -> {
-                    conn.addHandlerLast(new ReadTimeoutHandler(180, TimeUnit.SECONDS));
-                    conn.addHandlerLast(new WriteTimeoutHandler(60, TimeUnit.SECONDS));
+                    conn.addHandlerLast(new ReadTimeoutHandler(360, TimeUnit.SECONDS));
+                    conn.addHandlerLast(new WriteTimeoutHandler(120, TimeUnit.SECONDS));
                 });
 
         // 🔧 构建WebClient

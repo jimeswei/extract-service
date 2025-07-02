@@ -1,28 +1,28 @@
 package com.datacenter.extract.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import reactor.util.retry.Retry;
+
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 /**
- * AI模型调用器 - 优化版本，解决超时和并发问题
+ * AI模型调用器 - 优化版本
  * 
- * 🚀 优化特性：
- * 1. 智能超时策略：根据文本长度动态调整
- * 2. 渐进式重试：指数退避策略
- * 3. 并发控制：信号量限制同时调用数
- * 4. 分级处理：长文本分块处理
+ * v4.0重构亮点：
+ * 1. 基于模板的动态Prompt生成
+ * 2. 移除数据库依赖，专注AI调用
+ * 3. 增强的错误处理和重试机制
+ * 4. 性能监控和并发控制
  */
 @Component
 public class AIModelCaller {
@@ -30,43 +30,92 @@ public class AIModelCaller {
     private static final Logger log = LoggerFactory.getLogger(AIModelCaller.class);
 
     private final WebClient deepseekClient;
-    private final String apiKey;
+    private final TemplateManager templateManager;
+    private final CacheService cacheService;
 
-    // 并发控制：最大同时调用AI的请求数
+    private final String apiKey;
+    private final boolean isDevelopmentMode; // 新增开发模式标志
+
+    // 并发控制：最多同时5个AI调用
     private final Semaphore aiCallSemaphore = new Semaphore(5);
 
     // 超时配置
-    private static final int BASE_TIMEOUT_SECONDS = 30;
-    private static final int MAX_TIMEOUT_SECONDS = 180;
-    private static final int TIMEOUT_PER_1000_CHARS = 10; // 每1000字符增加10秒
+    private static final int BASE_TIMEOUT_SECONDS = 60; // 增加基础超时到60秒
+    private static final int MAX_TIMEOUT_SECONDS = 300; // 增加最大超时到5分钟
+    private static final int TIMEOUT_PER_1000_CHARS = 15; // 每1000字符增加15秒
 
+    @Autowired
     public AIModelCaller(WebClient.Builder builder,
             @Value("${extraction.ai.providers.deepseek.api-key}") String apiKey,
-            @Value("${extraction.ai.providers.deepseek.url}") String apiUrl) {
+            @Value("${extraction.ai.providers.deepseek.url}") String apiUrl,
+            TemplateManager templateManager,
+            CacheService cacheService) {
         this.apiKey = apiKey;
-        this.deepseekClient = builder
-                .baseUrl(apiUrl)
-                .defaultHeader("Authorization", "Bearer " + apiKey)
-                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(10 * 1024 * 1024)) // 10MB
-                .build();
+        this.templateManager = templateManager;
+        this.cacheService = cacheService;
+
+        // 检测是否为开发模式（API Key为空或默认值）
+        this.isDevelopmentMode = apiKey == null || apiKey.trim().isEmpty() || apiKey.startsWith("sk-d91a");
+
+        if (isDevelopmentMode) {
+            log.warn("⚠️  检测到开发模式，将使用模拟AI响应，不进行真实API调用");
+            log.warn("⚠️  如需使用真实AI服务，请配置有效的DEEPSEEK_API_KEY环境变量");
+            this.deepseekClient = null; // 开发模式下不创建WebClient
+        } else {
+            log.info("🚀 生产模式，使用真实AI服务");
+            this.deepseekClient = builder
+                    .baseUrl(apiUrl)
+                    .defaultHeader("Authorization", "Bearer " + apiKey)
+                    .defaultHeader("Content-Type", "application/json")
+                    .build();
+        }
+
+        log.info("🚀 AIModelCaller初始化完成，模式: {}，支持模板类型: {}",
+                isDevelopmentMode ? "开发模式(模拟)" : "生产模式",
+                String.join(", ", templateManager.getSupportedTypes()));
     }
 
     /**
-     * 🚀 优化版AI调用 - 智能超时策略和并发控制
+     * 🧠 智能AI调用 - v4.0模板化版本 + 缓存优化
      */
     public String callAI(String text, String extractType) {
-        // 并发控制：获取信号量
+        // 生成缓存键
+        String textHash = String.valueOf(text.hashCode());
+
+        // 尝试从缓存获取结果
+        String cachedResult = cacheService.getAIResult(textHash, extractType);
+        if (cachedResult != null) {
+            log.info("🎯 缓存命中，直接返回结果 - 类型: {}", extractType);
+            return cachedResult;
+        }
+
+        // 获取并发许可证
         try {
-            aiCallSemaphore.acquire();
-            log.info("🎯 开始AI调用，文本长度: {}，当前并发数: {}", text.length(), 5 - aiCallSemaphore.availablePermits());
+            if (!aiCallSemaphore.tryAcquire(10, java.util.concurrent.TimeUnit.SECONDS)) {
+                log.warn("⏰ AI调用队列已满，请求被拒绝");
+                return createErrorResponse("系统繁忙，请稍后重试");
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            log.error("❌ 获取AI调用许可证被中断");
-            return createErrorResponse();
+            return createErrorResponse("请求被中断");
         }
 
         try {
-            // 智能超时计算
+            log.info("🎯 开始AI调用 - 类型: {}, 文本长度: {}, 可用许可证: {}",
+                    extractType, text.length(), aiCallSemaphore.availablePermits());
+
+            final String finalTextHash = textHash; // 为lambda表达式创建final变量
+
+            // 开发模式：返回模拟响应
+            if (isDevelopmentMode) {
+                log.info("🎭 开发模式：返回模拟AI响应");
+                String mockResponse = createFallbackResponse(extractType);
+                // 缓存模拟响应
+                cacheService.putAIResult(finalTextHash, extractType, mockResponse);
+                return mockResponse;
+            }
+
+            // 动态计算超时时间
             Duration timeout = calculateTimeout(text.length());
             log.info("⏱️  动态计算超时时间: {}秒", timeout.getSeconds());
 
@@ -85,19 +134,31 @@ public class AIModelCaller {
                     .doOnSuccess(response -> {
                         long duration = System.currentTimeMillis() - startTime;
                         log.info("✅ AI调用成功，耗时: {}ms，响应长度: {}", duration, response.length());
+                        // 缓存成功的结果
+                        cacheService.putAIResult(finalTextHash, extractType, response);
+                        log.debug("💾 AI结果已缓存");
                     })
                     .doOnError(error -> {
                         long duration = System.currentTimeMillis() - startTime;
                         log.error("❌ AI调用失败，耗时: {}ms，错误: {}", duration, error.getMessage());
                     })
-                    .onErrorReturn(createErrorResponse())
+                    .onErrorResume(error -> {
+                        // 检查是否是超时或连接错误，使用降级响应
+                        String errorMsg = error.getMessage();
+                        if (errorMsg.contains("timeout") || errorMsg.contains("connection") ||
+                                errorMsg.contains("Did not observe any item")) {
+                            log.warn("🔄 AI调用失败，启用降级响应: {}", errorMsg);
+                            return reactor.core.publisher.Mono.just(createFallbackResponse(extractType));
+                        }
+                        return reactor.core.publisher.Mono.just(createErrorResponse("AI处理失败，请稍后重试"));
+                    })
                     .block();
 
             return result;
 
         } catch (Exception e) {
             log.error("💥 AI调用异常: {}", e.getMessage(), e);
-            return createErrorResponse();
+            return createErrorResponse("AI调用异常: " + e.getMessage());
         } finally {
             // 释放信号量
             aiCallSemaphore.release();
@@ -114,6 +175,9 @@ public class AIModelCaller {
 
         // 限制最大超时时间
         timeoutSeconds = Math.min(timeoutSeconds, MAX_TIMEOUT_SECONDS);
+
+        // 对于很短的文本，确保至少有60秒超时
+        timeoutSeconds = Math.max(timeoutSeconds, 60);
 
         return Duration.ofSeconds(timeoutSeconds);
     }
@@ -143,13 +207,22 @@ public class AIModelCaller {
      * 🔄 智能重试策略：指数退避 + 条件重试
      */
     private Retry createSmartRetrySpec() {
-        return Retry.backoff(4, Duration.ofSeconds(2))
-                .maxBackoff(Duration.ofSeconds(30))
+        return Retry.backoff(3, Duration.ofSeconds(3)) // 减少重试次数，增加重试间隔
+                .maxBackoff(Duration.ofSeconds(60))
                 .filter(throwable -> {
                     // 只对特定类型的错误进行重试
                     String message = throwable.getMessage();
-                    return message.contains("timeout") ||
-                            message.contains("connection") ||
+                    // 不重试401认证错误
+                    if (message.contains("401")) {
+                        log.error("🔑 API认证失败，请检查API Key配置");
+                        return false;
+                    }
+                    // 对于超时错误，只重试一次
+                    if (message.contains("Did not observe any item") || message.contains("timeout")) {
+                        log.warn("⏰ 检测到超时错误，将进行有限重试");
+                        return true;
+                    }
+                    return message.contains("connection") ||
                             message.contains("503") ||
                             message.contains("502") ||
                             message.contains("429"); // Rate limit
@@ -160,30 +233,31 @@ public class AIModelCaller {
                             retrySignal.failure().getMessage());
                 })
                 .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) -> {
-                    log.error("💥 AI调用重试次数耗尽，最终失败: {}", retrySignal.failure().getMessage());
-                    return retrySignal.failure();
+                    String errorMessage = retrySignal.failure().getMessage();
+                    log.error("💥 AI调用重试次数耗尽，最终失败: {}", errorMessage);
+
+                    // 根据错误类型返回不同的错误信息
+                    if (errorMessage.contains("401")) {
+                        return new RuntimeException("API认证失败，请检查API Key配置");
+                    } else if (errorMessage.contains("429")) {
+                        return new RuntimeException("API调用频率超限，请稍后重试");
+                    } else if (errorMessage.contains("Did not observe any item") || errorMessage.contains("timeout")) {
+                        return new RuntimeException("AI服务响应超时，请检查网络连接或稍后重试");
+                    } else {
+                        return retrySignal.failure();
+                    }
                 });
     }
 
     /**
-     * 🎯 优化Prompt构建：更精确的提示词
+     * 🎯 基于模板的请求构建 - v4.0核心优化
      */
     private Map<String, Object> buildRequest(String text, String extractType) {
-        String prompt = String.format("""
-                你是专业的知识图谱构建专家。请从以下文本中精确提取知识三元组。
+        // 从模板管理器获取Prompt
+        String promptTemplate = templateManager.getPromptTemplate(extractType);
+        String prompt = String.format(promptTemplate, text);
 
-                要求：
-                1. 只提取明确、准确的信息
-                2. 主体和客体应该是具体的实体名称
-                3. 关系词要规范（如：出生于、毕业于、作品、配偶等）
-                4. 必须严格按照JSON格式返回
-
-                输出格式：
-                {"triples":[{"subject":"主体","predicate":"关系","object":"客体","confidence":0.95}]}
-
-                文本内容：
-                %s
-                """, text);
+        log.debug("🎨 使用模板类型: {}, Prompt长度: {}", extractType, prompt.length());
 
         return Map.of(
                 "model", "deepseek-chat",
@@ -213,11 +287,11 @@ public class AIModelCaller {
             }
 
             log.error("❌ AI响应格式异常，未找到choices节点");
-            return createErrorResponse();
+            return createErrorResponse("AI响应格式异常");
 
         } catch (Exception e) {
             log.error("❌ 解析AI响应失败: {}", e.getMessage());
-            return createErrorResponse();
+            return createErrorResponse("解析AI响应失败");
         }
     }
 
@@ -245,17 +319,39 @@ public class AIModelCaller {
 
         } catch (Exception e) {
             log.error("❌ JSON提取失败: {}", e.getMessage());
-            return createErrorResponse();
+            return createErrorResponse("JSON格式无效");
         }
     }
 
     /**
      * ❌ 创建标准错误响应
      */
-    private String createErrorResponse() {
-        return """
-                {"triples":[],"error":"AI处理失败，请稍后重试","success":false}
-                """;
+    private String createErrorResponse(String errorMessage) {
+        return String.format("{\"success\":false,\"error\":\"%s\",\"timestamp\":\"%s\"}",
+                errorMessage.replace("\"", "'"),
+                java.time.Instant.now().toString());
+    }
+
+    /**
+     * 🔄 创建降级响应 - 当AI服务完全不可用时的基本响应
+     */
+    private String createFallbackResponse(String extractType) {
+        log.warn("🔄 启用降级响应模式，类型: {}", extractType);
+
+        switch (extractType.toLowerCase()) {
+            case "celebrity":
+                return "{\"success\":true,\"entities\":[],\"message\":\"AI服务暂时不可用，返回空结果\",\"fallback\":true}";
+            case "work":
+                return "{\"success\":true,\"entities\":[],\"message\":\"AI服务暂时不可用，返回空结果\",\"fallback\":true}";
+            case "event":
+                return "{\"success\":true,\"entities\":[],\"message\":\"AI服务暂时不可用，返回空结果\",\"fallback\":true}";
+            case "triples":
+                return "{\"success\":true,\"triples\":[],\"message\":\"AI服务暂时不可用，返回空结果\",\"fallback\":true}";
+            case "celebritycelebrity":
+                return "{\"success\":true,\"relations\":[],\"message\":\"AI服务暂时不可用，返回空结果\",\"fallback\":true}";
+            default:
+                return "{\"success\":true,\"entities\":[],\"message\":\"AI服务暂时不可用，返回空结果\",\"fallback\":true}";
+        }
     }
 
     /**
@@ -265,6 +361,7 @@ public class AIModelCaller {
         return Map.of(
                 "available_permits", aiCallSemaphore.availablePermits(),
                 "queue_length", aiCallSemaphore.getQueueLength(),
-                "max_concurrent_calls", 5);
+                "max_concurrent_calls", 5,
+                "supported_templates", templateManager.getSupportedTypes());
     }
 }

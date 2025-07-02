@@ -1,0 +1,45 @@
+{
+    "entity_type": "celebrity",
+    "extraction_fields": {
+        "basic_info": [
+            "name",
+            "nationality",
+            "birthdate",
+            "gender",
+            "profession"
+        ],
+        "personal_info": [
+            "spouse",
+            "relatives",
+            "education",
+            "resume"
+        ],
+        "professional_info": [
+            "company",
+            "position",
+            "group",
+            "baike"
+        ]
+    },
+    "prompt_template": "你是专业的知识图谱构建专家。请从以下文本中精确提取名人相关信息。\n\n提取要求：\n1. 只提取明确、准确的信息\n2. 按照指定字段结构组织数据\n3. 必须严格按照JSON格式返回\n\n输出格式：\n{\"celebrities\":[{\"name\":\"姓名\",\"nationality\":\"国籍\",\"birthdate\":\"出生日期\",\"gender\":\"性别\",\"profession\":\"职业\",\"spouse\":\"配偶\",\"relatives\":\"亲属\",\"company\":\"公司\",\"position\":\"职位\",\"education\":\"教育经历\",\"resume\":\"履历\",\"group\":\"团体\",\"baike\":\"百科信息\",\"confidence\":0.95}]}\n\n文本内容：\n%s",
+    "output_structure": {
+        "celebrities": [
+            {
+                "name": "string",
+                "nationality": "string",
+                "birthdate": "string",
+                "gender": "string",
+                "profession": "string",
+                "spouse": "string",
+                "relatives": "string",
+                "company": "string",
+                "position": "string",
+                "education": "string",
+                "resume": "string",
+                "group": "string",
+                "baike": "string",
+                "confidence": "number"
+            }
+        ]
+    }
+} 

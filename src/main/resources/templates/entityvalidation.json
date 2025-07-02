@@ -1,0 +1,290 @@
+{
+  "description": "实体验证服务配置文件 - 企业级知识图谱实体处理",
+  "version": "v5.0",
+  "last_updated": "2025-01-27",
+  
+  "entity_validation": {
+    "entity_types": {
+      "celebrity": {
+        "description": "名人/人物实体",
+        "required_attributes": ["name", "birth_date", "profession"],
+        "optional_attributes": ["death_date", "nationality", "education", "awards"],
+        "valid_relations": [
+          "出生于", "毕业于", "配偶", "主演", "导演", "获奖", "参与",
+          "出演", "担任", "任职于", "工作于", "居住于", "成长于",
+          "师从", "合作", "友谊", "恋爱", "结婚", "离婚"
+        ],
+        "disambiguation_priority": ["birth_date", "profession", "nationality"]
+      },
+      "person": {
+        "description": "通用人物实体",
+        "required_attributes": ["name", "birth_date", "profession"],
+        "optional_attributes": ["death_date", "nationality", "education"],
+        "valid_relations": ["出生于", "毕业于", "工作于", "居住于"],
+        "disambiguation_priority": ["birth_date", "profession"]
+      },
+      "work": {
+        "description": "作品实体",
+        "required_attributes": ["name", "release_year", "director"],
+        "optional_attributes": ["genre", "producer", "cast", "awards", "box_office"],
+        "valid_relations": [
+          "导演", "主演", "类型", "发布于", "制作方", "获奖", "编剧",
+          "出品方", "播出平台", "投资方", "发行方", "上映于", "播出于",
+          "改编自", "续集", "前传", "系列", "主题曲", "配乐"
+        ],
+        "disambiguation_priority": ["release_year", "director", "genre"]
+      },
+      "movie": {
+        "description": "电影实体",
+        "required_attributes": ["name", "release_year", "director"],
+        "optional_attributes": ["genre", "producer", "cast", "awards", "box_office", "runtime"],
+        "valid_relations": ["导演", "主演", "类型", "发布于", "制作方", "获奖"],
+        "disambiguation_priority": ["release_year", "director", "cast"]
+      },
+      "event": {
+        "description": "事件实体",
+        "required_attributes": ["name", "time", "location"],
+        "optional_attributes": ["participants", "organizer", "impact", "result"],
+        "valid_relations": [
+          "发生于", "参与者", "地点", "时间", "影响", "主办方",
+          "举办地", "开始时间", "结束时间", "参加人员", "赞助商",
+          "媒体报道", "结果", "意义", "背景", "原因"
+        ],
+        "disambiguation_priority": ["time", "location", "participants"]
+      },
+      "organization": {
+        "description": "组织/机构实体",
+        "required_attributes": ["name", "type", "founded_date"],
+        "optional_attributes": ["location", "founder", "industry", "employees"],
+        "valid_relations": ["创立于", "位于", "隶属于", "创始人", "成员"],
+        "disambiguation_priority": ["founded_date", "location", "type"]
+      },
+      "default": {
+        "description": "默认实体类型",
+        "required_attributes": ["name"],
+        "optional_attributes": ["type", "description"],
+        "valid_relations": ["相关", "关联", "包含", "属于", "来源于", "基于"],
+        "disambiguation_priority": ["type"]
+      }
+    },
+    
+    "validation_rules": {
+      "name_constraints": {
+        "min_length": 1,
+        "max_length": 200,
+        "allow_special_chars": true,
+        "trim_whitespace": true
+      },
+      "date_constraints": {
+        "formats": ["yyyy-MM-dd", "yyyy/MM/dd", "yyyy年MM月dd日", "yyyy"],
+        "min_year": 1000,
+        "max_year": 2100
+      },
+      "attribute_validation": {
+        "enable_type_checking": true,
+        "enable_format_validation": true,
+        "enable_range_validation": true
+      }
+    }
+  },
+  
+  "disambiguation_settings": {
+    "similarity_threshold": 0.8,
+    "context_window_size": 50,
+    "max_candidates": 5,
+    "enable_fuzzy_matching": true,
+    "cache_expiry_hours": 24,
+    
+    "entity_specific_thresholds": {
+      "celebrity": 0.85,
+      "person": 0.85,
+      "work": 0.8,
+      "movie": 0.8,
+      "event": 0.9,
+      "organization": 0.75,
+      "default": 0.7
+    },
+    
+    "similarity_weights": {
+      "name_similarity": 0.3,
+      "attribute_similarity": 0.4,
+      "context_similarity": 0.3
+    },
+    
+    "fuzzy_matching_rules": {
+      "enable_pinyin_matching": true,
+      "enable_abbreviation_matching": true,
+      "enable_synonym_matching": true
+    }
+  },
+  
+  "knowledge_fusion_rules": {
+    "entity_fusion_strategies": {
+      "attribute_conflict": "source_reliability_weighted",
+      "temporal_conflict": "latest_timestamp_priority",
+      "value_conflict": "confidence_weighted"
+    },
+    
+    "fusion_confidence_weights": {
+      "source_reliability": 0.4,
+      "temporal_recency": 0.3,
+      "consensus_score": 0.3
+    },
+    
+    "attribute_merge_rules": {
+      "string_attributes": "longest_value",
+      "numeric_attributes": "average",
+      "array_attributes": "union",
+      "object_attributes": "deep_merge"
+    },
+    
+    "conflict_resolution": {
+      "enable_conflict_logging": true,
+      "preserve_conflict_history": true,
+      "max_conflict_records": 10
+    }
+  },
+  
+  "entity_normalization": {
+    "name_normalization": {
+      "remove_titles": ["先生", "女士", "老师", "导演", "博士", "教授"],
+      "remove_brackets": true,
+      "trim_whitespace": true,
+      "to_simplified_chinese": true
+    },
+    
+    "date_normalization": {
+      "year_only_pattern": "\\d{4}",
+      "year_only_suffix": "-01-01",
+      "standard_format": "yyyy-MM-dd",
+      "parse_chinese_dates": true
+    },
+    
+    "location_normalization": {
+      "country_mappings": {
+        "中国": "中华人民共和国",
+        "美国": "美利坚合众国",
+        "英国": "大不列颠及北爱尔兰联合王国",
+        "韩国": "大韩民国",
+        "日本": "日本国"
+      },
+      "city_mappings": {
+        "北京": "北京市",
+        "上海": "上海市",
+        "广州": "广州市",
+        "深圳": "深圳市"
+      }
+    },
+    
+    "profession_normalization": {
+      "导演": "电影导演",
+      "歌手": "流行歌手",
+      "演员": "影视演员",
+      "编剧": "影视编剧",
+      "制片人": "电影制片人",
+      "摄影师": "电影摄影师",
+      "音乐人": "音乐制作人",
+      "主持人": "电视主持人",
+      "作家": "文学作家",
+      "画家": "美术画家"
+    }
+  },
+  
+  "entity_linking": {
+    "external_knowledge_bases": {
+      "baidu_baike": {
+        "enabled": true,
+        "api_endpoint": "https://baike.baidu.com/api/",
+        "confidence_threshold": 0.9
+      },
+      "wikipedia": {
+        "enabled": true,
+        "api_endpoint": "https://zh.wikipedia.org/api/",
+        "confidence_threshold": 0.85
+      },
+      "wikidata": {
+        "enabled": true,
+        "api_endpoint": "https://www.wikidata.org/w/api.php",
+        "confidence_threshold": 0.8
+      }
+    },
+    
+    "linking_strategies": {
+      "exact_match": 0.5,
+      "fuzzy_match": 0.3,
+      "context_match": 0.2
+    }
+  },
+  
+  "quality_assessment": {
+    "entity_completeness_metrics": {
+      "required_attributes_weight": 0.5,
+      "optional_attributes_weight": 0.3,
+      "relation_coverage_weight": 0.2
+    },
+    
+    "entity_consistency_checks": {
+      "date_consistency": true,
+      "location_consistency": true,
+      "attribute_type_consistency": true
+    },
+    
+    "minimum_quality_scores": {
+      "celebrity": 0.8,
+      "work": 0.75,
+      "event": 0.85,
+      "default": 0.7
+    }
+  },
+  
+  "entity_lifecycle": {
+    "versioning": {
+      "enable_version_tracking": true,
+      "max_versions": 10,
+      "version_comparison": true
+    },
+    
+    "status_transitions": {
+      "draft": ["verified", "rejected"],
+      "verified": ["updated", "deprecated"],
+      "updated": ["verified", "deprecated"],
+      "deprecated": ["archived"],
+      "rejected": ["draft"],
+      "archived": []
+    },
+    
+    "retention_policies": {
+      "draft_retention_days": 30,
+      "verified_retention_days": -1,
+      "deprecated_retention_days": 90,
+      "archived_retention_days": 365
+    }
+  },
+  
+  "default_fallback_config": {
+    "description": "实体验证默认配置（配置加载失败时使用）",
+    "default_entity_types": {
+      "celebrity": {
+        "required_attributes": ["name", "birth_date", "profession"],
+        "valid_relations": ["出生于", "毕业于", "配偶", "主演", "导演", "获奖"]
+      },
+      "work": {
+        "required_attributes": ["name", "release_year", "director"],
+        "valid_relations": ["导演", "主演", "类型", "发布于", "制作方", "获奖"]
+      },
+      "event": {
+        "required_attributes": ["name", "time", "location"],
+        "valid_relations": ["发生于", "参与者", "地点", "时间", "影响"]
+      }
+    },
+    "default_disambiguation_threshold": 0.7,
+    "default_quality_threshold": 0.6
+  },
+  
+  "emergency_fallback": {
+    "description": "紧急情况下的最小化实体配置",
+    "minimal_entity_type": "default",
+    "minimal_attributes": ["name"],
+    "minimal_threshold": 0.5
+  }
+} 

@@ -19,8 +19,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 长文本分批次处理服务
- * 专门处理超长文本的知识图谱提取，支持智能分段和并行处理
+ * 长文本分片处理服务 - v4.0优化版本
+ * 专门处理超长文本的智能提取，支持智能分段和并行处理
+ * 
+ * v4.0更新：
+ * - 移除数据库依赖
+ * - 集成模板管理系统
+ * - 集成文件输出服务
+ * - 优化分片算法
  */
 @Service
 public class LongTextProcessor {
@@ -28,6 +34,8 @@ public class LongTextProcessor {
     private static final Logger log = LoggerFactory.getLogger(LongTextProcessor.class);
 
     private final AIModelCaller aiModelCaller;
+    private final TemplateManager templateManager;
+    private final OutputFileService outputFileService;
     private final ObjectMapper objectMapper;
     private final ExecutorService batchExecutor;
 
@@ -38,10 +46,15 @@ public class LongTextProcessor {
     private static final int MAX_PARALLEL_CHUNKS = 3; // 最大并行处理分片数
 
     @Autowired
-    public LongTextProcessor(AIModelCaller aiModelCaller) {
+    public LongTextProcessor(AIModelCaller aiModelCaller,
+            TemplateManager templateManager,
+            OutputFileService outputFileService) {
         this.aiModelCaller = aiModelCaller;
+        this.templateManager = templateManager;
+        this.outputFileService = outputFileService;
         this.objectMapper = new ObjectMapper();
         this.batchExecutor = Executors.newFixedThreadPool(MAX_PARALLEL_CHUNKS);
+        log.info("LongTextProcessor v4.0 initialized with template management and file output");
     }
 
     /**
@@ -49,13 +62,25 @@ public class LongTextProcessor {
      */
     public String processLongText(String text, String extractType) {
         int textLength = text.length();
-        log.info("🔍 开始处理长文本，长度: {} 字符", textLength);
+        log.info("🔍 开始处理长文本，长度: {} 字符，提取类型: {}", textLength, extractType);
 
         try {
+            // 验证提取类型
+            if (!isValidExtractType(extractType)) {
+                String error = "不支持的提取类型: " + extractType;
+                log.error(error);
+                return createErrorResponse(error);
+            }
+
             // 短文本直接处理
             if (textLength <= MAX_CHUNK_SIZE) {
                 log.info("📝 文本较短，直接处理");
-                return aiModelCaller.callAI(text, extractType);
+                String result = aiModelCaller.callAI(text, extractType);
+
+                // 保存结果到文件
+                outputFileService.saveRawResult(extractType, result, result);
+
+                return result;
             }
 
             // 长文本分片处理
@@ -86,6 +111,10 @@ public class LongTextProcessor {
                     try {
                         log.info("⚡ 处理分片 {} ({} 字符)", chunkIndex + 1, chunk.content.length());
                         String result = aiModelCaller.callAI(chunk.content, extractType);
+
+                        // 保存分片结果
+                        outputFileService.saveIntermediateResult(extractType, "chunk_" + chunkIndex, result);
+
                         return new ChunkResult(chunkIndex, chunk, result, true);
                     } catch (Exception e) {
                         log.error("❌ 分片 {} 处理失败: {}", chunkIndex + 1, e.getMessage());
@@ -106,7 +135,12 @@ public class LongTextProcessor {
             }
 
             // 5. 合并三元组结果
-            return mergeChunkResults(results, extractType);
+            String mergedResult = mergeChunkResults(results, extractType);
+
+            // 6. 保存最终合并结果
+            outputFileService.saveRawResult(extractType, mergedResult, mergedResult);
+
+            return mergedResult;
 
         } catch (Exception e) {
             log.error("💥 分片处理失败: {}", e.getMessage(), e);
@@ -200,71 +234,80 @@ public class LongTextProcessor {
             return text;
         }
 
+        // 从末尾取重叠内容，尽量按句子边界截取
         String overlap = text.substring(text.length() - OVERLAP_SIZE);
 
-        // 找到第一个完整句子的开始
-        int sentenceStart = overlap.indexOf('。');
-        if (sentenceStart > 0 && sentenceStart < OVERLAP_SIZE - 50) {
-            overlap = overlap.substring(sentenceStart + 1);
+        // 寻找第一个句号后的位置作为起始点
+        int firstPeriod = overlap.indexOf("。");
+        if (firstPeriod > 0 && firstPeriod < overlap.length() - 1) {
+            overlap = overlap.substring(firstPeriod + 1);
         }
 
-        return overlap.trim();
+        return overlap;
     }
 
     /**
-     * 合并分片结果
+     * 合并分片结果 - v4.0优化版本
      */
     private String mergeChunkResults(List<ChunkResult> results, String extractType) {
         try {
             ObjectNode mergedResult = objectMapper.createObjectNode();
             ArrayNode allTriples = objectMapper.createArrayNode();
 
-            int successCount = 0;
+            int successfulChunks = 0;
             int totalChunks = results.size();
 
+            // 处理每个分片的结果
             for (ChunkResult result : results) {
                 if (result.success && result.result != null) {
-                    successCount++;
-
                     try {
-                        JsonNode resultJson = objectMapper.readTree(result.result);
-                        JsonNode triples = resultJson.get("triples");
+                        JsonNode chunkJson = objectMapper.readTree(result.result);
 
-                        if (triples != null && triples.isArray()) {
-                            // 去重并添加三元组
-                            for (JsonNode triple : triples) {
+                        // 提取三元组
+                        if (chunkJson.has("triples") && chunkJson.get("triples").isArray()) {
+                            ArrayNode chunkTriples = (ArrayNode) chunkJson.get("triples");
+
+                            // 验证并添加每个三元组
+                            for (JsonNode triple : chunkTriples) {
                                 if (isValidTriple(triple) && !isDuplicateTriple(allTriples, triple)) {
-                                    // 添加分片信息
-                                    ObjectNode enhancedTriple = triple.deepCopy();
-                                    enhancedTriple.put("chunk_index", result.chunkIndex);
-                                    enhancedTriple.put("chunk_start", result.chunk.startPos);
-                                    allTriples.add(enhancedTriple);
+                                    allTriples.add(triple);
                                 }
                             }
                         }
+
+                        successfulChunks++;
+
                     } catch (Exception e) {
-                        log.warn("⚠️  解析分片 {} 结果失败: {}", result.chunkIndex, e.getMessage());
+                        log.warn("解析分片结果失败: {}", e.getMessage());
                     }
+                } else {
+                    log.warn("分片 {} 处理失败，跳过", result.chunkIndex);
                 }
             }
 
             // 构建最终结果
+            mergedResult.put("extract_type", extractType);
             mergedResult.set("triples", allTriples);
             mergedResult.put("total_chunks", totalChunks);
-            mergedResult.put("success_chunks", successCount);
-            mergedResult.put("success_rate", String.format("%.2f%%", (double) successCount / totalChunks * 100));
+            mergedResult.put("successful_chunks", successfulChunks);
             mergedResult.put("total_triples", allTriples.size());
-            mergedResult.put("processing_method", "batch_processing");
-            mergedResult.put("timestamp", System.currentTimeMillis());
+            mergedResult.put("processing_method", "long_text_chunked");
+            mergedResult.put("processed_at", System.currentTimeMillis());
 
-            log.info("✅ 分片合并完成，成功率: {}/{} ({:.1f}%)，提取三元组: {}",
-                    successCount, totalChunks, (double) successCount / totalChunks * 100, allTriples.size());
+            // 添加处理统计
+            ObjectNode stats = objectMapper.createObjectNode();
+            stats.put("success_rate", (double) successfulChunks / totalChunks);
+            stats.put("avg_triples_per_chunk",
+                    successfulChunks > 0 ? (double) allTriples.size() / successfulChunks : 0);
+            mergedResult.set("processing_stats", stats);
 
-            return mergedResult.toString();
+            log.info("✅ 长文本合并完成: {} 分片 -> {} 三元组", successfulChunks, allTriples.size());
+
+            return objectMapper.writeValueAsString(mergedResult);
 
         } catch (Exception e) {
-            log.error("💥 合并结果失败: {}", e.getMessage(), e);
-            return createErrorResponse("合并结果失败: " + e.getMessage());
+            log.error("合并分片结果失败: {}", e.getMessage(), e);
+            return createErrorResponse("合并分片结果失败: " + e.getMessage());
         }
     }
 
@@ -273,31 +316,26 @@ public class LongTextProcessor {
      */
     private boolean isValidTriple(JsonNode triple) {
         return triple.has("subject") && triple.has("predicate") && triple.has("object") &&
-                !triple.get("subject").asText().trim().isEmpty() &&
-                !triple.get("predicate").asText().trim().isEmpty() &&
-                !triple.get("object").asText().trim().isEmpty();
+                triple.get("subject").asText().trim().length() > 0 &&
+                triple.get("predicate").asText().trim().length() > 0 &&
+                triple.get("object").asText().trim().length() > 0;
     }
 
     /**
-     * 检查三元组是否重复
+     * 检查重复三元组
      */
     private boolean isDuplicateTriple(ArrayNode existingTriples, JsonNode newTriple) {
-        String newSubject = newTriple.get("subject").asText().trim();
-        String newPredicate = newTriple.get("predicate").asText().trim();
-        String newObject = newTriple.get("object").asText().trim();
+        String newSubject = newTriple.get("subject").asText();
+        String newPredicate = newTriple.get("predicate").asText();
+        String newObject = newTriple.get("object").asText();
 
         for (JsonNode existing : existingTriples) {
-            String existingSubject = existing.get("subject").asText().trim();
-            String existingPredicate = existing.get("predicate").asText().trim();
-            String existingObject = existing.get("object").asText().trim();
-
-            if (newSubject.equals(existingSubject) &&
-                    newPredicate.equals(existingPredicate) &&
-                    newObject.equals(existingObject)) {
+            if (existing.get("subject").asText().equals(newSubject) &&
+                    existing.get("predicate").asText().equals(newPredicate) &&
+                    existing.get("object").asText().equals(newObject)) {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -306,13 +344,14 @@ public class LongTextProcessor {
      */
     private String createErrorResponse(String errorMessage) {
         try {
-            ObjectNode errorResult = objectMapper.createObjectNode();
-            errorResult.put("error", errorMessage);
-            errorResult.put("success", false);
-            errorResult.put("timestamp", System.currentTimeMillis());
-            return errorResult.toString();
+            ObjectNode errorResponse = objectMapper.createObjectNode();
+            errorResponse.put("success", false);
+            errorResponse.put("error", errorMessage);
+            errorResponse.put("timestamp", System.currentTimeMillis());
+            errorResponse.put("service", "LongTextProcessor");
+            return objectMapper.writeValueAsString(errorResponse);
         } catch (Exception e) {
-            return "{\"error\":\"" + errorMessage + "\",\"success\":false}";
+            return "{\"success\":false,\"error\":\"" + errorMessage + "\"}";
         }
     }
 
@@ -328,7 +367,7 @@ public class LongTextProcessor {
         TextChunk(int index, String content) {
             this.index = index;
             this.content = content;
-            this.startPos = 0; // 简化版本，实际可以记录在原文中的位置
+            this.startPos = 0; // 简化实现
             this.endPos = content.length();
         }
     }
@@ -360,11 +399,38 @@ public class LongTextProcessor {
             stats.put("min_chunk_size", MIN_CHUNK_SIZE);
             stats.put("overlap_size", OVERLAP_SIZE);
             stats.put("max_parallel_chunks", MAX_PARALLEL_CHUNKS);
-            stats.put("active_threads",
-                    MAX_PARALLEL_CHUNKS - ((java.util.concurrent.ThreadPoolExecutor) batchExecutor).getActiveCount());
-            return stats.toString();
+            stats.put("service_version", "v4.0");
+            stats.put("features", "template_based,file_output,smart_chunking");
+            return objectMapper.writeValueAsString(stats);
         } catch (Exception e) {
-            return "{\"error\":\"获取统计信息失败\"}";
+            return "{\"error\":\"Failed to get stats\"}";
+        }
+    }
+
+    /**
+     * 验证提取类型是否有效
+     */
+    private boolean isValidExtractType(String extractType) {
+        if (extractType == null || extractType.trim().isEmpty()) {
+            return false;
+        }
+
+        String[] supportedTypes = templateManager.getSupportedTypes();
+        for (String supportedType : supportedTypes) {
+            if (supportedType.equalsIgnoreCase(extractType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 资源清理
+     */
+    public void shutdown() {
+        if (batchExecutor != null && !batchExecutor.isShutdown()) {
+            batchExecutor.shutdown();
+            log.info("LongTextProcessor executor shutdown completed");
         }
     }
 }

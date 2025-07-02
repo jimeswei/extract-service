@@ -2,6 +2,7 @@ package com.datacenter.extract;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -13,7 +14,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @author DataCenter Team
  * @version 1.0.0
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
 @EnableCaching
 @EnableAsync
 @EnableScheduling

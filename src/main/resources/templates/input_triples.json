@@ -1,0 +1,46 @@
+{
+    "entity_type": "triples",
+    "extraction_fields": {
+        "triple_info": [
+            "subject",
+            "predicate",
+            "object",
+            "confidence"
+        ]
+    },
+    "relation_types": [
+        "出生于",
+        "毕业于",
+        "任职于",
+        "配偶",
+        "作品",
+        "参演",
+        "导演",
+        "制片",
+        "编剧",
+        "演唱",
+        "发布",
+        "获奖",
+        "参加",
+        "举办",
+        "合作",
+        "朋友",
+        "师生",
+        "父子",
+        "母女",
+        "兄弟",
+        "姐妹",
+        "其他关系"
+    ],
+    "prompt_template": "你是专业的知识图谱构建专家。请从以下文本中精确提取知识三元组。\n\n要求：\n1. 只提取明确、准确的信息\n2. 主体和客体应该是具体的实体名称\n3. 关系词要规范（如：出生于、毕业于、作品、配偶等）\n4. 必须严格按照JSON格式返回\n\n输出格式：\n{\"triples\":[{\"subject\":\"主体\",\"predicate\":\"关系\",\"object\":\"客体\",\"confidence\":0.95}]}\n\n文本内容：\n%s",
+    "output_structure": {
+        "triples": [
+            {
+                "subject": "string",
+                "predicate": "string",
+                "object": "string",
+                "confidence": "number"
+            }
+        ]
+    }
+} 

@@ -14,13 +14,12 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * 性能优化配置中心
+ * 性能优化配置中心 - v4.0优化版本
  * 
  * 核心优化策略：
  * 1. 线程池优化：专业化线程池设计
- * 2. 缓存优化：多级缓存架构
- * 3. 连接池优化：高效连接复用
- * 4. 监控优化：全链路性能监控
+ * 2. 缓存优化：文件处理缓存架构
+ * 3. 监控优化：全链路性能监控
  */
 @Configuration
 @ConfigurationProperties(prefix = "performance")
@@ -79,18 +78,18 @@ public class PerformanceConfig {
     }
 
     /**
-     * 数据库操作线程池 - 专业化设计
+     * 文件处理线程池 - v4.0新增
      */
-    @Bean("databaseExecutor")
-    public Executor databaseExecutor() {
+    @Bean("fileProcessingExecutor")
+    public Executor fileProcessingExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 
-        // 数据库连接池特点：连接数有限
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(15);
+        // 文件IO特点：适中的并发数
+        executor.setCorePoolSize(4);
+        executor.setMaxPoolSize(12);
         executor.setQueueCapacity(200);
 
-        executor.setThreadNamePrefix("DB-");
+        executor.setThreadNamePrefix("File-");
         executor.setKeepAliveSeconds(30);
 
         executor.initialize();
@@ -111,7 +110,7 @@ public class PerformanceConfig {
     }
 
     /**
-     * 二级缓存：AI结果缓存
+     * AI结果缓存
      */
     @Bean("aiResultCache")
     public Cache<String, String> aiResultCache() {
@@ -123,13 +122,13 @@ public class PerformanceConfig {
     }
 
     /**
-     * 三级缓存：实体消歧义缓存
+     * 模板缓存 - v4.0新增
      */
-    @Bean("disambiguationCache")
-    public Cache<String, Object> disambiguationCache() {
+    @Bean("templateCache")
+    public Cache<String, Object> templateCache() {
         return Caffeine.newBuilder()
-                .maximumSize(5000)
-                .expireAfterWrite(Duration.ofHours(6))
+                .maximumSize(100)
+                .expireAfterWrite(Duration.ofHours(24))
                 .recordStats()
                 .build();
     }
@@ -151,12 +150,12 @@ public class PerformanceConfig {
     }
 
     /**
-     * 统一缓存管理器
+     * 统一缓存管理器 - v4.0优化版本
      */
     public static class CacheManager {
         private Cache<String, Object> l1Cache;
         private Cache<String, String> aiResultCache;
-        private Cache<String, Object> disambiguationCache;
+        private Cache<String, Object> templateCache;
 
         public CacheManager() {
         }
@@ -169,15 +168,15 @@ public class PerformanceConfig {
             this.aiResultCache = aiResultCache;
         }
 
-        public void setDisambiguationCache(Cache<String, Object> disambiguationCache) {
-            this.disambiguationCache = disambiguationCache;
+        public void setTemplateCache(Cache<String, Object> templateCache) {
+            this.templateCache = templateCache;
         }
 
         public <T> T get(CacheLevel level, String key, Class<T> type) {
             return switch (level) {
                 case L1 -> type.cast(l1Cache.getIfPresent(key));
                 case AI_RESULT -> type.cast(aiResultCache.getIfPresent(key));
-                case DISAMBIGUATION -> type.cast(disambiguationCache.getIfPresent(key));
+                case TEMPLATE -> type.cast(templateCache.getIfPresent(key));
             };
         }
 
@@ -185,7 +184,7 @@ public class PerformanceConfig {
             switch (level) {
                 case L1 -> l1Cache.put(key, value);
                 case AI_RESULT -> aiResultCache.put(key, (String) value);
-                case DISAMBIGUATION -> disambiguationCache.put(key, value);
+                case TEMPLATE -> templateCache.put(key, value);
             }
         }
 
@@ -193,29 +192,29 @@ public class PerformanceConfig {
             return switch (level) {
                 case L1 -> l1Cache.stats();
                 case AI_RESULT -> aiResultCache.stats();
-                case DISAMBIGUATION -> disambiguationCache.stats();
+                case TEMPLATE -> templateCache.stats();
             };
         }
     }
 
     /**
-     * 缓存级别枚举
+     * 缓存级别枚举 - v4.0更新
      */
     public enum CacheLevel {
-        L1, AI_RESULT, DISAMBIGUATION
+        L1, AI_RESULT, TEMPLATE
     }
 
     /**
      * 性能监控器
      */
     public static class PerformanceMonitor {
-        // 性能监控实现
+
         public void recordMetric(String name, double value) {
-            // 记录性能指标
+            // 这里可以集成Micrometer或其他监控框架
         }
 
         public void recordLatency(String operation, long latencyMs) {
-            // 记录延迟指标
+            // 记录操作延迟
         }
     }
 }

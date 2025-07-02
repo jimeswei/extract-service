@@ -1,0 +1,302 @@
+{
+  "description": "关系验证服务配置文件 - 企业级知识图谱关系处理",
+  "version": "v5.0",
+  "last_updated": "2025-01-27",
+  
+  "relation_validation": {
+    "relation_types": {
+      "reflexive_relations": {
+        "description": "自反关系（主体和客体可以相同）",
+        "relations": ["是", "为", "等于", "属于", "包含", "隶属于"],
+        "allow_self_reference": true
+      },
+      
+      "non_reflexive_relations": {
+        "description": "非自反关系（主体和客体必须不同）",
+        "relations": ["出生于", "毕业于", "配偶", "主演", "导演", "创立", "发明"],
+        "allow_self_reference": false
+      },
+      
+      "symmetric_relations": {
+        "description": "对称关系（A-R-B等价于B-R-A）",
+        "relations": ["配偶", "合作", "友谊", "竞争对手", "同事", "同学"],
+        "is_symmetric": true
+      },
+      
+      "asymmetric_relations": {
+        "description": "非对称关系（A-R-B不等价于B-R-A）",
+        "relations": ["导演", "主演", "出生于", "毕业于", "创立", "拥有"],
+        "is_symmetric": false
+      },
+      
+      "transitive_relations": {
+        "description": "传递性关系（A-R-B且B-R-C则A-R-C）",
+        "relations": ["祖先", "位于", "包含", "大于", "早于"],
+        "is_transitive": true
+      },
+      
+      "temporal_relations": {
+        "description": "时序关系（有时间属性）",
+        "relations": ["发生于", "开始于", "结束于", "期间", "之前", "之后"],
+        "requires_timestamp": true
+      }
+    },
+    
+    "relation_categories": {
+      "personal_relations": {
+        "description": "人际关系",
+        "relations": ["配偶", "子女", "父母", "兄弟姐妹", "朋友", "恋人", "师生"],
+        "confidence_boost": 0.1
+      },
+      
+      "professional_relations": {
+        "description": "职业关系",
+        "relations": ["导演", "主演", "编剧", "制片人", "雇佣", "合作", "竞争"],
+        "confidence_boost": 0.15
+      },
+      
+      "location_relations": {
+        "description": "地理位置关系",
+        "relations": ["出生于", "居住于", "位于", "毗邻", "属于", "包含"],
+        "confidence_boost": 0.2
+      },
+      
+      "temporal_relations": {
+        "description": "时间关系",
+        "relations": ["发生于", "开始于", "结束于", "早于", "晚于", "同时"],
+        "confidence_boost": 0.2
+      },
+      
+      "causal_relations": {
+        "description": "因果关系",
+        "relations": ["导致", "引起", "产生", "影响", "促进", "阻碍"],
+        "confidence_boost": 0.1
+      },
+      
+      "ownership_relations": {
+        "description": "所属关系",
+        "relations": ["拥有", "创立", "投资", "控股", "隶属于", "管理"],
+        "confidence_boost": 0.15
+      }
+    },
+    
+    "confidence_scoring": {
+      "base_confidence": 0.7,
+      "scoring_factors": {
+        "high_confidence_relations": {
+          "description": "高置信度关系列表",
+          "relations": [
+            "出生于", "毕业于", "配偶", "导演", "主演", "发布于", "获奖",
+            "出品方", "制作方", "播出平台", "发生于", "举办地"
+          ],
+          "confidence_boost": 0.2
+        },
+        
+        "medium_confidence_relations": {
+          "description": "中等置信度关系列表",
+          "relations": [
+            "参与", "合作", "友谊", "影响", "相关", "关联"
+          ],
+          "confidence_boost": 0.1
+        },
+        
+        "low_confidence_relations": {
+          "description": "低置信度关系列表",
+          "relations": [
+            "可能", "疑似", "传闻", "据说"
+          ],
+          "confidence_penalty": -0.2
+        }
+      },
+      
+      "context_scoring": {
+        "context_weight": 0.3,
+        "original_confidence_weight": 0.5,
+        "relation_type_weight": 0.2
+      },
+      
+      "score_boundaries": {
+        "min_confidence": 0.0,
+        "max_confidence": 1.0,
+        "rejection_threshold": 0.5
+      }
+    },
+    
+    "relation_synonyms": {
+      "description": "关系同义词映射",
+      "mappings": {
+        "演出": "参演",
+        "出演": "参演",
+        "主演": "参演",
+        "担任": "是",
+        "任职": "工作于",
+        "就职": "工作于",
+        "毕业": "毕业于",
+        "出生": "出生于",
+        "居住": "居住于",
+        "生活": "居住于",
+        "制作": "制作方",
+        "出品": "出品方",
+        "发行": "发行方",
+        "播出": "播出于",
+        "上映": "上映于",
+        "举办": "举办于",
+        "主办": "主办方",
+        "创办": "创立",
+        "成立": "创立",
+        "建立": "创立",
+        "拍摄": "制作",
+        "执导": "导演",
+        "编写": "编剧",
+        "谱曲": "作曲",
+        "演唱": "演唱者",
+        "表演": "表演者"
+      },
+      
+      "synonym_groups": {
+        "spouse_relations": ["配偶", "夫妻", "妻子", "丈夫", "爱人"],
+        "parent_relations": ["父亲", "母亲", "父母", "双亲"],
+        "child_relations": ["儿子", "女儿", "子女", "孩子"],
+        "work_relations": ["工作于", "就职于", "任职于", "供职于"]
+      }
+    },
+    
+    "validation_rules": {
+      "structural_validation": {
+        "require_subject": true,
+        "require_predicate": true,
+        "require_object": true,
+        "max_predicate_length": 50,
+        "allow_empty_values": false
+      },
+      
+      "semantic_validation": {
+        "check_relation_direction": true,
+        "check_relation_symmetry": true,
+        "check_relation_transitivity": true,
+        "check_temporal_consistency": true
+      },
+      
+      "consistency_rules": {
+        "unique_relations": ["配偶", "出生地", "死亡地"],
+        "mutually_exclusive": [
+          ["在世", "去世"],
+          ["单身", "已婚"],
+          ["在职", "离职"]
+        ],
+        "dependency_relations": {
+          "离婚": ["结婚"],
+          "毕业于": ["就读于"],
+          "去世": ["出生"]
+        }
+      }
+    },
+    
+    "relation_constraints": {
+      "cardinality_constraints": {
+        "one_to_one": ["配偶", "身份证号", "护照号"],
+        "one_to_many": ["父亲", "母亲", "创始人", "董事长"],
+        "many_to_one": ["子女", "员工", "学生", "成员"],
+        "many_to_many": ["朋友", "同事", "合作伙伴", "竞争对手"]
+      },
+      
+      "temporal_constraints": {
+        "requires_start_time": ["开始于", "创立于", "加入于"],
+        "requires_end_time": ["结束于", "离职于", "毕业于"],
+        "requires_duration": ["期间", "历时", "持续"]
+      },
+      
+      "domain_constraints": {
+        "person_only": ["出生于", "毕业于", "配偶"],
+        "organization_only": ["创立于", "注册于", "上市于"],
+        "location_only": ["位于", "毗邻", "属于"]
+      }
+    },
+    
+    "fusion_rules": {
+      "enable_fusion": true,
+      "fusion_strategies": {
+        "identical_relations": "merge_with_highest_confidence",
+        "similar_relations": "create_relation_cluster",
+        "conflicting_relations": "preserve_all_with_conflict_flag"
+      },
+      
+      "aggregation_methods": {
+        "confidence_aggregation": "weighted_average",
+        "source_aggregation": "union",
+        "timestamp_selection": "most_recent"
+      },
+      
+      "fusion_thresholds": {
+        "min_similarity_for_merge": 0.9,
+        "min_confidence_for_fusion": 0.6,
+        "max_conflicts_allowed": 3
+      }
+    },
+    
+    "relation_inference": {
+      "enable_inference": true,
+      "inference_rules": [
+        {
+          "name": "spouse_symmetry",
+          "if": "A 配偶 B",
+          "then": "B 配偶 A"
+        },
+        {
+          "name": "parent_child",
+          "if": "A 父亲 B",
+          "then": "B 子女 A"
+        },
+        {
+          "name": "location_transitivity",
+          "if": ["A 位于 B", "B 位于 C"],
+          "then": "A 位于 C"
+        }
+      ],
+      
+      "inference_confidence": {
+        "base_inference_confidence": 0.8,
+        "confidence_decay_factor": 0.9
+      }
+    },
+    
+    "quality_metrics": {
+      "relation_quality_factors": {
+        "has_confidence_score": 0.2,
+        "has_source_info": 0.2,
+        "has_timestamp": 0.2,
+        "is_validated": 0.2,
+        "has_evidence": 0.2
+      },
+      
+      "quality_thresholds": {
+        "minimum_quality": 0.6,
+        "good_quality": 0.8,
+        "excellent_quality": 0.95
+      }
+    }
+  },
+  
+  "default_fallback_config": {
+    "description": "关系验证默认配置（配置加载失败时使用）",
+    "default_reflexive_relations": ["是", "为", "等于", "属于"],
+    "default_high_confidence_relations": ["出生于", "毕业于", "配偶", "导演"],
+    "default_relation_synonyms": {
+      "演出": "参演",
+      "出演": "参演",
+      "担任": "是"
+    },
+    "default_validation_rules": {
+      "require_subject": true,
+      "require_predicate": true,
+      "require_object": true
+    }
+  },
+  
+  "emergency_fallback": {
+    "description": "紧急情况下的最小化关系配置",
+    "minimal_relations": ["是", "为"],
+    "minimal_confidence": 0.5,
+    "skip_validation": false
+  }
+} 

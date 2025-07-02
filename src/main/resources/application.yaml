@@ -1,6 +1,6 @@
 # ========================================
-# 智能文本提取服务 - 统一配置文件 v6.0
-# 🔧 基础配置 + 🚀 生产环境配置 (消除重复)
+# 智能文本提取服务 v4.0 - 文件架构配置
+# 🔧 无数据库依赖 + 🚀 基于文件的处理架构
 # ========================================
 
 # 默认激活开发环境
@@ -9,35 +9,23 @@ spring:
     active: ${SPRING_PROFILES_ACTIVE:default}
   main:
     allow-bean-definition-overriding: true
-  
   application:
-    name: extract-service
+    name: extract-service-v4
     
-  # 通用数据库配置
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/${DB_NAME:extract-graph}?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:123456}
-    
-  # 通用JPA配置
-  jpa:
-    hibernate:
-      ddl-auto: none
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-    show-sql: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
-        format_sql: false
-        
-  # Redis配置
+  # Redis配置 - v4.0性能优化
   data:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
-      timeout: 2000ms
+      password: ${REDIS_PASSWORD:}
+      database: ${REDIS_DATABASE:0}
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 8
+          min-idle: 2
+          max-wait: 3000ms
 
 # 通用服务器配置
 server:
@@ -59,8 +47,6 @@ logging:
     root: INFO
     com.datacenter.extract: INFO
     org.springframework: WARN
-    org.hibernate: WARN
-    com.zaxxer.hikari: INFO
     reactor.netty: WARN
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%logger{36}] - %msg%n"
@@ -70,41 +56,74 @@ logging:
     max-size: 100MB
     max-history: ${LOG_MAX_HISTORY:10}
 
-# 通用AI配置
+# AI配置
 extraction:
   ai:
     providers:
       deepseek:
-        api-key: ${DEEPSEEK_API_KEY:sk-cea6dbdbba694338b5f4abe9dfb0975b}
-        url: https://api.deepseek.com/v1/chat/completions
-        base-timeout: 30s
-        max-timeout: 180s
+        api-key: ${DEEPSEEK_API_KEY:sk-d91a0452893f43c596b5071c66cc2cd9}  # 必须通过环境变量设置
+        url: ${DEEPSEEK_API_URL:https://api.deepseek.com/v1/chat/completions}
+        base-timeout: ${AI_BASE_TIMEOUT:30s}
+        max-timeout: ${AI_MAX_TIMEOUT:180s}
         retry-count: ${AI_RETRY_COUNT:3}
         max-concurrent-calls: ${AI_MAX_CONCURRENT:3}
         enable-metrics: true
         fallback-enabled: true
+        error-handling:
+          max-retries: ${AI_MAX_RETRIES:4}
+          retry-delay: ${AI_RETRY_DELAY:2s}
+          max-retry-delay: ${AI_MAX_RETRY_DELAY:30s}
+          timeout-per-1000-chars: ${AI_TIMEOUT_PER_1000_CHARS:10s}
 
-# 通用缓存配置
+# 文件处理配置 - v4.0新增
+file:
+  processing:
+    output-dir: ${OUTPUT_DIR:./out}
+    template-dir: ${TEMPLATE_DIR:./src/main/resources/templates}
+    batch-size: ${BATCH_SIZE:10}
+    max-file-size: ${MAX_FILE_SIZE:50MB}
+    cleanup-enabled: ${FILE_CLEANUP_ENABLED:true}
+    cleanup-days: ${FILE_CLEANUP_DAYS:7}
+    auto-create-dirs: true
+    # 兼容配置
+    output-directory: ${OUTPUT_DIR:./out}
+    template-directory: ${TEMPLATE_DIR:./src/main/resources/templates}
+
+# 缓存配置 - v4.0性能优化
 cache:
+  # 分层缓存策略: L1(Caffeine本地) + L2(Redis分布式)
+  strategy: ${CACHE_STRATEGY:hybrid}  # hybrid, caffeine-only, redis-only
+  
   caffeine:
     default:
       maximum-size: ${CACHE_DEFAULT_SIZE:1000}
       expire-after-write: 1h
+    template:
+      maximum-size: 100
+      expire-after-write: 24h
+    ai-result:
+      maximum-size: 1000
+      expire-after-write: 2h
+      
+  redis:
+    enabled: ${REDIS_CACHE_ENABLED:true}
+    ttl:
+      ai-result: 7200s      # AI结果缓存2小时
+      template: 86400s      # 模板缓存24小时
+      text-chunk: 3600s     # 文本分片缓存1小时
+      default: 1800s        # 默认缓存30分钟
+      key-prefix: "extract:v4:"
 
-# 通用知识图谱配置
-knowledge-graph:
-  enabled: true
-  disambiguation:
-    threshold: ${KG_DISAMBIGUATION_THRESHOLD:0.7}
-    max-candidates: ${KG_MAX_CANDIDATES:5}
-    cache-enabled: ${KG_CACHE_ENABLED:false}
-  fusion:
-    conflict-resolution: "confidence-weighted"
-    enable-quality-assessment: ${KG_QUALITY_ASSESSMENT:false}
-    batch-processing: ${KG_BATCH_PROCESSING:false}
-  quality:
-    min-score: 0.6
-    assessment-interval: 1h
+# 模板配置 - v4.0核心
+template:
+  supported-types:
+    - celebrity
+    - celebrityCelebrity
+    - work
+    - event
+    - triples
+  hot-reload: ${TEMPLATE_HOT_RELOAD:true}
+  validation-enabled: ${TEMPLATE_VALIDATION:true}
 
 ---
 # ========================================
@@ -114,51 +133,10 @@ spring:
   config:
     activate:
       on-profile: production
-  
-  # 生产数据库优化
-  datasource:
-    url: jdbc:mysql://localhost:3306/${DB_NAME:extraction_db}?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true&cachePrepStmts=true&useServerPrepStmts=true&prepStmtCacheSize=250&prepStmtCacheSqlLimit=2048
-    username: ${DB_USERNAME:extract_user}
-    password: ${DB_PASSWORD:extract_2024}
-    # HikariCP 高性能连接池
-    hikari:
-      maximum-pool-size: 30
-      minimum-idle: 10
-      idle-timeout: 300000
-      max-lifetime: 1800000
-      connection-timeout: 30000
-      validation-timeout: 5000
-      leak-detection-threshold: 60000
-      connection-test-query: SELECT 1
-      auto-commit: true
-      pool-name: ExtractServicePool-Production
-      
-  # JPA生产优化
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        show_sql: false
-        use_sql_comments: false
-        # 批处理优化
-        jdbc:
-          batch_size: 50
-          fetch_size: 50
-          batch_versioned_data: true
-        order_inserts: true
-        order_updates: true
-        # 二级缓存
-        cache:
-          use_second_level_cache: true
-          use_query_cache: true
-          region.factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
-        temp:
-          use_jdbc_metadata_defaults: false
 
 # 生产服务器配置
 server:
-  port: 8080
+  port: 2701
   servlet:
     context-path: /
   tomcat:
@@ -197,10 +175,8 @@ logging:
   level:
     com.datacenter.extract: INFO
     org.springframework: WARN
-    org.hibernate: WARN
     org.apache.tomcat: WARN
     reactor.netty: WARN
-    com.zaxxer.hikari: WARN
   file:
     name: logs/extract-service.log
     max-history: 30
@@ -239,30 +215,23 @@ extraction:
     buffer:
       max-in-memory-size: 10MB
 
-# 生产知识图谱配置
-knowledge-graph:
-  disambiguation:
-    threshold: 0.8
-    max-candidates: 3
-    cache-enabled: true
-    similarity-algorithm: "bert-cosine"
-  fusion:
-    enable-quality-assessment: true
-    batch-processing: true
-    confidence-threshold: 0.75
-  quality:
-    min-score: 0.7
-    assessment-interval: "2h"
-    auto-improvement: true
-  reasoning:
-    enabled: true
-    max-depth: 3
-    confidence-threshold: 0.6
+# 生产文件处理配置
+file:
+  processing:
+    output-dir: /data/extract-service/out
+    template-dir: /app/templates
+    batch-size: 50
+    max-file-size: 100MB
+    cleanup-enabled: true
+    cleanup-days: 30
+    compression-enabled: true
+    backup-enabled: true
+    backup-dir: /data/extract-service/backup
 
 # 生产缓存架构
 cache:
   caffeine:
-    # L1 主缓存
+    # 主缓存
     l1-cache:
       maximum-size: 10000
       expire-after-write: 30m
@@ -274,17 +243,11 @@ cache:
       expire-after-write: 2h
       expire-after-access: 1h
       record-stats: true
-    # 实体消歧义缓存
-    disambiguation-cache:
-      maximum-size: 2000
-      expire-after-write: 6h
-      expire-after-access: 3h
-      record-stats: true
-    # 相似度计算缓存
-    similarity-cache:
-      maximum-size: 10000
-      expire-after-write: 4h
-      expire-after-access: 2h
+    # 模板缓存
+    template-cache:
+      maximum-size: 200
+      expire-after-write: 24h
+      expire-after-access: 12h
       record-stats: true
 
 # 生产线程池配置
@@ -306,13 +269,13 @@ performance:
       keep-alive-seconds: 120
       thread-name-prefix: "ai-proc-"
       rejection-policy: "CallerRunsPolicy"
-    # 数据库线程池
-    database:
-      core-size: 5
-      max-size: 15
-      queue-capacity: 50
-      keep-alive-seconds: 300
-      thread-name-prefix: "db-"
+    # 文件处理线程池
+    file-processing:
+      core-size: 6
+      max-size: 16
+      queue-capacity: 80
+      keep-alive-seconds: 60
+      thread-name-prefix: "file-"
       rejection-policy: "CallerRunsPolicy"
       
   # 监控配置
@@ -350,9 +313,9 @@ metrics:
 ai:
   mcp:
     server:
-      name: intelligent-extraction-service-prod
+      name: intelligent-extraction-service-v4-prod
       type: ASYNC
-      version: 6.0.0
+      version: 4.0.0
       enabled: true
       sse-endpoint: /sse
       sse-message-endpoint: /mcp/message
@@ -363,40 +326,32 @@ ai:
         resource: true
         prompt: true
         completion: true
-        reasoning: true
-        knowledge-graph: true
+        template-based: true
+        file-output: true
 
-# 业务功能配置
+# 业务功能配置 - v4.0简化版
 business:
   # 功能开关
   features:
-    entity-disambiguation: true
-    knowledge-fusion: true
-    relation-validation: true
-    quality-assessment: true
+    template-based-extraction: true
     batch-processing: true
+    file-output: true
     
   # 处理模式配置
   processing-modes:
     standard:
       enabled: true
-      description: "标准AI提取"
-    enhanced:
-      enabled: true
-      description: "AI + 实体消歧义 + 关系验证"
-    fusion:
-      enabled: true
-      description: "完整知识图谱处理链"
+      description: "标准模板提取"
     batch:
       enabled: true
-      description: "批量处理模式"
+      description: "批量文件处理"
       
   # 质量控制
   quality-control:
     min-confidence-score: 0.7
     max-processing-time-ms: 300000
     enable-auto-retry: true
-    enable-human-review: false
+    file-validation: true
 
 # 异步任务配置
 async:
@@ -414,13 +369,16 @@ spring:
   config:
     activate:
       on-profile: default
-  
-  # 开发数据库配置
-  datasource:
-    hikari:
-      maximum-pool-size: 10
-      minimum-idle: 5
-      idle-timeout: 300000
-      max-lifetime: 1800000
-      connection-timeout: 30000
-      validation-timeout: 5000
+
+# 开发文件处理配置
+file:
+  processing:
+    output-dir: ./out
+    cleanup-enabled: false
+    compression-enabled: false
+    backup-enabled: false
+
+# 开发模板配置
+template:
+  hot-reload: true
+  validation-enabled: false
